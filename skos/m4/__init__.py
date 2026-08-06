@@ -1,1 +1,1 @@
-"""Sergio Knowledge OS — Milestone 4."""
+"""Milestone 4: Semantic Layer & Vector Search."""

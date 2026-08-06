@@ -1,1 +1,1 @@
-"""Ports — abstract interfaces for infrastructure capabilities."""
+"""Infrastructure ports (abstract interfaces)."""

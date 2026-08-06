@@ -1,1 +1,1 @@
-"""Infrastructure Layer — ports and adapters."""
+"""Infrastructure layer for M4."""

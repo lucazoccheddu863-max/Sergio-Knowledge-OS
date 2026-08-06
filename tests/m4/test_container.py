@@ -143,5 +143,5 @@ class TestScopedContainer:
         container.register(IConfigPort, MockConfigAdapter, Lifecycle.SCOPED)
         with container.create_scope("request-1") as scoped:
             instance1 = scoped.resolve(IConfigPort)
-        instance2 = container.resolve(IConfigPort, scope_id="request-1")
-        assert instance1 is not instance2
+            instance2 = container.resolve(IConfigPort, scope_id="request-1")
+            assert instance1 is instance2

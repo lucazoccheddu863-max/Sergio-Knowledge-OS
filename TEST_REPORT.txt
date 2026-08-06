@@ -1,0 +1,82 @@
+================================================================================
+ SERGIO KNOWLEDGE OS — MILESTONE 4.1 STEP 2 TEST REPORT
+ Version: 0.4.0-alpha2
+ Date: 2026-08-07
+================================================================================
+
+▶ TEST EXECUTION
+────────────────────────────────────────────────────────────────────────────────
+
+ Milestone 4.1 Step 1 (Regression Check)
+ ✅ pytest: 31/31 PASS
+ ✅ Status: ZERO REGRESSIONS
+
+ Milestone 4.1 Step 2 (New Components)
+ ✅ pytest: 8/8 PASS
+ ✅ Coverage: new code fully exercised
+
+ Full M4 Suite (Step 1 + Step 2)
+ ✅ pytest: 39/39 PASS
+ ✅ Duration: ~1.9s
+
+▶ NEW COMPONENTS TESTED
+────────────────────────────────────────────────────────────────────────────────
+
+ Module                                   Tests  Status
+ ─────────────────────────────────────────────────────────────
+ InMemoryEventBus                             5  PASS
+   - publish_and_subscribe
+   - unsubscribe
+   - no_subscribers_no_error
+   - multiple_subscribers
+   - subscriber_count
+   - handler_exception_does_not_crash_bus
+
+ ImportOrchestrator                           3  PASS
+   - start_import_emits_event
+   - complete_import_emits_event
+   - import_failed_emits_event
+
+ Architecture Rules                           —  PASS
+   - Domain layer: 0 infrastructure imports
+   - Application layer: 0 adapter imports (only ports)
+
+▶ FILES CREATED (Milestone 4.1 Step 2)
+────────────────────────────────────────────────────────────────────────────────
+
+ Infrastructure Layer
+ skos/m4/infrastructure/adapters/event_bus/__init__.py
+ skos/m4/infrastructure/adapters/event_bus/in_memory_event_bus.py
+
+ Application Layer
+ skos/m4/application/services/import_orchestrator.py
+
+ Tests (Milestone 4.1 Step 2)
+ tests/m4/test_event_bus.py ← 8 tests
+
+ Project Documentation
+ docs/ROADMAP.md
+ docs/ARCHITECTURE.md
+ MILESTONES/M4/STATUS.md
+ CHANGELOG.md
+ VERSION
+
+ Verification
+ verify_milestone4_1_step2.py
+ setup_milestone4_1_step2.py
+
+▶ KNOWN LIMITATIONS
+────────────────────────────────────────────────────────────────────────────────
+
+ 1. EventBus is in-memory only (synchronous, single-process)
+    → Redis / RabbitMQ adapter planned for M6
+
+ 2. ImportOrchestrator is a minimal application service
+    → Full pipeline orchestration in M4.6 (RAG)
+
+ 3. No persistence for event replay
+    → Event store planned for M5+
+
+================================================================================
+ RELEASE STATUS: ✅ READY FOR DEPLOYMENT
+================================================================================

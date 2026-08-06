@@ -1,1 +1,1 @@
-"""Secret manager adapters."""
+"""Secret adapters."""

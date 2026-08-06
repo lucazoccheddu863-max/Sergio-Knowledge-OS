@@ -19,10 +19,10 @@ class EnvSecretManagerAdapter(SecretManagerPort):
     """Secret manager backed by environment variables.
 
     Secrets are stored as environment variables with the format:
-    SKOS_SECRET__<namespace>__<key>
+    SKOS_SECRET__<NAMESPACE>__<KEY>
 
     For the default namespace:
-    SKOS_SECRET__<key>
+    SKOS_SECRET__<KEY>
 
     WARNING: This adapter is intended for development only.
     """

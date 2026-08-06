@@ -1,1 +1,1 @@
-"""Application Layer — use cases and orchestration."""
+"""Application layer for M4."""

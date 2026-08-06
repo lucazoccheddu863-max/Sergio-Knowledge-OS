@@ -1,1 +1,1 @@
-"""Configuration adapters."""
+"""Config adapters."""

@@ -1,1 +1,1 @@
-"""Tests for M4 components."""
+"""Tests for Milestone 4."""
