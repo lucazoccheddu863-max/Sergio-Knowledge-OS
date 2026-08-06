@@ -1,0 +1,12 @@
+Sergio Knowledge OS
+Version: 0.3.0
+Milestone: 3
+Status: RELEASE CANDIDATE
+Date: 2026-08-05
+
+Milestones:
+  v0.1.0 → Milestone 1: Project scaffolding
+  v0.2.0 → Milestone 2: Import Manager (ChatGPT + Gemini parsers, hashing, incremental import)
+  v0.3.0 → Milestone 3: Database + Knowledge Engine + Pipeline + Multi-AI support
+
+Next: v0.4.0 → Milestone 4: Semantic Layer & Vector Search

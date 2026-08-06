@@ -1,0 +1,8 @@
+database_path: ./data/sergio_knowledge.db
+archive_root: ./data/archive
+chatgpt_import_dir: ./data/imports/chatgpt
+gemini_import_dir: ./data/imports/gemini
+backup_dir: ./data/backups
+hash_algorithm: sha256
+ai_primary_provider: openai
+ai_local_model: qwen2.5:1.5b
