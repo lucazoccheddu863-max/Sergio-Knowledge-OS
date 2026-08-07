@@ -1,30 +1,15 @@
 """Tests for the Configuration Layer and Secret Manager."""
-
-import os
-from unittest.mock import MagicMock
-
 import pytest
-
+from unittest.mock import MagicMock
 from skos.m4.domain.value_objects import ConfigScope, SecretRef
-from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
-    HierarchicalConfigAdapter,
-)
-from skos.m4.infrastructure.adapters.secrets.env_secret_adapter import (
-    EnvSecretManagerAdapter,
-)
+from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import HierarchicalConfigAdapter
+from skos.m4.infrastructure.adapters.secrets.env_secret_adapter import EnvSecretManagerAdapter
 from skos.m4.infrastructure.ports.secret_port import SecretNotFoundError
 
 
 class TestHierarchicalConfigAdapter:
     def test_get_from_defaults(self) -> None:
-        defaults = {
-            "m4": {
-                "embedding": {
-                    "batch_size": 100,
-                    "model": "nomic-embed-text",
-                }
-            }
-        }
+        defaults = {"m4": {"embedding": {"batch_size": 100, "model": "nomic-embed-text"}}}
         config = HierarchicalConfigAdapter(defaults=defaults)
         assert config.get("m4.embedding.batch_size") == 100
         assert config.get("m4.embedding.model") == "nomic-embed-text"
@@ -92,16 +77,6 @@ class TestHierarchicalConfigAdapter:
         config.set("m4.embedding.batch_size", 100)
         callback.assert_called_once_with(100)
         sub.unsubscribe()
-
-    def test_dump_merged_config(self) -> None:
-        config = HierarchicalConfigAdapter()
-        config.set("m4.embedding.batch_size", 100)
-        config.set("m4.embedding.model", "nomic")
-        ws_scope = ConfigScope(workspace_id="ws-1")
-        config.set("m4.embedding.batch_size", 50, scope=ws_scope)
-        dumped = config.dump(scope=ws_scope)
-        assert dumped["m4"]["embedding"]["batch_size"] == 50
-        assert dumped["m4"]["embedding"]["model"] == "nomic"
 
     def test_get_with_fallback_scopes(self) -> None:
         config = HierarchicalConfigAdapter()

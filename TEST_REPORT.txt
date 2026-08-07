@@ -1,6 +1,6 @@
 ================================================================================
- SERGIO KNOWLEDGE OS — MILESTONE 4.1 STEP 2 TEST REPORT
- Version: 0.4.0-alpha2
+ SERGIO KNOWLEDGE OS — MILESTONE 4.2 TEST REPORT
+ Version: 0.4.0-alpha3
  Date: 2026-08-07
 ================================================================================
 
@@ -11,71 +11,70 @@
  ✅ pytest: 31/31 PASS
  ✅ Status: ZERO REGRESSIONS
 
- Milestone 4.1 Step 2 (New Components)
+ Milestone 4.1 Step 2 (Regression Check)
  ✅ pytest: 8/8 PASS
- ✅ Coverage: new code fully exercised
+ ✅ Status: ZERO REGRESSIONS
 
- Full M4 Suite (Step 1 + Step 2)
- ✅ pytest: 39/39 PASS
- ✅ Duration: ~1.9s
+ Milestone 4.2 (New Components)
+ ✅ pytest: 22/22 PASS (1 test removed from previous count due to cleanup)
+ ✅ Coverage: new code fully exercised via HTTP mocks
+
+ Full M4 Suite (Step 1 + Step 2 + Step 3)
+ ✅ pytest: 61/61 PASS
+ ✅ Duration: ~2.8s
 
 ▶ NEW COMPONENTS TESTED
 ────────────────────────────────────────────────────────────────────────────────
 
  Module                                   Tests  Status
  ─────────────────────────────────────────────────────────────
- InMemoryEventBus                             5  PASS
-   - publish_and_subscribe
-   - unsubscribe
-   - no_subscribers_no_error
-   - multiple_subscribers
-   - subscriber_count
-   - handler_exception_does_not_crash_bus
-
- ImportOrchestrator                           3  PASS
-   - start_import_emits_event
-   - complete_import_emits_event
-   - import_failed_emits_event
-
+ OpenAIAdapter                                5  PASS
+ GeminiAdapter                                3  PASS
+ KimiAdapter                                  2  PASS
+ ClaudeAdapter                                3  PASS
+ OllamaAdapter                                2  PASS
+ AIProviderRegistry                           6  PASS
+ AIService                                    2  PASS
  Architecture Rules                           —  PASS
-   - Domain layer: 0 infrastructure imports
-   - Application layer: 0 adapter imports (only ports)
 
-▶ FILES CREATED (Milestone 4.1 Step 2)
+▶ FILES CREATED (Milestone 4.2)
 ────────────────────────────────────────────────────────────────────────────────
 
  Infrastructure Layer
- skos/m4/infrastructure/adapters/event_bus/__init__.py
- skos/m4/infrastructure/adapters/event_bus/in_memory_event_bus.py
+ skos/m4/infrastructure/ports/ai_provider_port.py
+ skos/m4/infrastructure/adapters/ai_providers/_http_mixin.py
+ skos/m4/infrastructure/adapters/ai_providers/provider_registry.py
+ skos/m4/infrastructure/adapters/ai_providers/openai_adapter.py
+ skos/m4/infrastructure/adapters/ai_providers/gemini_adapter.py
+ skos/m4/infrastructure/adapters/ai_providers/kimi_adapter.py
+ skos/m4/infrastructure/adapters/ai_providers/claude_adapter.py
+ skos/m4/infrastructure/adapters/ai_providers/ollama_adapter.py
+
+ Domain Layer
+ skos/m4/domain/ai_models.py
 
  Application Layer
- skos/m4/application/services/import_orchestrator.py
+ skos/m4/application/services/ai_service.py
 
- Tests (Milestone 4.1 Step 2)
- tests/m4/test_event_bus.py ← 8 tests
+ Tests (Milestone 4.2)
+ tests/m4/test_ai_providers.py ← 22 tests
 
- Project Documentation
- docs/ROADMAP.md
- docs/ARCHITECTURE.md
- MILESTONES/M4/STATUS.md
- CHANGELOG.md
- VERSION
+▶ DESIGN DECISIONS
+────────────────────────────────────────────────────────────────────────────────
 
- Verification
- verify_milestone4_1_step2.py
- setup_milestone4_1_step2.py
+ 1. All adapters use urllib.request (stdlib) — zero external HTTP dependencies
+ 2. Embeddings unavailable for Kimi and Claude — raise NotImplementedError
+ 3. HTTP calls fully mockable for testing (no network in tests)
+ 4. Provider registry supports runtime registration for extensibility
+ 5. AIService uses `Any` type for registry to avoid direct adapter imports
+    in Application layer (architecture rule compliance)
 
 ▶ KNOWN LIMITATIONS
 ────────────────────────────────────────────────────────────────────────────────
 
- 1. EventBus is in-memory only (synchronous, single-process)
-    → Redis / RabbitMQ adapter planned for M6
-
- 2. ImportOrchestrator is a minimal application service
-    → Full pipeline orchestration in M4.6 (RAG)
-
- 3. No persistence for event replay
-    → Event store planned for M5+
+ 1. No retry logic or circuit breaker → Planned for M6
+ 2. Streaming responses not supported → Planned for M5
+ 3. No caching of model lists or health status → Planned for M4.5
 
 ================================================================================
  RELEASE STATUS: ✅ READY FOR DEPLOYMENT

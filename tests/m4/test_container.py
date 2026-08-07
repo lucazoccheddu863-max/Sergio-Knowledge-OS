@@ -1,8 +1,6 @@
 """Tests for the Service Container and Dependency Injection."""
-
 import pytest
-
-from skos.m4.di.container import Lifecycle, ScopedContainer, ServiceContainer
+from skos.m4.di.container import Lifecycle, ServiceContainer
 
 
 class IConfigPort:
@@ -18,7 +16,6 @@ class ISecretPort:
 class MockConfigAdapter(IConfigPort):
     def __init__(self, prefix: str = "mock") -> None:
         self.prefix = prefix
-
     def get(self, key: str) -> str:
         return f"{self.prefix}:{key}"
 
@@ -26,7 +23,6 @@ class MockConfigAdapter(IConfigPort):
 class MockSecretAdapter(ISecretPort):
     def __init__(self, config: IConfigPort | None = None) -> None:
         self.config = config
-
     def get(self, key: str) -> str:
         if self.config:
             return f"secret:{self.config.get(key)}"

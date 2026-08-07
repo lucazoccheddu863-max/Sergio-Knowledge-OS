@@ -7,11 +7,6 @@ from typing import Any
 
 @dataclass(frozen=True)
 class ConfigScope:
-    """Represents a configuration scope in the hierarchy.
-
-    Scopes are ordered from most general to most specific:
-    system < tenant < workspace < project < user
-    """
     system: bool = True
     tenant_id: str | None = None
     workspace_id: str | None = None
@@ -30,7 +25,6 @@ class ConfigScope:
 
 @dataclass(frozen=True)
 class ConfigPath:
-    """A dotted path to a configuration value."""
     path: str
 
     def parts(self) -> list[str]:
@@ -48,6 +42,5 @@ class ConfigPath:
 
 @dataclass(frozen=True)
 class SecretRef:
-    """Reference to a secret stored in a Secret Manager."""
     key: str
     namespace: str = "default"

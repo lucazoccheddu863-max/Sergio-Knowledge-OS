@@ -1,32 +1,13 @@
-"""Environment variable secret manager adapter.
-
-For development and testing. Production should use HashiCorp Vault,
-AWS Secrets Manager, or similar.
-"""
+"""Environment variable secret manager adapter."""
 from __future__ import annotations
 
 import os
 
 from skos.m4.domain.value_objects import SecretRef
-from skos.m4.infrastructure.ports.secret_port import (
-    SecretAccessError,
-    SecretManagerPort,
-    SecretNotFoundError,
-)
+from skos.m4.infrastructure.ports.secret_port import SecretAccessError, SecretManagerPort, SecretNotFoundError
 
 
 class EnvSecretManagerAdapter(SecretManagerPort):
-    """Secret manager backed by environment variables.
-
-    Secrets are stored as environment variables with the format:
-    SKOS_SECRET__<NAMESPACE>__<KEY>
-
-    For the default namespace:
-    SKOS_SECRET__<KEY>
-
-    WARNING: This adapter is intended for development only.
-    """
-
     ENV_PREFIX = "SKOS_SECRET__"
 
     def _env_key(self, ref: SecretRef) -> str:
@@ -38,9 +19,7 @@ class EnvSecretManagerAdapter(SecretManagerPort):
         env_key = self._env_key(ref)
         value = os.environ.get(env_key)
         if value is None:
-            raise SecretNotFoundError(
-                f"Secret not found: {ref.key} (namespace: {ref.namespace})"
-            )
+            raise SecretNotFoundError(f"Secret not found: {ref.key} (namespace: {ref.namespace})")
         return value
 
     def set(self, ref: SecretRef, value: str) -> None:
@@ -50,9 +29,7 @@ class EnvSecretManagerAdapter(SecretManagerPort):
     def delete(self, ref: SecretRef) -> None:
         env_key = self._env_key(ref)
         if env_key not in os.environ:
-            raise SecretNotFoundError(
-                f"Secret not found: {ref.key} (namespace: {ref.namespace})"
-            )
+            raise SecretNotFoundError(f"Secret not found: {ref.key} (namespace: {ref.namespace})")
         del os.environ[env_key]
 
     def exists(self, ref: SecretRef) -> bool:
