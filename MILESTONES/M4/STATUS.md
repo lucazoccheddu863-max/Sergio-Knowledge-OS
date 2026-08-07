@@ -15,10 +15,16 @@
 | 4.2 | OllamaAdapter | ✅ Complete | 2 |
 | 4.2 | AIProviderRegistry | ✅ Complete | 5 |
 | 4.2 | AIService | ✅ Complete | 2 |
-| 4.3 | Embeddings Pipeline | ⏳ Planned | — |
-| 4.4 | Vector Database | ⏳ Planned | — |
+| 4.3 | Embeddings Pipeline | ✅ Complete | 11 |
+| 4.4 | Vector Database | 🔄 NEXT | — |
 | 4.5 | Semantic Search | ⏳ Planned | — |
 | 4.6 | RAG Pipeline | ⏳ Planned | — |
+
+## Test Summary (M4.3)
+- pytest: 11/11 PASS (new embedding pipeline tests)
+- Regression M4.1 + M4.2: 61/61 PASS
+- Full M4 suite: 72/72 PASS
+- Architecture rules: 0 violations
 
 ## Test Summary (M4.2)
 - pytest: 23/23 PASS (new AI provider tests)
@@ -27,4 +33,4 @@
 - Architecture rules: 0 violations
 
 ## Next Action
-Proceed to M4.3 — Embeddings Generation Pipeline
+Proceed to M4.4 — Vector Database Integration

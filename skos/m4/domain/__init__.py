@@ -6,3 +6,9 @@ from skos.m4.domain.ai_models import (
     EmbeddingRequest,
     EmbeddingResult,
 )
+from skos.m4.domain.chunking import (
+    ChunkingStrategy,
+    FixedSizeChunking,
+    ParagraphChunking,
+    TextChunk,
+)

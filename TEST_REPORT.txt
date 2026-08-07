@@ -1,6 +1,6 @@
 ================================================================================
- SERGIO KNOWLEDGE OS — MILESTONE 4.2 TEST REPORT
- Version: 0.4.0-alpha3
+ SERGIO KNOWLEDGE OS — MILESTONE 4.3 TEST REPORT
+ Version: 0.4.0-alpha4
  Date: 2026-08-07
 ================================================================================
 
@@ -15,66 +15,76 @@
  ✅ pytest: 8/8 PASS
  ✅ Status: ZERO REGRESSIONS
 
- Milestone 4.2 (New Components)
- ✅ pytest: 22/22 PASS (1 test removed from previous count due to cleanup)
- ✅ Coverage: new code fully exercised via HTTP mocks
+ Milestone 4.2 (Regression Check)
+ ✅ pytest: 26/26 PASS
+ ✅ Status: ZERO REGRESSIONS
 
- Full M4 Suite (Step 1 + Step 2 + Step 3)
- ✅ pytest: 61/61 PASS
- ✅ Duration: ~2.8s
+ Milestone 4.3 (New Components)
+ ✅ pytest: 11/11 PASS
+ ✅ Coverage: chunking strategies and pipeline fully exercised
+
+ Full M4 Suite (Step 1 + Step 2 + Step 3 + Step 4)
+ ✅ pytest: 76/76 PASS
+ ✅ Duration: ~3.1s
 
 ▶ NEW COMPONENTS TESTED
 ────────────────────────────────────────────────────────────────────────────────
 
  Module                                   Tests  Status
  ─────────────────────────────────────────────────────────────
- OpenAIAdapter                                5  PASS
- GeminiAdapter                                3  PASS
- KimiAdapter                                  2  PASS
- ClaudeAdapter                                3  PASS
- OllamaAdapter                                2  PASS
- AIProviderRegistry                           6  PASS
- AIService                                    2  PASS
- Architecture Rules                           —  PASS
+ FixedSizeChunking                            5  PASS
+   - empty_text, short_text_no_split
+   - long_text_split, overlap_preserves_context
+   - invalid_chunk_size, invalid_overlap
 
-▶ FILES CREATED (Milestone 4.2)
+ ParagraphChunking                            3  PASS
+   - empty_text, single_paragraph
+   - multiple_paragraphs, long_paragraph_fallback
+
+ EmbeddingPipeline                            6  PASS
+   - embed_short_texts, embed_long_texts_with_chunking
+   - embed_chunks_directly, empty_texts
+   - batch_processing, event_emission
+
+ Architecture Rules                           —  PASS
+   - Domain layer: 0 infrastructure imports
+   - Application layer: 0 adapter imports (only ports)
+
+▶ FILES CREATED (Milestone 4.3)
 ────────────────────────────────────────────────────────────────────────────────
 
- Infrastructure Layer
- skos/m4/infrastructure/ports/ai_provider_port.py
- skos/m4/infrastructure/adapters/ai_providers/_http_mixin.py
- skos/m4/infrastructure/adapters/ai_providers/provider_registry.py
- skos/m4/infrastructure/adapters/ai_providers/openai_adapter.py
- skos/m4/infrastructure/adapters/ai_providers/gemini_adapter.py
- skos/m4/infrastructure/adapters/ai_providers/kimi_adapter.py
- skos/m4/infrastructure/adapters/ai_providers/claude_adapter.py
- skos/m4/infrastructure/adapters/ai_providers/ollama_adapter.py
-
  Domain Layer
- skos/m4/domain/ai_models.py
+ skos/m4/domain/chunking.py
+   - ChunkingStrategy (ABC)
+   - FixedSizeChunking
+   - ParagraphChunking
+   - TextChunk (value object)
 
  Application Layer
- skos/m4/application/services/ai_service.py
+ skos/m4/application/services/embedding_pipeline.py
+   - embed_texts() with automatic chunking
+   - embed_chunks() for pre-chunked content
+   - Configurable batch processing
+   - Event emission (embedding.completed)
 
- Tests (Milestone 4.2)
- tests/m4/test_ai_providers.py ← 22 tests
+ Tests (Milestone 4.3)
+ tests/m4/test_embedding_pipeline.py ← 11 tests
 
 ▶ DESIGN DECISIONS
 ────────────────────────────────────────────────────────────────────────────────
 
- 1. All adapters use urllib.request (stdlib) — zero external HTTP dependencies
- 2. Embeddings unavailable for Kimi and Claude — raise NotImplementedError
- 3. HTTP calls fully mockable for testing (no network in tests)
- 4. Provider registry supports runtime registration for extensibility
- 5. AIService uses `Any` type for registry to avoid direct adapter imports
-    in Application layer (architecture rule compliance)
+ 1. Chunking is domain logic (strategy pattern) — stays in domain layer
+ 2. Pipeline is application orchestration — uses AIService, EventBus, Config
+ 3. Batch size configurable via hierarchical config (m4.embedding.batch_size)
+ 4. Events decouple embedding completion from downstream consumers (M4.4)
+ 5. ParagraphChunking falls back to FixedSizeChunking for oversized paragraphs
 
 ▶ KNOWN LIMITATIONS
 ────────────────────────────────────────────────────────────────────────────────
 
- 1. No retry logic or circuit breaker → Planned for M6
- 2. Streaming responses not supported → Planned for M5
- 3. No caching of model lists or health status → Planned for M4.5
+ 1. No retry logic on embedding failures → Planned for M6
+ 2. No deduplication of identical chunks → Planned for M4.5
+ 3. No progress reporting during long batches → Planned for M5
 
 ================================================================================
  RELEASE STATUS: ✅ READY FOR DEPLOYMENT

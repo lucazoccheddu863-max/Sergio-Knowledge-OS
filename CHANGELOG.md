@@ -1,5 +1,42 @@
 # Changelog
 
+## [0.4.0-alpha4] — 2026-08-07
+
+### Milestone 4.3 — Embeddings Generation Pipeline
+
+#### Added
+- `ChunkingStrategy` ABC with two implementations:
+  - `FixedSizeChunking` — word-based sliding window with configurable overlap
+  - `ParagraphChunking` — paragraph boundary splitting with fallback to fixed-size
+- `TextChunk` value object with source tracking and metadata
+- `EmbeddingPipeline` application service:
+  - Automatic text chunking before embedding generation
+  - Configurable batch processing (respects `m4.embedding.batch_size`)
+  - Event emission (`embedding.completed`) via EventBus
+  - Direct chunk embedding for pre-chunked content
+- `tests/m4/test_embedding_pipeline.py` — 11 tests covering chunking strategies and pipeline
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha4`
+- `skos/m4/domain/__init__.py` exports chunking classes
+
+#### Design Decisions
+- Chunking is domain logic (strategy pattern) — stays in domain layer
+- Pipeline is application orchestration — uses AIService, EventBus, Config
+- Batch size configurable via hierarchical config
+- Events decouple embedding completion from downstream consumers (M4.4 Vector DB)
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+
+---
+
+# Changelog
+
 ## [0.4.0-alpha3] — 2026-08-07
 
 ### Milestone 4.2 — AI Provider Abstraction

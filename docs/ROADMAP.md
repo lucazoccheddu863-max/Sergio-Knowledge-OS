@@ -10,9 +10,10 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 ### M4 — Semantic Layer & Vector Search 🔄 IN PROGRESS
 - M4.1 Step 1 ✅ — DI Container, Config, Secrets
 - M4.1 Step 2 ✅ — Event Bus, Application Services
-- M4.2 ✅ — AI Provider Abstraction (OpenAI, Gemini, Kimi, Claude, Ollama)
-- M4.3 ⏳ — Embeddings Generation Pipeline
-- M4.4 ⏳ — Vector Database Integration
+- M4.2 ✅ — AI Provider Abstraction
+- M4.3 ✅ — Embeddings Generation Pipeline (OpenAI, Gemini, Kimi, Claude, Ollama)
+- M4.3 ✅ — Embeddings Generation Pipeline
+- M4.4 🔄 — Vector Database Integration (NEXT)
 - M4.5 ⏳ — Semantic Search Engine
 - M4.6 ⏳ — RAG Pipeline
 - M4.7 ⏳ — RAG Foundation Closeout
