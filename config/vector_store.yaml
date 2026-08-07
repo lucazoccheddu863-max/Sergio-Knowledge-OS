@@ -1,0 +1,14 @@
+vector_store:
+  provider: chroma
+  persist_directory: ./storage/chroma
+  default_collection: default
+  embedding_dimension: 1536
+  distance_metric: cosine
+  log_operations: true
+  collections:
+    - name: knowledge
+      dimension: 1536
+      distance_metric: cosine
+    - name: conversations
+      dimension: 1536
+      distance_metric: cosine

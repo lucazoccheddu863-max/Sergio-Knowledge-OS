@@ -1,3 +1,38 @@
+## [0.4.0-alpha5] — 2026-08-07
+
+### Milestone 4.4 — Vector DB Integration
+
+#### Added
+- `VectorStorePort` — abstract interface for vector database operations
+- `ChromaDBAdapter` — ChromaDB implementation with:
+  - Automatic collection name sanitisation (alphanumeric, underscore, hyphen; max 63 chars)
+  - Empty metadata normalisation to prevent ChromaDB runtime errors
+  - In-memory and persistent client support
+- Domain models: `VectorRecord`, `VectorQuery`, `SearchResult`
+- `VectorStoreService` — application service bridging embedding pipeline and vector store
+- `tests/m4/test_vector_store.py` — 15 tests covering unit, integration, and service layers
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha5`
+- `pyproject.toml` adds `chromadb>=0.5.0` dependency
+- `skos/m4/domain/__init__.py` exports vector models
+
+#### Design Decisions
+- Vector store is infrastructure (adapter pattern) — stays in infrastructure layer
+- VectorStoreService is application orchestration — uses VectorStorePort
+- Collection names sanitised transparently to shield users from ChromaDB constraints
+- Empty metadata normalised to None to avoid ChromaDB empty-dict rejection
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+
+---
+
 # Changelog
 
 ## [0.4.0-alpha4] — 2026-08-07

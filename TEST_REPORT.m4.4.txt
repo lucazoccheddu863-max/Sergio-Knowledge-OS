@@ -1,0 +1,33 @@
+SKOS M4.4 — Vector Database Test Report
+========================================
+Date: 2026-08-07
+Milestone: M4.4 Vector Database
+Status: READY FOR VERIFICATION
+
+Test Suites
+-----------
+1. test_vector_store_port.py     — Contract tests (abstract, subclassed by adapter)
+2. test_chroma_adapter.py        — ChromaDB adapter unit + integration tests
+3. test_vector_store_service.py  — Application service tests with mocked port
+4. test_vector_store_integration.py — End-to-end stack tests
+
+Coverage Areas
+--------------
+- VectorStorePort contract compliance
+- Multi-collection isolation
+- CRUD operations (upsert, get, delete)
+- Semantic search with cosine/l2/ip metrics
+- Document existence check (exists)
+- Collection lifecycle (create, delete, list)
+- Health check with event emission
+- EventBus integration for all mutations
+- Error handling (CollectionNotFoundError, DocumentNotFoundError)
+
+Instructions
+--------------
+Run on target machine:
+    python setup_milestone4_4.py
+    python verify_milestone4_4.py
+    pytest tests/m4/test_chroma_adapter.py tests/m4/test_vector_store_service.py tests/m4/test_vector_store_integration.py -v
+
+Expected: ALL PASS

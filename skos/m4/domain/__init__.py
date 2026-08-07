@@ -12,3 +12,8 @@ from skos.m4.domain.chunking import (
     ParagraphChunking,
     TextChunk,
 )
+from skos.m4.domain.vector_models import (
+    VectorRecord,
+    VectorQuery,
+    SearchResult,
+)
