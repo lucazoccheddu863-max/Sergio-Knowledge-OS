@@ -1,3 +1,43 @@
+## [0.4.0-alpha9] — 2026-08-08
+
+### Milestone 4.8 — Query Orchestrator
+
+#### Added
+- `QueryOrchestratorPort` — abstract interface for unified querying
+- `QueryOrchestratorService` — routes queries to semantic search, RAG, and knowledge graph
+- Domain models: `UnifiedQuery`, `UnifiedResult`
+- Query modes: `auto`, `semantic`, `rag`, `graph`, `hybrid`
+- `tests/m4/test_query_orchestrator.py` — 12 tests covering all routing modes
+- Events: `orchestrator.query_executed`, `orchestrator.query_failed`
+- Config keys: `m4.orchestrator.default_mode`, `m4.orchestrator.max_query_time_ms`
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha9`
+- `pyproject.toml` version bump
+- `config.yaml` adds `m4.orchestrator.*` configuration
+- `skos/m4/domain/__init__.py` exports orchestrator models
+
+#### Design Decisions
+- `QueryOrchestratorService` talks ONLY to application services, never to concrete adapters
+- `auto` mode routes to semantic search + RAG (default for end users)
+- `hybrid` mode routes to all three engines (semantic + RAG + graph)
+- `graph` mode queries the knowledge graph by entity name
+- Forward-compatible with M5 (API Layer): `UnifiedResult` is the contract for API responses
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+
+---
+
 ## [0.4.0-alpha8] — 2026-08-08
 
 ### Milestone 4.7 — Knowledge Graph Integration

@@ -34,3 +34,7 @@ from skos.m4.domain.knowledge_graph_models import (
     GraphQuery,
     GraphResult,
 )
+from skos.m4.domain.query_orchestrator_models import (
+    UnifiedQuery,
+    UnifiedResult,
+)

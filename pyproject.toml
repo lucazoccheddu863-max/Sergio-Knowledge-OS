@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "skos"
-version = "0.4.0-alpha8"
+version = "0.4.0-alpha9"
 description = "Sergio Knowledge OS — Semantic Knowledge Platform"
 requires-python = ">=3.11"
 dependencies = [
