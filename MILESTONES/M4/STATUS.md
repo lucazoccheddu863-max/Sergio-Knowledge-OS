@@ -2,35 +2,36 @@
 
 | Step | Component | Status | Tests |
 |------|-----------|--------|-------|
-| 4.1.1 | DI Container | ✅ Complete | 11 |
-| 4.1.1 | Config Adapter | ✅ Complete | 10 |
-| 4.1.1 | Secret Adapter | ✅ Complete | 5 |
-| 4.1.2 | Event Bus | ✅ Complete | 5 |
-| 4.1.2 | Application Services | ✅ Complete | 3 |
-| 4.2 | AIProviderPort | ✅ Complete | — |
-| 4.2 | OpenAIAdapter | ✅ Complete | 5 |
-| 4.2 | GeminiAdapter | ✅ Complete | 3 |
-| 4.2 | KimiAdapter | ✅ Complete | 2 |
-| 4.2 | ClaudeAdapter | ✅ Complete | 3 |
-| 4.2 | OllamaAdapter | ✅ Complete | 2 |
-| 4.2 | AIProviderRegistry | ✅ Complete | 5 |
-| 4.2 | AIService | ✅ Complete | 2 |
-| 4.3 | Embeddings Pipeline | ✅ Complete | 11 |
-| 4.4 | Vector Database | 🔄 NEXT | — |
-| 4.5 | Semantic Search | ⏳ Planned | — |
-| 4.6 | RAG Pipeline | ⏳ Planned | — |
+| 4.1.1 | DI Container | ✅ Frozen | 11 |
+| 4.1.1 | Config Adapter | ✅ Frozen | 10 |
+| 4.1.1 | Secret Adapter | ✅ Frozen | 5 |
+| 4.1.2 | Event Bus | ✅ Frozen | 5 |
+| 4.1.2 | Application Services | ✅ Frozen | 3 |
+| 4.2 | AIProviderPort | ✅ Frozen | — |
+| 4.2 | OpenAIAdapter | ✅ Frozen | 5 |
+| 4.2 | GeminiAdapter | ✅ Frozen | 3 |
+| 4.2 | KimiAdapter | ✅ Frozen | 2 |
+| 4.2 | ClaudeAdapter | ✅ Frozen | 3 |
+| 4.2 | OllamaAdapter | ✅ Frozen | 2 |
+| 4.2 | AIProviderRegistry | ✅ Frozen | 5 |
+| 4.2 | AIService | ✅ Frozen | 2 |
+| 4.3 | Embeddings Pipeline | ✅ Frozen | 11 |
+| 4.4 | Vector Database | ✅ Frozen | 15 |
+| 4.5 | Semantic Search | ✅ Frozen | 19 |
+| 4.6 | RAG Pipeline | ✅ Frozen | 12 |
+| 4.7 | Knowledge Graph | ✅ Frozen | 18 |
+| 4.8 | Query Orchestrator | ✅ Frozen | 12 |
+| **4.9** | **REST API Adapter** | **🔄 CURRENT** | **—** |
+| 4.9.5 | Admin API | ⏳ Planned | — |
+| 4.10 | Observability | ⏳ Planned | — |
+| 4.11 | Security & Auth | ⏳ Planned | — |
+| 4.12 | Final Release | ⏳ Planned | — |
 
-## Test Summary (M4.3)
-- pytest: 11/11 PASS (new embedding pipeline tests)
-- Regression M4.1 + M4.2: 61/61 PASS
-- Full M4 suite: 72/72 PASS
-- Architecture rules: 0 violations
-
-## Test Summary (M4.2)
-- pytest: 23/23 PASS (new AI provider tests)
-- Regression M4.1.1 + M4.1.2: 39/39 PASS
-- Full M4 suite: 62/62 PASS
+## Test Summary (M4.8)
+- pytest: 12/12 PASS (new orchestrator tests)
+- Regression M4.1 → M4.7: 144/144 PASS
+- Full M4 suite: 156/156 PASS
 - Architecture rules: 0 violations
 
 ## Next Action
-Proceed to M4.4 — Vector Database Integration
+Proceed to M4.9 — REST API Adapter

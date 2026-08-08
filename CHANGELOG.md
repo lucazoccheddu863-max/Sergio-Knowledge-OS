@@ -1,3 +1,44 @@
+## [0.4.0-alpha10] — 2026-08-08
+
+### Milestone 4.9 — REST API Adapter
+
+#### Added
+- `FastAPIAdapter` — FastAPI infrastructure adapter exposing REST API
+- Domain DTOs in `skos/m4/infrastructure/adapters/api/dto.py`
+- Endpoints:
+  - `POST /api/v1/query` — unified query execution
+  - `GET /api/v1/health` — system health check
+  - `GET /api/v1/status` — system status and version
+  - `GET /api/v1/engines` — list available engines
+- `tests/m4/test_api_adapter.py` — 7 tests covering all endpoints
+- `setup_milestone4_9.py` and `verify_milestone4_9.py`
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha10`
+- `pyproject.toml` version bump
+- `MILESTONES/M4/STATUS.md` updated to reflect real state
+
+#### Design Decisions
+- FastAPI is exclusively an infrastructure adapter — zero dependency from domain/application layers
+- `FastAPIAdapter` receives `QueryOrchestratorPort` and `ConfigurationPort` via constructor
+- All DTOs are Pydantic models decoupled from domain dataclasses
+- Forward-compatible with M4.9.5 (Admin API) and M5 (full production API)
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+- M4.8 — untouched
+
+* * *
+
 ## [0.4.0-alpha9] — 2026-08-08
 
 ### Milestone 4.8 — Query Orchestrator
