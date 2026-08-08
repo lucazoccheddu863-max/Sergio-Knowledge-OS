@@ -17,3 +17,9 @@ from skos.m4.domain.vector_models import (
     VectorQuery,
     SearchResult,
 )
+from skos.m4.domain.search_models import (
+    SemanticQuery,
+    SemanticSearchResult,
+    RankedDocument,
+    SearchFilter,
+)

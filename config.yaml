@@ -6,3 +6,10 @@ backup_dir: ./data/backups
 hash_algorithm: sha256
 ai_primary_provider: openai
 ai_local_model: qwen2.5:1.5b
+
+  semantic_search:
+    collection_name: "semantic_search"
+    default_top_k: 5
+    similarity_threshold: 0.7
+    max_results_per_query: 20
+    rerank_enabled: false

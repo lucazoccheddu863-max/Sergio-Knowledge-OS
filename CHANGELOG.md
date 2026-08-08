@@ -1,3 +1,39 @@
+## [0.4.0-alpha6] — 2026-08-08
+
+### Milestone 4.5 — Semantic Search Engine
+
+#### Added
+- `SemanticSearchPort` — abstract interface for semantic search engines
+- `ChromaSemanticSearchAdapter` — ChromaDB implementation delegating to VectorStorePort
+- `SemanticSearchService` — orchestrates query embedding → vector search → ranking → events
+- `DocumentIndexerService` — orchestrates chunking → embedding → indexing → events
+- Domain models: `SemanticQuery`, `SemanticSearchResult`, `RankedDocument`, `SearchFilter`
+- `tests/m4/test_semantic_search.py` — 19 tests covering domain, port, adapter, services
+- Events: `search.completed`, `search.failed`, `document.indexed`, `document.index_failed`
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha6`
+- `pyproject.toml` version bump
+- `config.yaml` adds `m4.semantic_search.*` configuration keys
+- `skos/m4/domain/__init__.py` exports search models
+
+#### Design Decisions
+- `SemanticSearchService` talks ONLY to `VectorStorePort` and `AIService`, never to concrete adapters
+- `DocumentIndexerService` talks to `EmbeddingPipeline` and `VectorStoreService`, never to concrete adapters
+- Forward-compatible with M4.6 (RAG): `RankedDocument` provides the contract between search and RAG
+- Empty `index_document` on adapter forces use of `DocumentIndexerService` for embedding generation
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+
+---
+
 ## [0.4.0-alpha5] — 2026-08-07
 
 ### Milestone 4.4 — Vector DB Integration

@@ -1,10 +1,10 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M4.4
+TEST REPORT — Sergio Knowledge OS M4.5
 ============================================================
 
-Date: 2026-08-07
-Version: 0.4.0-alpha5
-Milestone: M4.4 — Vector DB Integration
+Date: 2026-08-08
+Version: 0.4.0-alpha6
+Milestone: M4.5 — Semantic Search Engine
 
 [1m============================= test session starts ==============================[0m
 platform linux -- Python 3.12.12, pytest-9.1.1, pluggy-1.6.0 -- /usr/local/bin/python3
@@ -13,108 +13,128 @@ rootdir: /mnt/agents/output/sergio-m44
 configfile: pyproject.toml
 plugins: asyncio-1.4.0, anyio-4.9.0
 asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
-[1mcollecting ... [0mcollected 96 items
+[1mcollecting ... [0mcollected 116 items
 
-tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_chat_success [32mPASSED[0m[32m [  1%][0m
-tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_embed_success [32mPASSED[0m[32m [  2%][0m
-tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_health_check_success [32mPASSED[0m[32m [  3%][0m
-tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_list_models [32mPASSED[0m[32m [  4%][0m
-tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_chat_http_error [32mPASSED[0m[32m [  5%][0m
-tests/m4/test_ai_providers.py::TestGeminiAdapter::test_chat_success [32mPASSED[0m[32m [  6%][0m
-tests/m4/test_ai_providers.py::TestGeminiAdapter::test_embed_success [32mPASSED[0m[32m [  7%][0m
-tests/m4/test_ai_providers.py::TestGeminiAdapter::test_list_models [32mPASSED[0m[32m [  8%][0m
-tests/m4/test_ai_providers.py::TestKimiAdapter::test_chat_success [32mPASSED[0m[32m [  9%][0m
-tests/m4/test_ai_providers.py::TestKimiAdapter::test_embed_not_implemented [32mPASSED[0m[32m [ 10%][0m
-tests/m4/test_ai_providers.py::TestClaudeAdapter::test_chat_success [32mPASSED[0m[32m [ 11%][0m
-tests/m4/test_ai_providers.py::TestClaudeAdapter::test_chat_with_system_message [32mPASSED[0m[32m [ 12%][0m
-tests/m4/test_ai_providers.py::TestClaudeAdapter::test_embed_not_implemented [32mPASSED[0m[32m [ 13%][0m
-tests/m4/test_ai_providers.py::TestOllamaAdapter::test_chat_success [32mPASSED[0m[32m [ 14%][0m
-tests/m4/test_ai_providers.py::TestOllamaAdapter::test_embed_success [32mPASSED[0m[32m [ 15%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_register_and_create [32mPASSED[0m[32m [ 16%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_list_providers [32mPASSED[0m[32m [ 17%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_unknown_provider_raises [32mPASSED[0m[32m [ 18%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_is_registered [32mPASSED[0m[32m [ 19%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_unregister [32mPASSED[0m[32m [ 20%][0m
-tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_invalid_class_raises [32mPASSED[0m[32m [ 21%][0m
-tests/m4/test_ai_providers.py::TestAIService::test_chat_delegates_to_provider [32mPASSED[0m[32m [ 22%][0m
-tests/m4/test_ai_providers.py::TestAIService::test_list_providers [32mPASSED[0m[32m [ 23%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_from_defaults [32mPASSED[0m[32m [ 25%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_default_value [32mPASSED[0m[32m [ 26%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_set_and_get [32mPASSED[0m[32m [ 27%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_scope_override [32mPASSED[0m[32m [ 28%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_scope_fallback [32mPASSED[0m[32m [ 29%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_deep_merge [32mPASSED[0m[32m [ 30%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_env_var_loading [32mPASSED[0m[32m [ 31%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_env_var_type_coercion [32mPASSED[0m[32m [ 32%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_subscribe_and_notify [32mPASSED[0m[32m [ 33%][0m
-tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_with_fallback_scopes [32mPASSED[0m[32m [ 34%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_get_secret [32mPASSED[0m[32m [ 35%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_get_secret_not_found [32mPASSED[0m[32m [ 36%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_set_secret [32mPASSED[0m[32m [ 37%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_delete_secret [32mPASSED[0m[32m [ 38%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_namespaced_secret [32mPASSED[0m[32m [ 39%][0m
-tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_list_keys [32mPASSED[0m[32m [ 40%][0m
-tests/m4/test_container.py::TestServiceContainer::test_register_and_resolve [32mPASSED[0m[32m [ 41%][0m
-tests/m4/test_container.py::TestServiceContainer::test_singleton_lifecycle [32mPASSED[0m[32m [ 42%][0m
-tests/m4/test_container.py::TestServiceContainer::test_transient_lifecycle [32mPASSED[0m[32m [ 43%][0m
-tests/m4/test_container.py::TestServiceContainer::test_scoped_lifecycle [32mPASSED[0m[32m [ 44%][0m
-tests/m4/test_container.py::TestServiceContainer::test_constructor_injection [32mPASSED[0m[32m [ 45%][0m
-tests/m4/test_container.py::TestServiceContainer::test_optional_dependency [32mPASSED[0m[32m [ 46%][0m
-tests/m4/test_container.py::TestServiceContainer::test_optional_dependency_missing [32mPASSED[0m[32m [ 47%][0m
-tests/m4/test_container.py::TestServiceContainer::test_register_instance [32mPASSED[0m[32m [ 48%][0m
-tests/m4/test_container.py::TestServiceContainer::test_unregistered_interface_raises [32mPASSED[0m[32m [ 50%][0m
-tests/m4/test_container.py::TestServiceContainer::test_invalid_implementation_raises [32mPASSED[0m[32m [ 51%][0m
-tests/m4/test_container.py::TestServiceContainer::test_dispose_clears_singletons [32mPASSED[0m[32m [ 52%][0m
-tests/m4/test_container.py::TestScopedContainer::test_scope_context_manager [32mPASSED[0m[32m [ 53%][0m
-tests/m4/test_container.py::TestScopedContainer::test_scope_cleanup [32mPASSED[0m[32m [ 54%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_empty_text [32mPASSED[0m[32m [ 55%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_short_text_no_split [32mPASSED[0m[32m [ 56%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_long_text_split [32mPASSED[0m[32m [ 57%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_overlap_preserves_context [32mPASSED[0m[32m [ 58%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_invalid_chunk_size [32mPASSED[0m[32m [ 59%][0m
-tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_invalid_overlap [32mPASSED[0m[32m [ 60%][0m
-tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_empty_text [32mPASSED[0m[32m [ 61%][0m
-tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_single_paragraph [32mPASSED[0m[32m [ 62%][0m
-tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_multiple_paragraphs [32mPASSED[0m[32m [ 63%][0m
-tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_long_paragraph_fallback [32mPASSED[0m[32m [ 64%][0m
-tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_short_texts [32mPASSED[0m[32m [ 65%][0m
-tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_long_texts_with_chunking [32mPASSED[0m[32m [ 66%][0m
-tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_chunks_directly [32mPASSED[0m[32m [ 67%][0m
-tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_empty_texts [32mPASSED[0m[32m [ 68%][0m
-tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_batch_processing [32mPASSED[0m[32m [ 69%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_publish_and_subscribe [32mPASSED[0m[32m [ 70%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_unsubscribe [32mPASSED[0m[32m [ 71%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_no_subscribers_no_error [32mPASSED[0m[32m [ 72%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_multiple_subscribers [32mPASSED[0m[32m [ 73%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_subscriber_count [32mPASSED[0m[32m [ 75%][0m
-tests/m4/test_event_bus.py::TestInMemoryEventBus::test_handler_exception_does_not_crash_bus [32mPASSED[0m[32m [ 76%][0m
-tests/m4/test_event_bus.py::TestImportOrchestrator::test_start_import_emits_event [32mPASSED[0m[32m [ 77%][0m
-tests/m4/test_event_bus.py::TestImportOrchestrator::test_complete_import_emits_event [32mPASSED[0m[32m [ 78%][0m
-tests/m4/test_event_bus.py::TestImportOrchestrator::test_import_failed_emits_event [32mPASSED[0m[32m [ 79%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_replaces_spaces [32mPASSED[0m[32m [ 80%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_removes_special_chars [32mPASSED[0m[32m [ 81%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_truncates_to_63 [32mPASSED[0m[32m [ 82%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_prefixes_digit [32mPASSED[0m[32m [ 83%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_empty_defaults [32mPASSED[0m[32m [ 84%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_empty_dict_returns_none [32mPASSED[0m[32m [ 85%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_none_returns_none [32mPASSED[0m[32m [ 86%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_with_data_preserved [32mPASSED[0m[32m [ 87%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_health_check [32mPASSED[0m[32m [ 88%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_list_collections_empty [32mPASSED[0m[32m [ 89%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_get_collection_creates_if_missing [32mPASSED[0m[32m [ 90%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_upsert_and_search [32mPASSED[0m[32m [ 91%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_upsert_with_empty_metadata [32mPASSED[0m[32m [ 92%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_delete [32mPASSED[0m[32m [ 93%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_delete_collection [32mPASSED[0m[32m [ 94%][0m
-tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_collection_name_sanitised_internally [32mPASSED[0m[32m [ 95%][0m
-tests/m4/test_vector_store.py::TestVectorStoreService::test_index_chunks [32mPASSED[0m[32m [ 96%][0m
-tests/m4/test_vector_store.py::TestVectorStoreService::test_index_chunks_length_mismatch_raises [32mPASSED[0m[32m [ 97%][0m
-tests/m4/test_vector_store.py::TestVectorStoreService::test_search_similar [32mPASSED[0m[32m [ 98%][0m
+tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_chat_success [32mPASSED[0m[32m [  0%][0m
+tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_embed_success [32mPASSED[0m[32m [  1%][0m
+tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_health_check_success [32mPASSED[0m[32m [  2%][0m
+tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_list_models [32mPASSED[0m[32m [  3%][0m
+tests/m4/test_ai_providers.py::TestOpenAIAdapter::test_chat_http_error [32mPASSED[0m[32m [  4%][0m
+tests/m4/test_ai_providers.py::TestGeminiAdapter::test_chat_success [32mPASSED[0m[32m [  5%][0m
+tests/m4/test_ai_providers.py::TestGeminiAdapter::test_embed_success [32mPASSED[0m[32m [  6%][0m
+tests/m4/test_ai_providers.py::TestGeminiAdapter::test_list_models [32mPASSED[0m[32m [  6%][0m
+tests/m4/test_ai_providers.py::TestKimiAdapter::test_chat_success [32mPASSED[0m[32m [  7%][0m
+tests/m4/test_ai_providers.py::TestKimiAdapter::test_embed_not_implemented [32mPASSED[0m[32m [  8%][0m
+tests/m4/test_ai_providers.py::TestClaudeAdapter::test_chat_success [32mPASSED[0m[32m [  9%][0m
+tests/m4/test_ai_providers.py::TestClaudeAdapter::test_chat_with_system_message [32mPASSED[0m[32m [ 10%][0m
+tests/m4/test_ai_providers.py::TestClaudeAdapter::test_embed_not_implemented [32mPASSED[0m[32m [ 11%][0m
+tests/m4/test_ai_providers.py::TestOllamaAdapter::test_chat_success [32mPASSED[0m[32m [ 12%][0m
+tests/m4/test_ai_providers.py::TestOllamaAdapter::test_embed_success [32mPASSED[0m[32m [ 12%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_register_and_create [32mPASSED[0m[32m [ 13%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_list_providers [32mPASSED[0m[32m [ 14%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_unknown_provider_raises [32mPASSED[0m[32m [ 15%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_is_registered [32mPASSED[0m[32m [ 16%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_unregister [32mPASSED[0m[32m [ 17%][0m
+tests/m4/test_ai_providers.py::TestAIProviderRegistry::test_invalid_class_raises [32mPASSED[0m[32m [ 18%][0m
+tests/m4/test_ai_providers.py::TestAIService::test_chat_delegates_to_provider [32mPASSED[0m[32m [ 18%][0m
+tests/m4/test_ai_providers.py::TestAIService::test_list_providers [32mPASSED[0m[32m [ 19%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_from_defaults [32mPASSED[0m[32m [ 20%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_default_value [32mPASSED[0m[32m [ 21%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_set_and_get [32mPASSED[0m[32m [ 22%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_scope_override [32mPASSED[0m[32m [ 23%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_scope_fallback [32mPASSED[0m[32m [ 24%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_deep_merge [32mPASSED[0m[32m [ 25%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_env_var_loading [32mPASSED[0m[32m [ 25%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_env_var_type_coercion [32mPASSED[0m[32m [ 26%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_subscribe_and_notify [32mPASSED[0m[32m [ 27%][0m
+tests/m4/test_config.py::TestHierarchicalConfigAdapter::test_get_with_fallback_scopes [32mPASSED[0m[32m [ 28%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_get_secret [32mPASSED[0m[32m [ 29%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_get_secret_not_found [32mPASSED[0m[32m [ 30%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_set_secret [32mPASSED[0m[32m [ 31%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_delete_secret [32mPASSED[0m[32m [ 31%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_namespaced_secret [32mPASSED[0m[32m [ 32%][0m
+tests/m4/test_config.py::TestEnvSecretManagerAdapter::test_list_keys [32mPASSED[0m[32m [ 33%][0m
+tests/m4/test_container.py::TestServiceContainer::test_register_and_resolve [32mPASSED[0m[32m [ 34%][0m
+tests/m4/test_container.py::TestServiceContainer::test_singleton_lifecycle [32mPASSED[0m[32m [ 35%][0m
+tests/m4/test_container.py::TestServiceContainer::test_transient_lifecycle [32mPASSED[0m[32m [ 36%][0m
+tests/m4/test_container.py::TestServiceContainer::test_scoped_lifecycle [32mPASSED[0m[32m [ 37%][0m
+tests/m4/test_container.py::TestServiceContainer::test_constructor_injection [32mPASSED[0m[32m [ 37%][0m
+tests/m4/test_container.py::TestServiceContainer::test_optional_dependency [32mPASSED[0m[32m [ 38%][0m
+tests/m4/test_container.py::TestServiceContainer::test_optional_dependency_missing [32mPASSED[0m[32m [ 39%][0m
+tests/m4/test_container.py::TestServiceContainer::test_register_instance [32mPASSED[0m[32m [ 40%][0m
+tests/m4/test_container.py::TestServiceContainer::test_unregistered_interface_raises [32mPASSED[0m[32m [ 41%][0m
+tests/m4/test_container.py::TestServiceContainer::test_invalid_implementation_raises [32mPASSED[0m[32m [ 42%][0m
+tests/m4/test_container.py::TestServiceContainer::test_dispose_clears_singletons [32mPASSED[0m[32m [ 43%][0m
+tests/m4/test_container.py::TestScopedContainer::test_scope_context_manager [32mPASSED[0m[32m [ 43%][0m
+tests/m4/test_container.py::TestScopedContainer::test_scope_cleanup [32mPASSED[0m[32m [ 44%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_empty_text [32mPASSED[0m[32m [ 45%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_short_text_no_split [32mPASSED[0m[32m [ 46%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_long_text_split [32mPASSED[0m[32m [ 47%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_overlap_preserves_context [32mPASSED[0m[32m [ 48%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_invalid_chunk_size [32mPASSED[0m[32m [ 49%][0m
+tests/m4/test_embedding_pipeline.py::TestFixedSizeChunking::test_invalid_overlap [32mPASSED[0m[32m [ 50%][0m
+tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_empty_text [32mPASSED[0m[32m [ 50%][0m
+tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_single_paragraph [32mPASSED[0m[32m [ 51%][0m
+tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_multiple_paragraphs [32mPASSED[0m[32m [ 52%][0m
+tests/m4/test_embedding_pipeline.py::TestParagraphChunking::test_long_paragraph_fallback [32mPASSED[0m[32m [ 53%][0m
+tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_short_texts [32mPASSED[0m[32m [ 54%][0m
+tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_long_texts_with_chunking [32mPASSED[0m[32m [ 55%][0m
+tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_embed_chunks_directly [32mPASSED[0m[32m [ 56%][0m
+tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_empty_texts [32mPASSED[0m[32m [ 56%][0m
+tests/m4/test_embedding_pipeline.py::TestEmbeddingPipeline::test_batch_processing [32mPASSED[0m[32m [ 57%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_publish_and_subscribe [32mPASSED[0m[32m [ 58%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_unsubscribe [32mPASSED[0m[32m [ 59%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_no_subscribers_no_error [32mPASSED[0m[32m [ 60%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_multiple_subscribers [32mPASSED[0m[32m [ 61%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_subscriber_count [32mPASSED[0m[32m [ 62%][0m
+tests/m4/test_event_bus.py::TestInMemoryEventBus::test_handler_exception_does_not_crash_bus [32mPASSED[0m[32m [ 62%][0m
+tests/m4/test_event_bus.py::TestImportOrchestrator::test_start_import_emits_event [32mPASSED[0m[32m [ 63%][0m
+tests/m4/test_event_bus.py::TestImportOrchestrator::test_complete_import_emits_event [32mPASSED[0m[32m [ 64%][0m
+tests/m4/test_event_bus.py::TestImportOrchestrator::test_import_failed_emits_event [32mPASSED[0m[32m [ 65%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_semantic_query_creation [32mPASSED[0m[32m [ 66%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_semantic_query_with_filter [32mPASSED[0m[32m [ 67%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_ranked_document_defaults [32mPASSED[0m[32m [ 68%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_ranked_document_score_in_range [32mPASSED[0m[32m [ 68%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_search_filter_defaults [32mPASSED[0m[32m [ 69%][0m
+tests/m4/test_semantic_search.py::TestDomainModels::test_semantic_search_result_defaults [32mPASSED[0m[32m [ 70%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchPort::test_semantic_search_port_is_abc [32mPASSED[0m[32m [ 71%][0m
+tests/m4/test_semantic_search.py::TestChromaSemanticSearchAdapter::test_adapter_delegates_health_check [32mPASSED[0m[32m [ 72%][0m
+tests/m4/test_semantic_search.py::TestChromaSemanticSearchAdapter::test_adapter_delegates_delete [32mPASSED[0m[32m [ 73%][0m
+tests/m4/test_semantic_search.py::TestChromaSemanticSearchAdapter::test_adapter_search_delegates_to_store [32mPASSED[0m[32m [ 74%][0m
+tests/m4/test_semantic_search.py::TestChromaSemanticSearchAdapter::test_adapter_index_document_raises [32mPASSED[0m[32m [ 75%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchService::test_search_returns_ranked_documents [32mPASSED[0m[32m [ 75%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchService::test_search_emits_completed_event [32mPASSED[0m[32m [ 76%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchService::test_search_with_min_similarity_filters [32mPASSED[0m[32m [ 77%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchService::test_search_emits_failed_event_on_error [32mPASSED[0m[32m [ 78%][0m
+tests/m4/test_semantic_search.py::TestSemanticSearchService::test_health_check_delegates [32mPASSED[0m[32m [ 79%][0m
+tests/m4/test_semantic_search.py::TestDocumentIndexerService::test_index_text_chunks_embeds_and_stores [32mPASSED[0m[32m [ 80%][0m
+tests/m4/test_semantic_search.py::TestDocumentIndexerService::test_index_text_emits_indexed_event [32mPASSED[0m[32m [ 81%][0m
+tests/m4/test_semantic_search.py::TestDocumentIndexerService::test_index_text_emits_failed_event_on_error [32mPASSED[0m[32m [ 81%][0m
+tests/m4/test_semantic_search.py::TestDocumentIndexerService::test_health_check_delegates [32mPASSED[0m[32m [ 82%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_replaces_spaces [32mPASSED[0m[32m [ 83%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_removes_special_chars [32mPASSED[0m[32m [ 84%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_truncates_to_63 [32mPASSED[0m[32m [ 85%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_prefixes_digit [32mPASSED[0m[32m [ 86%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_sanitize_collection_name_empty_defaults [32mPASSED[0m[32m [ 87%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_empty_dict_returns_none [32mPASSED[0m[32m [ 87%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_none_returns_none [32mPASSED[0m[32m [ 88%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterUnit::test_normalize_metadata_with_data_preserved [32mPASSED[0m[32m [ 89%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_health_check [32mPASSED[0m[32m [ 90%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_list_collections_empty [32mPASSED[0m[32m [ 91%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_get_collection_creates_if_missing [32mPASSED[0m[32m [ 92%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_upsert_and_search [32mPASSED[0m[32m [ 93%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_upsert_with_empty_metadata [32mPASSED[0m[32m [ 93%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_delete [32mPASSED[0m[32m [ 94%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_delete_collection [32mPASSED[0m[32m [ 95%][0m
+tests/m4/test_vector_store.py::TestChromaDBAdapterIntegration::test_collection_name_sanitised_internally [32mPASSED[0m[32m [ 96%][0m
+tests/m4/test_vector_store.py::TestVectorStoreService::test_index_chunks [32mPASSED[0m[32m [ 97%][0m
+tests/m4/test_vector_store.py::TestVectorStoreService::test_index_chunks_length_mismatch_raises [32mPASSED[0m[32m [ 98%][0m
+tests/m4/test_vector_store.py::TestVectorStoreService::test_search_similar [32mPASSED[0m[32m [ 99%][0m
 tests/m4/test_vector_store.py::TestVectorStoreService::test_health_check [32mPASSED[0m[32m [100%][0m
 
-[32m============================== [32m[1m96 passed[0m[32m in 3.64s[0m[32m ==============================[0m
+[32m============================= [32m[1m116 passed[0m[32m in 1.65s[0m[32m ==============================[0m
 
 
 Return code: 0
 
-🎉 ALL TESTS PASSED (96/96)
+🎉 ALL TESTS PASSED (116/116)
