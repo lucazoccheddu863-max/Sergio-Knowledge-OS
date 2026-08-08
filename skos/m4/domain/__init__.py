@@ -28,3 +28,9 @@ from skos.m4.domain.rag_models import (
     RAGContext,
     RAGResult,
 )
+from skos.m4.domain.knowledge_graph_models import (
+    Entity,
+    Relation,
+    GraphQuery,
+    GraphResult,
+)

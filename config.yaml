@@ -17,3 +17,7 @@ ai_local_model: qwen2.5:1.5b
   rag:
     default_top_k: 5
     system_prompt: "You are a helpful assistant. Use the provided context to answer the question. If the context does not contain the answer, say so clearly."
+
+  knowledge_graph:
+    default_depth: 2
+    max_results: 50

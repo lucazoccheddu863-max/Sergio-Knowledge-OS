@@ -1,3 +1,41 @@
+## [0.4.0-alpha8] — 2026-08-08
+
+### Milestone 4.7 — Knowledge Graph Integration
+
+#### Added
+- `KnowledgeGraphPort` — abstract interface for graph databases
+- `InMemoryKnowledgeGraphAdapter` — in-memory graph store (prototype)
+- `KnowledgeGraphService` — orchestrates entity/relation indexing and querying
+- Domain models: `Entity`, `Relation`, `GraphQuery`, `GraphResult`
+- `tests/m4/test_knowledge_graph.py` — 18 tests covering domain, adapter, service
+- Events: `kg.document_indexed`, `kg.queried`, `kg.entity_deleted`
+- Config keys: `m4.knowledge_graph.default_depth`, `m4.knowledge_graph.max_results`
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha8`
+- `pyproject.toml` version bump
+- `config.yaml` adds `m4.knowledge_graph.*` configuration
+- `skos/m4/domain/__init__.py` exports KG models
+
+#### Design Decisions
+- `KnowledgeGraphService` talks ONLY to `KnowledgeGraphPort`, never to concrete adapters
+- `InMemoryKnowledgeGraphAdapter` validates entity existence before adding relations
+- Forward-compatible with Neo4j/NetworkX: swap adapter, zero application changes
+- Graph query supports filtering by entity name (substring), type, and relation type
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+
+---
+
 ## [0.4.0-alpha7] — 2026-08-08
 
 ### Milestone 4.6 — RAG Pipeline
