@@ -1,3 +1,48 @@
+## [0.4.0-alpha11] — 2026-08-08
+
+### Milestone 4.9.5 — API Contract Freeze
+
+#### Added
+- `APIError` unified error model in DTOs
+- `RequestValidationError` handler returning unified `APIError` schema
+- `HTTPException` handler returning unified `APIError` schema
+- Generic `Exception` handler returning unified `APIError` schema
+- Admin route placeholder: `GET /api/v1/admin/status`
+- OpenAPI schema auto-generation at `/api/v1/openapi.json`
+- Swagger UI at `/api/v1/docs`
+- ReDoc at `/api/v1/redoc`
+- `docs/api_contract.md` — frozen API Contract v1 documentation
+- `setup_milestone4_95.py` and `verify_milestone4_95.py`
+- Contract tests: OpenAPI schema validation, error schema validation, admin routes
+
+#### Changed
+- `FastAPIAdapter` version bumped to `0.4.0-alpha11`
+- `FastAPIAdapter` milestone bumped to `M4.9.5`
+- Error responses now follow unified `APIError` schema with `request_id` UUID
+- `VERSION` and `VERSION.m4.4` bumped to `0.4.0-alpha11`
+
+#### Design Decisions
+- API Contract v1 is frozen — no breaking changes without major version bump
+- All error responses (422, 500, unexpected) follow identical `APIError` schema
+- Admin routes are prefixed with `/api/v1/admin/*` and reserved for M4.10+
+- OpenAPI schema is the single source of truth for API documentation
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+- M4.8 — untouched
+- M4.9 — untouched
+
+* * *
+
 ## [0.4.0-alpha10] — 2026-08-08
 
 ### Milestone 4.9 — REST API Adapter

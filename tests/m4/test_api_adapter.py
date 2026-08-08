@@ -1,4 +1,12 @@
-"""Tests for M4.9 — REST API Adapter (FastAPI)."""
+"""Tests for M4.9.5 — API Contract Freeze.
+
+Verifies:
+- All M4.9 endpoints continue to work (backward compatibility)
+- APIError is returned on errors
+- OpenAPI schema is generated correctly
+- Admin routes are registered
+- Contract documentation exists
+"""
 from __future__ import annotations
 
 from unittest.mock import Mock
@@ -31,6 +39,8 @@ def client(mock_orchestrator: Mock, mock_config: Mock) -> TestClient:
     adapter = FastAPIAdapter(orchestrator=mock_orchestrator, config=mock_config)
     return TestClient(adapter.app)
 
+
+# ── M4.9 Backward Compatibility ────────────────────────────────────────────────
 
 class TestQueryEndpoint:
     def test_query_auto_mode_success(self, client: TestClient, mock_orchestrator: Mock) -> None:
@@ -68,14 +78,22 @@ class TestQueryEndpoint:
     def test_query_missing_text(self, client: TestClient) -> None:
         response = client.post("/api/v1/query", json={"mode": "auto"})
         assert response.status_code == 422
+        data = response.json()
+        assert "error_code" in data
+        assert data["error_code"] == "HTTP_422"
 
-    def test_query_orchestrator_error(self, client: TestClient, mock_orchestrator: Mock) -> None:
+    def test_query_orchestrator_error_returns_api_error(self, client: TestClient, mock_orchestrator: Mock) -> None:
         from skos.m4.infrastructure.ports.query_orchestrator_port import QueryOrchestratorError
         mock_orchestrator.execute.side_effect = QueryOrchestratorError("boom")
 
         response = client.post("/api/v1/query", json={"text": "hello"})
         assert response.status_code == 500
-        assert "boom" in response.json()["detail"]
+        data = response.json()
+        assert "error_code" in data
+        assert data["error_code"] == "HTTP_500"
+        assert "message" in data
+        assert "boom" in data["message"]
+        assert "request_id" in data
 
 
 class TestHealthEndpoint:
@@ -103,8 +121,8 @@ class TestStatusEndpoint:
         response = client.get("/api/v1/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["version"] == "0.4.0-alpha10"
-        assert data["milestone"] == "M4.9"
+        assert data["version"] == "0.4.0-alpha11"
+        assert data["milestone"] == "M4.9.5"
         assert data["status"] == "operational"
 
 
@@ -117,3 +135,77 @@ class TestEnginesEndpoint:
         assert "rag" in data["engines"]
         assert "knowledge_graph" in data["engines"]
         assert "query_orchestrator" in data["engines"]
+
+
+# ── M4.9.5 Contract Tests ─────────────────────────────────────────────────────
+
+class TestAPIErrorContract:
+    def test_validation_error_returns_api_error_schema(self, client: TestClient) -> None:
+        """422 errors must follow the unified APIError schema."""
+        response = client.post("/api/v1/query", json={})
+        assert response.status_code == 422
+        data = response.json()
+        assert "error_code" in data
+        assert "message" in data
+        assert "request_id" in data
+
+    def test_internal_error_returns_api_error_schema(self, client: TestClient, mock_orchestrator: Mock) -> None:
+        """500 errors must follow the unified APIError schema."""
+        from skos.m4.infrastructure.ports.query_orchestrator_port import QueryOrchestratorError
+        mock_orchestrator.execute.side_effect = QueryOrchestratorError("test error")
+
+        response = client.post("/api/v1/query", json={"text": "test"})
+        assert response.status_code == 500
+        data = response.json()
+        assert data["error_code"] == "HTTP_500"
+        assert "message" in data
+        assert "request_id" in data
+        assert len(data["request_id"]) == 36  # UUID length
+
+
+class TestOpenAPISchema:
+    def test_openapi_json_available(self, client: TestClient) -> None:
+        response = client.get("/api/v1/openapi.json")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["info"]["title"] == "Sergio Knowledge OS API"
+        assert data["info"]["version"] == "0.4.0-alpha11"
+
+    def test_openapi_contains_query_endpoint(self, client: TestClient) -> None:
+        response = client.get("/api/v1/openapi.json")
+        data = response.json()
+        paths = data["paths"]
+        assert "/api/v1/query" in paths
+        assert "post" in paths["/api/v1/query"]
+
+    def test_openapi_contains_error_schema(self, client: TestClient) -> None:
+        response = client.get("/api/v1/openapi.json")
+        data = response.json()
+        schemas = data["components"]["schemas"]
+        assert "APIError" in schemas
+
+
+class TestAdminRoutes:
+    def test_admin_status_endpoint_exists(self, client: TestClient) -> None:
+        response = client.get("/api/v1/admin/status")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["milestone"] == "M4.9.5"
+        assert data["status"] == "admin_reserved"
+
+    def test_admin_routes_in_openapi(self, client: TestClient) -> None:
+        response = client.get("/api/v1/openapi.json")
+        data = response.json()
+        assert "/api/v1/admin/status" in data["paths"]
+
+
+class TestContractDocumentation:
+    def test_api_contract_md_exists(self) -> None:
+        import pathlib
+        assert pathlib.Path("docs/api_contract.md").exists()
+
+    def test_api_contract_md_contains_version(self) -> None:
+        import pathlib
+        content = pathlib.Path("docs/api_contract.md").read_text()
+        assert "0.4.0-alpha11" in content
+        assert "M4.9.5" in content

@@ -1,12 +1,20 @@
-"""FastAPI Infrastructure Adapter for SKOS M4.9.
+"""FastAPI Infrastructure Adapter for SKOS M4.9.5 — API Contract Freeze.
 
 FastAPI is EXCLUSIVELY an infrastructure adapter.
 No Service depends on FastAPI.
 All Services depend only on Ports.
+
+API Contract v1 is frozen. All endpoints, request/response schemas,
+and error formats are version-locked.
 """
 from __future__ import annotations
 
-from fastapi import FastAPI, HTTPException, status
+import uuid
+from typing import Any
+
+from fastapi import FastAPI, HTTPException, Request, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from skos.m4.domain.query_orchestrator_models import UnifiedQuery, UnifiedResult
 from skos.m4.domain.search_models import SemanticSearchResult, RankedDocument
@@ -19,6 +27,7 @@ from skos.m4.infrastructure.ports.query_orchestrator_port import (
 )
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
 from skos.m4.infrastructure.adapters.api.dto import (
+    APIError,
     QueryRequest,
     QueryResponse,
     RankedDocumentDTO,
@@ -50,19 +59,73 @@ class FastAPIAdapter:
         self._config = config
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
-            version="0.4.0-alpha10",
-            description="REST API for the Sergio Knowledge OS Query Engine",
+            version="0.4.0-alpha11",
+            description="REST API for the Sergio Knowledge OS Query Engine — Contract v1",
+            docs_url="/api/v1/docs",
+            redoc_url="/api/v1/redoc",
+            openapi_url="/api/v1/openapi.json",
         )
-        self._setup_routes()
+        self._setup_error_handlers()
+        self._setup_public_routes()
+        self._setup_admin_routes()
 
     @property
     def app(self) -> FastAPI:
         return self._app
 
-    def _setup_routes(self) -> None:
+    # ── Error Handlers ────────────────────────────────────────────────────────
+
+    def _setup_error_handlers(self) -> None:
+        @self._app.exception_handler(RequestValidationError)
+        async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+            request_id = str(uuid.uuid4())
+            error = APIError(
+                error_code="HTTP_422",
+                message="Request validation failed",
+                detail={"errors": exc.errors()},
+                request_id=request_id,
+            )
+            return JSONResponse(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                content=error.model_dump(),
+            )
+
+        @self._app.exception_handler(HTTPException)
+        async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+            request_id = str(uuid.uuid4())
+            error = APIError(
+                error_code=f"HTTP_{exc.status_code}",
+                message=str(exc.detail),
+                request_id=request_id,
+            )
+            return JSONResponse(
+                status_code=exc.status_code,
+                content=error.model_dump(),
+            )
+
+        @self._app.exception_handler(Exception)
+        async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+            request_id = str(uuid.uuid4())
+            error = APIError(
+                error_code="INTERNAL_ERROR",
+                message="An unexpected error occurred",
+                detail={"type": type(exc).__name__, "info": str(exc)},
+                request_id=request_id,
+            )
+            return JSONResponse(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                content=error.model_dump(),
+            )
+
+    # ── Public Routes (/api/v1/*) ─────────────────────────────────────────────
+
+    def _setup_public_routes(self) -> None:
         @self._app.post(
             "/api/v1/query",
             response_model=QueryResponse,
+            responses={
+                500: {"model": APIError, "description": "Query execution failed"},
+            },
             summary="Execute a unified query",
             tags=["Query"],
         )
@@ -83,11 +146,6 @@ class FastAPIAdapter:
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=str(exc),
-                ) from exc
-            except Exception as exc:
-                raise HTTPException(
-                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                    detail=f"Internal error: {exc}",
                 ) from exc
 
         @self._app.get(
@@ -117,8 +175,8 @@ class FastAPIAdapter:
         )
         async def status_endpoint() -> StatusResponse:
             return StatusResponse(
-                version="0.4.0-alpha10",
-                milestone="M4.9",
+                version="0.4.0-alpha11",
+                milestone="M4.9.5",
                 status="operational",
             )
 
@@ -136,6 +194,23 @@ class FastAPIAdapter:
                     "knowledge_graph",
                     "query_orchestrator",
                 ]
+            )
+
+    # ── Admin Routes (/api/v1/admin/*) ──────────────────────────────────────────
+
+    def _setup_admin_routes(self) -> None:
+        @self._app.get(
+            "/api/v1/admin/status",
+            response_model=StatusResponse,
+            summary="Admin status endpoint (reserved)",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_status_endpoint() -> StatusResponse:
+            return StatusResponse(
+                version="0.4.0-alpha11",
+                milestone="M4.9.5",
+                status="admin_reserved",
             )
 
     # ── Domain → DTO mappers ──────────────────────────────────────────────────

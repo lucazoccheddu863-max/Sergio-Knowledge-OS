@@ -1,12 +1,26 @@
-"""DTOs for the FastAPI REST API Adapter.
+"""DTOs for the FastAPI REST API Adapter — API Contract v1.
 
-Pydantic models that mirror the domain models for request/response serialization.
+Pydantic models that define the frozen API contract v1.
+All request/response schemas are version-locked.
 """
 from __future__ import annotations
 
 from typing import Any
 
 from pydantic import BaseModel, Field
+
+
+# ── Unified Error Model ──────────────────────────────────────────────────────
+
+class APIError(BaseModel):
+    """Unified error response for all API endpoints.
+
+    Every error response follows this schema regardless of endpoint or status code.
+    """
+    error_code: str = Field(..., description="Machine-readable error code")
+    message: str = Field(..., description="Human-readable error message")
+    detail: dict[str, Any] | None = Field(default=None, description="Additional error context")
+    request_id: str | None = Field(default=None, description="Correlation ID for tracing")
 
 
 # ── Query ────────────────────────────────────────────────────────────────────
@@ -87,7 +101,7 @@ class QueryResponse(BaseModel):
 class HealthResponse(BaseModel):
     """GET /api/v1/health response body."""
     status: str = Field(..., description="Overall health status: healthy | unhealthy")
-    engines: dict[str, bool] = Field(default_factory=dict, description="Per-engine health")
+    engines: dict[str, Any] = Field(default_factory=dict, description="Per-engine health")
 
 
 # ── Status ───────────────────────────────────────────────────────────────────
