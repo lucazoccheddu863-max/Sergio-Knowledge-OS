@@ -1,3 +1,39 @@
+## [0.4.0-alpha7] — 2026-08-08
+
+### Milestone 4.6 — RAG Pipeline
+
+#### Added
+- `RAGPipelinePort` — abstract interface for RAG implementations
+- `RAGPipelineService` — orchestrates retrieve → augment → generate
+- Domain models: `RAGQuery`, `RAGContext`, `RAGResult`
+- `tests/m4/test_rag_pipeline.py` — 12 tests covering full RAG flow
+- Events: `rag.response_generated`, `rag.failed`
+- Config keys: `m4.rag.default_top_k`, `m4.rag.system_prompt`
+
+#### Changed
+- `VERSION` bumped to `0.4.0-alpha7`
+- `pyproject.toml` version bump
+- `config.yaml` adds `m4.rag.*` configuration
+- `skos/m4/domain/__init__.py` exports RAG models
+
+#### Design Decisions
+- `RAGPipelineService` talks to `SemanticSearchService` and `AIService`, never to concrete adapters
+- Context built from `RankedDocument` list, formatted as `[Document N] text` blocks
+- Custom system prompt supported per-query via `RAGQuery.system_prompt`
+- Forward-compatible with M5 (API Layer): RAGResult provides complete response + context
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+
+---
+
 ## [0.4.0-alpha6] — 2026-08-08
 
 ### Milestone 4.5 — Semantic Search Engine

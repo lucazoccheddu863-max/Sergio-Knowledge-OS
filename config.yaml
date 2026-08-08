@@ -13,3 +13,7 @@ ai_local_model: qwen2.5:1.5b
     similarity_threshold: 0.7
     max_results_per_query: 20
     rerank_enabled: false
+
+  rag:
+    default_top_k: 5
+    system_prompt: "You are a helpful assistant. Use the provided context to answer the question. If the context does not contain the answer, say so clearly."

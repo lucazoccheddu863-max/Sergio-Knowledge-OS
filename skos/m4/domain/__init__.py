@@ -23,3 +23,8 @@ from skos.m4.domain.search_models import (
     RankedDocument,
     SearchFilter,
 )
+from skos.m4.domain.rag_models import (
+    RAGQuery,
+    RAGContext,
+    RAGResult,
+)
