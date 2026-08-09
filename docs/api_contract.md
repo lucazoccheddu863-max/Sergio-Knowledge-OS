@@ -1,6 +1,6 @@
 # API Contract v1 — Sergio Knowledge OS
 
-**Version:** 0.4.0-alpha12  
+**Version:** 0.4.0-alpha13  
 **Milestone:** M4.9.5 — API Contract Freeze  
 **Status:** FROZEN
 
@@ -37,7 +37,7 @@ All administrative endpoints are prefixed with `/api/v1/admin`.
 |--------|----------|-------------|------|
 | GET | `/api/v1/admin/status` | Admin status (reserved) | Admin |
 
-> **Note:** Administrative endpoints are reserved for future milestones (M4.10+).
+> **Note:** Administrative endpoints are reserved for future milestones (M4.11+).
 > The route structure is frozen but implementations will follow.
 
 ---

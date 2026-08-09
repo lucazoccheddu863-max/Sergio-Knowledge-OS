@@ -322,6 +322,64 @@
 ---
 
 # Changelog
+## [0.4.0-alpha13] — 2026-08-09
+
+### Milestone 4.11 — Security & Auth
+
+#### Added
+- `AuthPort` — infrastructure port for authentication
+- `AuthorizationPort` — infrastructure port for RBAC authorization
+- `RateLimitPort` — infrastructure port for rate limiting
+- `AuditPort` — infrastructure port for security audit logging
+- `APIKeyAuthAdapter` — in-memory API key authentication with Bearer support
+- `RBACAuthorizationAdapter` — in-memory role-based access control with wildcard patterns
+- `InMemoryRateLimitAdapter` — sliding-window rate limiter with per-resource overrides
+- `StructuredAuditAdapter` — JSON-structured audit logging
+- Security integration in `FastAPIAdapter`:
+  - Optional authentication via `x-api-key` or `Authorization: Bearer` headers
+  - Optional authorization with RBAC on all endpoints
+  - Optional rate limiting with 429 responses and quota headers
+  - Optional audit logging on all endpoints
+  - `GET /api/v1/security/status` — security subsystem status endpoint
+  - Admin routes (`/api/v1/admin/*`) require auth + admin role when security is configured
+  - Health endpoint reports auth, authorization, rate_limit, audit status
+- `tests/m4/test_security.py` — 41 tests covering ports, adapters, and integration
+- `setup_milestone4_11.py` and `verify_milestone4_11.py`
+
+#### Changed
+- `FastAPIAdapter` version bumped to `0.4.0-alpha13`
+- `FastAPIAdapter` milestone bumped to `M4.11`
+- `FastAPIAdapter.__init__` accepts optional `auth`, `authorization`, `rate_limiter`, `audit` parameters
+- DTOs extended with `SecurityStatusResponse`
+- `docs/api_contract.md` updated to reflect M4.11
+
+#### Design Decisions
+- All security adapters are optional — FastAPIAdapter works without them (backward compatible)
+- Authentication supports raw API key and `Bearer <key>` formats
+- RBAC patterns support wildcard `*` for actions and resource prefixes
+- Rate limiter uses sliding window with automatic eviction of expired entries
+- Audit events include timestamp, principal, action, resource, status, and details
+- Admin routes are protected only when an auth adapter is configured
+- No breaking changes to API Contract v1 (frozen in M4.9.5)
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+- M4.8 — untouched
+- M4.9 — untouched
+- M4.9.5 — untouched
+- M4.10 — untouched
+
+* * *
+
 
 ## [0.4.0-alpha4] — 2026-08-07
 

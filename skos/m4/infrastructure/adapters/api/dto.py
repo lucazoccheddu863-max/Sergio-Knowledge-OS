@@ -96,6 +96,24 @@ class QueryResponse(BaseModel):
     engines_used: list[str] = Field(default_factory=list)
 
 
+
+# ── Security ───────────────────────────────────────────────────────────────────
+
+class SecurityStatusResponse(BaseModel):
+    """GET /api/v1/security/status response body."""
+    enabled: bool
+    auth_healthy: bool
+    authorization_healthy: bool
+    rate_limit_healthy: bool
+    audit_healthy: bool
+    auth_required: bool
+
+class RateLimitHeaders(BaseModel):
+    """Rate limit metadata returned in response headers."""
+    limit: int
+    remaining: int
+    reset_after_seconds: float
+
 # ── Health ─────────────────────────────────────────────────────────────────────
 
 class HealthResponse(BaseModel):

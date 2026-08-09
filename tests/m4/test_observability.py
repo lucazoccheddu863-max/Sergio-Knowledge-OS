@@ -216,8 +216,8 @@ class TestObservabilityIntegration:
         response = client.get("/api/v1/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["version"] == "0.4.0-alpha12"
-        assert data["milestone"] == "M4.10"
+        assert data["version"] == "0.4.0-alpha13"
+        assert data["milestone"] == "M4.11"
 
     def test_admin_status_returns_m4_10(self, mock_orchestrator: Mock, mock_config: Mock) -> None:
         adapter = FastAPIAdapter(orchestrator=mock_orchestrator, config=mock_config)
@@ -225,4 +225,4 @@ class TestObservabilityIntegration:
         response = client.get("/api/v1/admin/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["milestone"] == "M4.10"
+        assert data["milestone"] == "M4.11"
