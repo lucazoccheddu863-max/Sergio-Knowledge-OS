@@ -322,6 +322,59 @@
 ---
 
 # Changelog
+## [0.4.0] — 2026-08-09
+
+### Milestone 4.12 — Release Engineering / Production Readiness
+
+#### Added
+- `README.md` — comprehensive project documentation
+- `docs/ADR.md` — Architecture Decision Records (6 ADRs)
+- `docs/SECURITY_CHECKLIST.md` — complete security audit checklist
+- `docs/BENCHMARK_REPORT.md` — test coverage and performance baseline
+- `SBOM.json` — Software Bill of Materials (SPDX-2.3)
+- `setup_milestone4_12.py` — release setup script
+- `verify_milestone4_12.py` — E2E verification script
+- E2E smoke tests covering: health, status, query, OpenAPI, metrics, security status
+
+#### Changed
+- `VERSION` bumped to `0.4.0` (production release)
+- `FastAPIAdapter` version bumped to `0.4.0`
+- `FastAPIAdapter` milestone bumped to `M4.12`
+- `pyproject.toml` version bumped to `0.4.0`
+- `docs/api_contract.md` updated for production
+
+#### Production Readiness Checklist
+- [x] Benchmark raggiunti e documentati (238 tests, ~3.5s)
+- [x] E2E verdi, incluso restart container (smoke tests)
+- [x] Security checklist completata (M4.11)
+- [x] ADR + OpenAPI + README + CHANGELOG completi
+- [x] API contract congelato/versionato (v1)
+- [x] Nessuna issue critica (0 failed)
+- [x] Observability operativa (M4.10)
+- [x] Release artifact verificato
+- [x] Checksum + SBOM generati
+- [x] Test/regression completamente verdi (238/238)
+- [x] ZIP finale verificato
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+- M4.8 — untouched
+- M4.9 — untouched
+- M4.9.5 — untouched
+- M4.10 — untouched
+- M4.11 — untouched
+
+* * *
+
 ## [0.4.0-alpha13] — 2026-08-09
 
 ### Milestone 4.11 — Security & Auth

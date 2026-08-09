@@ -89,7 +89,7 @@ class FastAPIAdapter:
         self._audit = audit
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
-            version="0.4.0-alpha13",
+            version="0.4.0",
             description="REST API for the Sergio Knowledge OS Query Engine — Contract v1",
             docs_url="/api/v1/docs",
             redoc_url="/api/v1/redoc",
@@ -382,8 +382,8 @@ class FastAPIAdapter:
             self._count_request("GET", "/api/v1/status", 200)
             self._audit_event("status", ctx.principal, "GET", "/api/v1/status", "success")
             return StatusResponse(
-                version="0.4.0-alpha13",
-                milestone="M4.11",
+                version="0.4.0",
+                milestone="M4.12",
                 status="operational",
             )
 
@@ -424,8 +424,8 @@ class FastAPIAdapter:
             self._count_request("GET", "/api/v1/admin/status", 200)
             self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/status", "success")
             return StatusResponse(
-                version="0.4.0-alpha13",
-                milestone="M4.11",
+                version="0.4.0",
+                milestone="M4.12",
                 status="admin_reserved",
             )
 

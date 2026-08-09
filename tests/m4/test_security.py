@@ -472,7 +472,7 @@ class TestAdminAuthRequired:
         response = client.get("/api/v1/admin/status", headers={"x-api-key": "secret"})
         assert response.status_code == 200
         data = response.json()
-        assert data["milestone"] == "M4.11"
+        assert data["milestone"] == "M4.12"
 
 
 class TestVersionAndMilestone:
@@ -482,8 +482,8 @@ class TestVersionAndMilestone:
         response = client.get("/api/v1/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["version"] == "0.4.0-alpha13"
-        assert data["milestone"] == "M4.11"
+        assert data["version"] == "0.4.0"
+        assert data["milestone"] == "M4.12"
 
     def test_admin_status_returns_m4_11(self, mock_orchestrator: Mock, mock_config: Mock) -> None:
         auth = APIKeyAuthAdapter(keys={"secret": {"roles": ["admin"]}})
@@ -499,7 +499,7 @@ class TestVersionAndMilestone:
         response = client.get("/api/v1/admin/status", headers={"x-api-key": "secret"})
         assert response.status_code == 200
         data = response.json()
-        assert data["milestone"] == "M4.11"
+        assert data["milestone"] == "M4.12"
 
 
 class TestHealthWithSecurity:

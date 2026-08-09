@@ -1,0 +1,91 @@
+{
+  "sbomVersion": "1.0",
+  "specVersion": "SPDX-2.3",
+  "creationInfo": {
+    "created": "2026-08-09T20:00:00Z",
+    "creators": [
+      "Tool: skos-sbom-generator-1.0"
+    ]
+  },
+  "name": "Sergio Knowledge OS",
+  "version": "0.4.0",
+  "packages": [
+    {
+      "name": "pydantic",
+      "version": ">=2.0.0",
+      "license": "MIT",
+      "purpose": "Data validation"
+    },
+    {
+      "name": "fastapi",
+      "version": ">=0.110.0",
+      "license": "MIT",
+      "purpose": "REST API framework"
+    },
+    {
+      "name": "uvicorn",
+      "version": ">=0.27.0",
+      "license": "BSD-3-Clause",
+      "purpose": "ASGI server"
+    },
+    {
+      "name": "prometheus-client",
+      "version": ">=0.20.0",
+      "license": "Apache-2.0",
+      "purpose": "Metrics"
+    },
+    {
+      "name": "opentelemetry-api",
+      "version": ">=1.23.0",
+      "license": "Apache-2.0",
+      "purpose": "Tracing API"
+    },
+    {
+      "name": "opentelemetry-sdk",
+      "version": ">=1.23.0",
+      "license": "Apache-2.0",
+      "purpose": "Tracing SDK"
+    },
+    {
+      "name": "chromadb",
+      "version": ">=0.5.0",
+      "license": "Apache-2.0",
+      "purpose": "Vector database"
+    }
+  ],
+  "devDependencies": [
+    {
+      "name": "pytest",
+      "version": ">=8.0.0",
+      "license": "MIT",
+      "purpose": "Testing"
+    },
+    {
+      "name": "pytest-asyncio",
+      "version": ">=0.23.0",
+      "license": "MIT",
+      "purpose": "Async testing"
+    },
+    {
+      "name": "black",
+      "version": ">=24.0.0",
+      "license": "MIT",
+      "purpose": "Formatting"
+    },
+    {
+      "name": "ruff",
+      "version": ">=0.3.0",
+      "license": "MIT",
+      "purpose": "Linting"
+    },
+    {
+      "name": "mypy",
+      "version": ">=1.9.0",
+      "license": "MIT",
+      "purpose": "Type checking"
+    }
+  ],
+  "pythonVersion": ">=3.11",
+  "totalPackages": 7,
+  "totalDevPackages": 5
+}
