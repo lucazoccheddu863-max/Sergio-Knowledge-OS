@@ -121,8 +121,8 @@ class TestStatusEndpoint:
         response = client.get("/api/v1/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["version"] == "0.4.0-alpha11"
-        assert data["milestone"] == "M4.9.5"
+        assert data["version"] == "0.4.0-alpha12"
+        assert data["milestone"] == "M4.10"
         assert data["status"] == "operational"
 
 
@@ -169,7 +169,7 @@ class TestOpenAPISchema:
         assert response.status_code == 200
         data = response.json()
         assert data["info"]["title"] == "Sergio Knowledge OS API"
-        assert data["info"]["version"] == "0.4.0-alpha11"
+        assert data["info"]["version"] == "0.4.0-alpha12"
 
     def test_openapi_contains_query_endpoint(self, client: TestClient) -> None:
         response = client.get("/api/v1/openapi.json")
@@ -190,7 +190,7 @@ class TestAdminRoutes:
         response = client.get("/api/v1/admin/status")
         assert response.status_code == 200
         data = response.json()
-        assert data["milestone"] == "M4.9.5"
+        assert data["milestone"] == "M4.10"
         assert data["status"] == "admin_reserved"
 
     def test_admin_routes_in_openapi(self, client: TestClient) -> None:
@@ -207,5 +207,5 @@ class TestContractDocumentation:
     def test_api_contract_md_contains_version(self) -> None:
         import pathlib
         content = pathlib.Path("docs/api_contract.md").read_text()
-        assert "0.4.0-alpha11" in content
+        assert "0.4.0-alpha12" in content
         assert "M4.9.5" in content

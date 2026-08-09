@@ -1,0 +1,16 @@
+"""MetricsPort — Infrastructure Port for M4.10."""
+from __future__ import annotations
+from abc import ABC, abstractmethod
+from typing import Any
+
+class MetricsPort(ABC):
+    @abstractmethod
+    def counter(self, name: str, value: float = 1.0, labels: dict[str, str] | None = None) -> None: ...
+    @abstractmethod
+    def gauge(self, name: str, value: float, labels: dict[str, str] | None = None) -> None: ...
+    @abstractmethod
+    def histogram(self, name: str, value: float, labels: dict[str, str] | None = None) -> None: ...
+    @abstractmethod
+    def render(self) -> str: ...
+    @abstractmethod
+    def health(self) -> bool: ...

@@ -1,4 +1,4 @@
-"""FastAPI Infrastructure Adapter for SKOS M4.9.5 — API Contract Freeze.
+"""FastAPI Infrastructure Adapter for SKOS M4.10 — Observability & Operations.
 
 FastAPI is EXCLUSIVELY an infrastructure adapter.
 No Service depends on FastAPI.
@@ -9,12 +9,13 @@ and error formats are version-locked.
 """
 from __future__ import annotations
 
+import time
 import uuid
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, PlainTextResponse
 
 from skos.m4.domain.query_orchestrator_models import UnifiedQuery, UnifiedResult
 from skos.m4.domain.search_models import SemanticSearchResult, RankedDocument
@@ -26,6 +27,9 @@ from skos.m4.infrastructure.ports.query_orchestrator_port import (
     QueryOrchestratorError,
 )
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
+from skos.m4.infrastructure.ports.metrics_port import MetricsPort
+from skos.m4.infrastructure.ports.tracing_port import TracingPort
+from skos.m4.infrastructure.ports.logging_port import LoggingPort
 from skos.m4.infrastructure.adapters.api.dto import (
     APIError,
     QueryRequest,
@@ -48,18 +52,27 @@ class FastAPIAdapter:
     Dependencies:
         - QueryOrchestratorPort: routes queries to engines
         - ConfigurationPort: reads API config
+        - MetricsPort (optional): collects Prometheus metrics
+        - TracingPort (optional): distributed tracing
+        - LoggingPort (optional): structured logging
     """
 
     def __init__(
         self,
         orchestrator: QueryOrchestratorPort,
         config: ConfigurationPort,
+        metrics: MetricsPort | None = None,
+        tracer: TracingPort | None = None,
+        logger: LoggingPort | None = None,
     ) -> None:
         self._orchestrator = orchestrator
         self._config = config
+        self._metrics = metrics
+        self._tracer = tracer
+        self._logger = logger
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
-            version="0.4.0-alpha11",
+            version="0.4.0-alpha12",
             description="REST API for the Sergio Knowledge OS Query Engine — Contract v1",
             docs_url="/api/v1/docs",
             redoc_url="/api/v1/redoc",
@@ -68,16 +81,40 @@ class FastAPIAdapter:
         self._setup_error_handlers()
         self._setup_public_routes()
         self._setup_admin_routes()
+        self._setup_observability_routes()
 
     @property
     def app(self) -> FastAPI:
         return self._app
+
+    # ── Observability Helpers ─────────────────────────────────────────────────
+
+    def _log(self, level: str, message: str, **kwargs: Any) -> None:
+        if self._logger:
+            getattr(self._logger, level)(message, **kwargs)
+
+    def _count_request(self, method: str, path: str, status_code: int) -> None:
+        if self._metrics:
+            self._metrics.counter(
+                "http_requests_total",
+                labels={"method": method, "path": path, "status": str(status_code)},
+            )
+
+    def _observe_latency(self, path: str, duration_ms: float) -> None:
+        if self._metrics:
+            self._metrics.histogram(
+                "http_request_duration_seconds",
+                duration_ms / 1000.0,
+                labels={"path": path},
+            )
 
     # ── Error Handlers ────────────────────────────────────────────────────────
 
     def _setup_error_handlers(self) -> None:
         @self._app.exception_handler(RequestValidationError)
         async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+            self._count_request(request.method, request.url.path, 422)
+            self._log("warning", "Validation error", path=request.url.path, errors=exc.errors())
             request_id = str(uuid.uuid4())
             error = APIError(
                 error_code="HTTP_422",
@@ -92,6 +129,8 @@ class FastAPIAdapter:
 
         @self._app.exception_handler(HTTPException)
         async def http_exception_handler(request: Request, exc: HTTPException) -> JSONResponse:
+            self._count_request(request.method, request.url.path, exc.status_code)
+            self._log("warning", "HTTP exception", path=request.url.path, status=exc.status_code)
             request_id = str(uuid.uuid4())
             error = APIError(
                 error_code=f"HTTP_{exc.status_code}",
@@ -105,6 +144,8 @@ class FastAPIAdapter:
 
         @self._app.exception_handler(Exception)
         async def generic_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+            self._count_request(request.method, request.url.path, 500)
+            self._log("error", "Unhandled exception", path=request.url.path, exception=str(exc))
             request_id = str(uuid.uuid4())
             error = APIError(
                 error_code="INTERNAL_ERROR",
@@ -130,7 +171,12 @@ class FastAPIAdapter:
             tags=["Query"],
         )
         async def query_endpoint(req: QueryRequest) -> QueryResponse:
+            start = time.perf_counter()
+            span = None
+            if self._tracer:
+                span = self._tracer.start_span("query_endpoint")
             try:
+                self._log("info", "Query received", text=req.text, mode=req.mode)
                 unified_query = UnifiedQuery(
                     text=req.text,
                     mode=req.mode,
@@ -141,12 +187,28 @@ class FastAPIAdapter:
                     system_prompt=req.system_prompt,
                 )
                 result = self._orchestrator.execute(unified_query)
-                return self._to_query_response(result)
+                self._log("info", "Query completed", engines=result.engines_used)
+                response = self._to_query_response(result)
+                self._count_request("POST", "/api/v1/query", 200)
+                return response
             except QueryOrchestratorError as exc:
+                self._log("error", "Query orchestrator error", error=str(exc))
+                if self._tracer and span:
+                    self._tracer.record_exception(span, exc)
                 raise HTTPException(
                     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                     detail=str(exc),
                 ) from exc
+            except Exception as exc:
+                self._log("error", "Query unexpected error", error=str(exc))
+                if self._tracer and span:
+                    self._tracer.record_exception(span, exc)
+                raise
+            finally:
+                if self._tracer and span:
+                    self._tracer.end_span(span)
+                duration_ms = (time.perf_counter() - start) * 1000
+                self._observe_latency("/api/v1/query", duration_ms)
 
         @self._app.get(
             "/api/v1/health",
@@ -157,11 +219,20 @@ class FastAPIAdapter:
         async def health_endpoint() -> HealthResponse:
             try:
                 healthy = self._orchestrator.health_check()
+                engines: dict[str, Any] = {"query_orchestrator": healthy}
+                if self._metrics:
+                    engines["metrics"] = self._metrics.health()
+                if self._tracer:
+                    engines["tracing"] = self._tracer.health()
+                if self._logger:
+                    engines["logging"] = self._logger.health()
+                self._count_request("GET", "/api/v1/health", 200)
                 return HealthResponse(
                     status="healthy" if healthy else "unhealthy",
-                    engines={"query_orchestrator": healthy},
+                    engines=engines,
                 )
             except Exception as exc:
+                self._log("error", "Health check failed", error=str(exc))
                 return HealthResponse(
                     status="unhealthy",
                     engines={"query_orchestrator": False, "error": str(exc)},
@@ -174,9 +245,10 @@ class FastAPIAdapter:
             tags=["System"],
         )
         async def status_endpoint() -> StatusResponse:
+            self._count_request("GET", "/api/v1/status", 200)
             return StatusResponse(
-                version="0.4.0-alpha11",
-                milestone="M4.9.5",
+                version="0.4.0-alpha12",
+                milestone="M4.10",
                 status="operational",
             )
 
@@ -187,6 +259,7 @@ class FastAPIAdapter:
             tags=["System"],
         )
         async def engines_endpoint() -> EnginesResponse:
+            self._count_request("GET", "/api/v1/engines", 200)
             return EnginesResponse(
                 engines=[
                     "semantic_search",
@@ -207,10 +280,32 @@ class FastAPIAdapter:
             include_in_schema=True,
         )
         async def admin_status_endpoint() -> StatusResponse:
+            self._count_request("GET", "/api/v1/admin/status", 200)
             return StatusResponse(
-                version="0.4.0-alpha11",
-                milestone="M4.9.5",
+                version="0.4.0-alpha12",
+                milestone="M4.10",
                 status="admin_reserved",
+            )
+
+    # ── Observability Routes ────────────────────────────────────────────────────
+
+    def _setup_observability_routes(self) -> None:
+        @self._app.get(
+            "/metrics",
+            response_class=PlainTextResponse,
+            summary="Prometheus metrics endpoint",
+            tags=["Observability"],
+        )
+        async def metrics_endpoint() -> PlainTextResponse:
+            if self._metrics:
+                self._count_request("GET", "/metrics", 200)
+                return PlainTextResponse(
+                    content=self._metrics.render(),
+                    media_type="text/plain; version=0.0.4",
+                )
+            return PlainTextResponse(
+                content="# metrics not configured\n",
+                media_type="text/plain; version=0.0.4",
             )
 
     # ── Domain → DTO mappers ──────────────────────────────────────────────────

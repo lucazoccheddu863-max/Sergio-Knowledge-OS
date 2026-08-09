@@ -1,6 +1,6 @@
 # API Contract v1 — Sergio Knowledge OS
 
-**Version:** 0.4.0-alpha11  
+**Version:** 0.4.0-alpha12  
 **Milestone:** M4.9.5 — API Contract Freeze  
 **Status:** FROZEN
 

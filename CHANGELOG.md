@@ -1,3 +1,55 @@
+## [0.4.0-alpha12] — 2026-08-09
+
+### Milestone 4.10 — Observability & Operations Adapter
+
+#### Added
+- `MetricsPort` — infrastructure port for metrics collection
+- `TracingPort` — infrastructure port for distributed tracing
+- `LoggingPort` — infrastructure port for structured logging
+- `PrometheusMetricsAdapter` — Prometheus-backed metrics with isolated `CollectorRegistry`
+- `OpenTelemetryTracerAdapter` — OpenTelemetry tracing with no-op fallback
+- `StructuredLoggingAdapter` — JSON-structured logging to configurable output
+- `/metrics` endpoint — Prometheus exposition format
+- Observability integration in `FastAPIAdapter`:
+  - Request counting via `http_requests_total`
+  - Latency histogram via `http_request_duration_seconds`
+  - Structured logging on all endpoints
+  - Span tracing on query endpoint
+  - Extended health check including metrics/tracing/logging status
+- `tests/m4/test_observability.py` — 25 tests covering ports, adapters, and integration
+- `setup_milestone4_10.py` and `verify_milestone4_10.py`
+
+#### Changed
+- `FastAPIAdapter` version bumped to `0.4.0-alpha12`
+- `FastAPIAdapter` milestone bumped to `M4.10`
+- `FastAPIAdapter.__init__` accepts optional `metrics`, `tracer`, `logger` parameters
+- Health endpoint now reports observability subsystem status
+- Error handlers now log structured messages and count requests
+
+#### Design Decisions
+- All observability adapters are optional — FastAPIAdapter works without them
+- Prometheus adapter uses isolated `CollectorRegistry` to avoid `DuplicateTimeseries`
+- OpenTelemetry adapter falls back to no-op spans when library unavailable
+- Structured logging writes JSON to configurable output stream
+- No breaking changes to API Contract v1 (frozen in M4.9.5)
+
+#### Frozen Baselines
+- M2 (v0.2.x) — untouched
+- M3 (v0.3.0) — untouched
+- M4.1 Step 1 — untouched
+- M4.1 Step 2 — untouched
+- M4.2 — untouched
+- M4.3 — untouched
+- M4.4 — untouched
+- M4.5 — untouched
+- M4.6 — untouched
+- M4.7 — untouched
+- M4.8 — untouched
+- M4.9 — untouched
+- M4.9.5 — untouched
+
+* * *
+
 ## [0.4.0-alpha11] — 2026-08-08
 
 ### Milestone 4.9.5 — API Contract Freeze
