@@ -7,18 +7,28 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 
 ### M2 — Import Engine ✅ FROZEN
 ### M3 — Database Layer ✅ FROZEN
-### M4 — Semantic Layer & Vector Search 🔄 IN PROGRESS
+### M4 — Semantic Layer & Vector Search ✅ PRODUCTION BASELINE
 - M4.1 Step 1 ✅ — DI Container, Config, Secrets
 - M4.1 Step 2 ✅ — Event Bus, Application Services
 - M4.2 ✅ — AI Provider Abstraction
 - M4.3 ✅ — Embeddings Generation Pipeline (OpenAI, Gemini, Kimi, Claude, Ollama)
 - M4.3 ✅ — Embeddings Generation Pipeline
-- M4.4 🔄 — Vector Database Integration (NEXT)
-- M4.5 ⏳ — Semantic Search Engine
-- M4.6 ⏳ — RAG Pipeline
-- M4.7 ⏳ — RAG Foundation Closeout
+- M4.4 ✅ — Vector Database Integration
+- M4.5 ✅ — Semantic Search Engine
+- M4.6 ✅ — RAG Pipeline
+- M4.7 ✅ — Knowledge Graph Integration
+- M4.8 ✅ — Query Orchestrator
+- M4.9 ✅ — REST API Adapter
+- M4.9.5 ✅ — API Contract Freeze
+- M4.10 ✅ — Observability & Operations Adapter
+- M4.11 ✅ — Security & Auth
+- M4.12 ✅ — Release Engineering v0.4.0
 
-### M5 — API & Frontend ⏳
+### M5 — Persistence, API Runtime & Frontend 🔄 IN PROGRESS
+- M5.1 ✅ — Persistence Layer (Redis/PostgreSQL adapters, optional runtime dependencies)
+- M5.2 ⏳ — Runtime wiring and deployment configuration
+- M5.3 ⏳ — Frontend/admin console
+
 ### M6 — Production Hardening ⏳
 
 ## Definition of Done
