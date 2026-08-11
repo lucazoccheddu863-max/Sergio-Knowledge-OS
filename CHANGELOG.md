@@ -322,6 +322,33 @@
 ---
 
 # Changelog
+## [0.5.0-alpha1] — 2026-08-10
+
+### Milestone 5.1 — Persistence Layer
+
+#### Added
+- `RedisEventBusAdapter` — Redis pub/sub + Streams persistent event bus
+- `RedisRateLimitAdapter` — Distributed sliding-window rate limiter via Redis sorted sets
+- `PostgreSQLAuditAdapter` — Persistent structured audit logging with JSONB
+- `PostgreSQLAuthAdapter` — Hashed API key authentication with PostgreSQL backend
+- `PostgreSQLKnowledgeGraphAdapter` — Adjacency-list knowledge graph with recursive CTE traversal
+- `tests/m5/test_persistence.py` — 24 tests covering all persistent adapters
+- `setup_milestone5_1.py` + `verify_milestone5_1.py`
+
+#### Design Decisions
+- All persistence adapters implement existing M4 ports (zero port changes)
+- Redis chosen for EventBus (pub/sub native) and RateLimit (atomic operations)
+- PostgreSQL chosen for Audit (structured queries), Auth (relational), KG (recursive CTEs)
+- Neo4j not selected: PostgreSQL recursive CTEs sufficient for current graph depth/complexity
+- All adapters gracefully degrade to `health() = False` when DB unavailable
+- M4 baseline untouched: in-memory adapters still default, persistent adapters are opt-in
+
+#### Test Results
+- M5.1: 24/24 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.4.0] — 2026-08-09
 
 ### Milestone 4.12 — Release Engineering / Production Readiness
