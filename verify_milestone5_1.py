@@ -37,10 +37,10 @@ def main() -> int:
     print("\n[3/4] Checking version...")
     with open("VERSION") as f:
         v = f.read().strip()
-    if v == "0.5.0-alpha1":
+    if v.startswith("0.5.0-alpha"):
         print(f"  ✅ VERSION = {v}")
     else:
-        print(f"  ❌ VERSION = {v} (expected 0.5.0-alpha1)")
+        print(f"  ❌ VERSION = {v} (expected 0.5.0-alpha series)")
         return 1
 
     print("\n[4/4] Checking CHANGELOG...")

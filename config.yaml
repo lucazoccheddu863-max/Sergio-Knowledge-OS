@@ -7,6 +7,25 @@ hash_algorithm: sha256
 ai_primary_provider: openai
 ai_local_model: qwen2.5:1.5b
 
+m5:
+  persistence:
+    mode: memory
+
+  redis:
+    url: "redis://localhost:6379/0"
+
+  postgresql:
+    dsn: "postgresql://localhost:5432/skos"
+
+  rate_limit:
+    default_limit: 60
+    default_window_seconds: 60.0
+    overrides: {}
+
+  runtime:
+    fallback_to_memory: true
+
+m4:
   semantic_search:
     collection_name: "semantic_search"
     default_top_k: 5

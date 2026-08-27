@@ -1,3 +1,35 @@
+# Changelog
+
+## [0.5.0-alpha2] — 2026-08-26
+
+### Milestone 5.2 — Runtime Wiring
+
+#### Added
+- `skos.m5.runtime.PersistenceRuntime` — runtime container for M5 persistence services
+- `skos.m5.runtime.build_persistence_runtime()` — factory for memory, persistent and auto-fallback modes
+- `RuntimeHealth` — component-level health snapshot for event bus, rate limiter, audit, auth and knowledge graph
+- M5 configuration keys in `config.yaml` for persistence mode, Redis, PostgreSQL and rate limiting
+- `tests/m5/test_runtime_wiring.py` — 5 tests covering memory wiring, persistent wiring, auto fallback, invalid mode and health output
+- `setup_milestone5_2.py` + `verify_milestone5_2.py`
+
+#### Changed
+- `VERSION` bumped to `0.5.0-alpha2`
+- `pyproject.toml` bumped to `0.5.0-alpha2`
+- README and roadmap updated for M5.2
+
+#### Design Decisions
+- Default runtime mode remains `memory`, so local development stays dependency-free
+- Persistent mode wires Redis/PostgreSQL adapters explicitly through configuration
+- Auto mode attempts persistent adapters and falls back to memory if health checks fail
+- M5.1 adapter contracts remain untouched
+- M4 baseline remains untouched
+
+#### Test Results
+- M5 total: 29/29 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.4.0-alpha12] — 2026-08-09
 
 ### Milestone 4.10 — Observability & Operations Adapter
