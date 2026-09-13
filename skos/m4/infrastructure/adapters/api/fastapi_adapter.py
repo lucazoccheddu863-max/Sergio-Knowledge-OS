@@ -15,7 +15,7 @@ from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request, status, Depends
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 
 from skos.m4.domain.query_orchestrator_models import UnifiedQuery, UnifiedResult
 from skos.m4.domain.search_models import SemanticSearchResult, RankedDocument
@@ -97,6 +97,7 @@ class FastAPIAdapter:
         )
         self._setup_error_handlers()
         self._setup_public_routes()
+        self._setup_admin_console_routes()
         self._setup_admin_routes()
         self._setup_observability_routes()
         self._setup_security_routes()
@@ -428,6 +429,40 @@ class FastAPIAdapter:
                 milestone="M4.12",
                 status="admin_reserved",
             )
+
+    # ── Admin Console (/admin) ────────────────────────────────────────────────
+
+    def _setup_admin_console_routes(self) -> None:
+        from importlib import resources
+
+        def read_asset(filename: str) -> str:
+            return (
+                resources.files("skos.m5.admin_console.assets")
+                .joinpath(filename)
+                .read_text(encoding="utf-8")
+            )
+
+        @self._app.get(
+            "/admin",
+            response_class=HTMLResponse,
+            include_in_schema=False,
+        )
+        async def admin_console() -> HTMLResponse:
+            return HTMLResponse(read_asset("index.html"))
+
+        @self._app.get(
+            "/admin/assets/styles.css",
+            include_in_schema=False,
+        )
+        async def admin_console_css() -> Response:
+            return Response(read_asset("styles.css"), media_type="text/css")
+
+        @self._app.get(
+            "/admin/assets/app.js",
+            include_in_schema=False,
+        )
+        async def admin_console_js() -> Response:
+            return Response(read_asset("app.js"), media_type="application/javascript")
 
     # ── Observability Routes ────────────────────────────────────────────────────
 

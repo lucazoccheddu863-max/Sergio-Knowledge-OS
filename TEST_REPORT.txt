@@ -1,30 +1,29 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M5.2
+TEST REPORT — Sergio Knowledge OS M5.3
 ============================================================
 
-Date: 2026-08-26
-Version: 0.5.0-alpha2
-Milestone: M5.2 — Runtime Wiring
+Date: 2026-09-07
+Version: 0.5.0-alpha3
+Milestone: M5.3 — Admin Console
 
-M5 Tests: 29/29 PASS
+M5 Tests: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 267/267 PASS
+Total: 270/270 PASS
 
 Verification command:
-python3 verify_milestone5_2.py
+python3 verify_milestone5_3.py
 
 Result:
-M5.2 verification complete. All checks PASS.
+M5.3 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-267 passed, 3 warnings
+270 passed, 3 warnings
 
 Notes:
-- Runtime wiring supports memory, persistent and auto-fallback modes.
-- Memory mode remains the default for dependency-free local development.
-- Persistent mode wires Redis/PostgreSQL adapters from configuration.
-- M4 baseline remains untouched.
-- Pytest discovery is constrained to tests/m4 and tests/m5 in pyproject.toml.
+- Admin console is served at /admin by the existing FastAPI adapter.
+- Static assets are packaged under skos.m5.admin_console.assets.
+- The console reads existing status, health, security and engines endpoints.
+- API Contract v1 remains frozen; no /api/v1 schema changes were required.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sergio Knowledge OS Admin</title>
+    <link rel="stylesheet" href="/admin/assets/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Admin console</p>
+          <h1>Sergio Knowledge OS</h1>
+        </div>
+        <button id="refresh" type="button">Refresh</button>
+      </header>
+
+      <section class="status-grid" aria-label="System summary">
+        <article>
+          <span>Status</span>
+          <strong id="system-status">Loading</strong>
+        </article>
+        <article>
+          <span>Version</span>
+          <strong id="system-version">Loading</strong>
+        </article>
+        <article>
+          <span>Milestone</span>
+          <strong id="system-milestone">Loading</strong>
+        </article>
+        <article>
+          <span>Security</span>
+          <strong id="security-status">Loading</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Subsystem Health</h2>
+          <span id="updated-at">Not updated yet</span>
+        </div>
+        <div id="health-list" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Available Engines</h2>
+        </div>
+        <div id="engine-list" class="chips"></div>
+      </section>
+    </main>
+    <script src="/admin/assets/app.js" defer></script>
+  </body>
+</html>

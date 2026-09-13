@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.5.0-alpha3] — 2026-09-07
+
+### Milestone 5.3 — Admin Console
+
+#### Added
+- `/admin` browser console served by the existing FastAPI adapter
+- Packaged admin assets under `skos.m5.admin_console.assets`
+- Dashboard cards for system status, version, milestone and security mode
+- Live health and engine panels backed by existing `/api/v1/*` endpoints
+- `tests/m5/test_admin_console.py` — 3 tests covering HTML, CSS and JS assets
+- `setup_milestone5_3.py` + `verify_milestone5_3.py`
+
+#### Changed
+- `VERSION` bumped to `0.5.0-alpha3`
+- `pyproject.toml` bumped to `0.5.0-alpha3`
+- README and roadmap updated for M5.3
+
+#### Design Decisions
+- API Contract v1 remains frozen; the admin console is served outside `/api/v1`
+- Frontend assets are package data, not an external build step
+- The console reuses existing health, status, security and engines endpoints
+
+#### Test Results
+- M5 total: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.5.0-alpha2] — 2026-08-26
 
 ### Milestone 5.2 — Runtime Wiring

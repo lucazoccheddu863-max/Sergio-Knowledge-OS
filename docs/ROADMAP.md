@@ -27,7 +27,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 ### M5 — Persistence, API Runtime & Frontend 🔄 IN PROGRESS
 - M5.1 ✅ — Persistence Layer (Redis/PostgreSQL adapters, optional runtime dependencies)
 - M5.2 ✅ — Runtime wiring and deployment configuration
-- M5.3 ⏳ — Frontend/admin console
+- M5.3 ✅ — Frontend/admin console
 
 ### M6 — Production Hardening ⏳
 
