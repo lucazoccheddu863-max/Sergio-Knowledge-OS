@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha4] — 2026-09-13
+
+### Milestone 6.4 — Backup Archive
+
+#### Added
+- `skos.m6.production.create_backup_archive()` — ZIP backup creation guarded by the backup manifest
+- `BackupResult` model for completed backup package metadata
+- `manifest.json` embedded inside each backup ZIP
+- Backup archive tests covering ZIP contents and failure on unready manifests
+- `setup_milestone6_4.py` + `verify_milestone6_4.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha4`
+- `pyproject.toml` bumped to `0.6.0-alpha4`
+- README and roadmap updated for M6.4
+
+#### Design Decisions
+- Backup creation only writes inside configured `backup_dir`
+- Backup creation fails fast when the manifest is not ready
+- Database and archive paths are preserved under clear ZIP prefixes
+
+#### Test Results
+- M6 total: 12/12 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha3] — 2026-09-13
 
 ### Milestone 6.3 — Backup Manifest

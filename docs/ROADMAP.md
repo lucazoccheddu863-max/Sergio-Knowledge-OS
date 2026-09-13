@@ -33,6 +33,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.1 ✅ — Production readiness checks
 - M6.2 ✅ — Admin readiness API and console panel
 - M6.3 ✅ — Backup manifest planning
+- M6.4 ✅ — Backup archive creation
 
 ## Definition of Done
 1. Design approved

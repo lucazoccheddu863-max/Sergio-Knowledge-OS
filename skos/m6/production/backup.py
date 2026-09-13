@@ -2,8 +2,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
+import json
 from pathlib import Path
 from typing import Any
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
 
@@ -56,6 +59,20 @@ class BackupManifest:
         }
 
 
+@dataclass(frozen=True)
+class BackupResult:
+    """Result of a completed backup package creation."""
+
+    archive_path: str
+    manifest: BackupManifest
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "archive_path": self.archive_path,
+            "manifest": self.manifest.as_dict(),
+        }
+
+
 def build_backup_manifest(
     config: ConfigurationPort,
     root_path: str | Path = ".",
@@ -71,6 +88,7 @@ def build_backup_manifest(
         _inspect_path("database", database_path),
         _inspect_path("archive", archive_root),
     )
+
     warnings = tuple(_collect_warnings(database_path, archive_root, backup_dir))
     return BackupManifest(
         ready=not warnings,
@@ -78,6 +96,30 @@ def build_backup_manifest(
         items=items,
         warnings=warnings,
     )
+
+
+def create_backup_archive(
+    config: ConfigurationPort,
+    root_path: str | Path = ".",
+    label: str | None = None,
+) -> BackupResult:
+    """Create a ZIP backup package when the backup manifest is ready."""
+
+    manifest = build_backup_manifest(config, root_path=root_path)
+    if not manifest.ready:
+        raise ValueError("backup manifest is not ready: " + "; ".join(manifest.warnings))
+
+    destination = Path(manifest.destination)
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    safe_label = _safe_label(label or "skos")
+    archive_path = destination / f"{safe_label}-backup-{timestamp}.zip"
+
+    with ZipFile(archive_path, "w", compression=ZIP_DEFLATED) as archive:
+        archive.writestr("manifest.json", json.dumps(manifest.as_dict(), indent=2, sort_keys=True))
+        for item in manifest.items:
+            _write_item(archive, item)
+
+    return BackupResult(archive_path=str(archive_path), manifest=manifest)
 
 
 def _inspect_path(name: str, path: Path) -> BackupItem:
@@ -105,6 +147,23 @@ def _inspect_path(name: str, path: Path) -> BackupItem:
         file_count=file_count,
         total_bytes=total_bytes,
     )
+
+
+def _write_item(archive: ZipFile, item: BackupItem) -> None:
+    source = Path(item.path)
+    if not source.exists():
+        return
+    if source.is_file():
+        archive.write(source, arcname=f"{item.name}/{source.name}")
+        return
+    for child in sorted(source.rglob("*")):
+        if child.is_file():
+            archive.write(child, arcname=f"{item.name}/{child.relative_to(source)}")
+
+
+def _safe_label(label: str) -> str:
+    cleaned = "".join(ch.lower() if ch.isalnum() else "-" for ch in label).strip("-")
+    return cleaned or "skos"
 
 
 def _collect_warnings(database_path: Path, archive_root: Path, backup_dir: Path) -> list[str]:
