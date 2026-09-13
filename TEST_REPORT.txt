@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.5
+TEST REPORT — Sergio Knowledge OS M6.6
 ============================================================
 
 Date: 2026-09-13
-Version: 0.6.0-alpha5
-Milestone: M6.5 — Backup Restore Inspection
+Version: 0.6.0-alpha6
+Milestone: M6.6 — Staged Backup Restore
 
-M6 Tests: 15/15 PASS
+M6 Tests: 19/19 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 285/285 PASS
+Total: 289/289 PASS
 
 Verification command:
-python3 verify_milestone6_5.py
+python3 verify_milestone6_6.py
 
 Result:
-M6.5 verification complete. All checks PASS.
+M6.6 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-285 passed, 3 warnings
+289 passed, 3 warnings
 
 Notes:
-- Backup restore inspection validates ZIP readability without extracting data.
-- Backup restore inspection requires manifest.json inside the package.
-- Backup restore inspection checks expected database and archive payload entries.
-- Restore execution remains intentionally deferred until stronger operator controls exist.
+- Staged backup restore extracts verified backups into an empty target directory.
+- Staged backup restore refuses unready archives and non-empty targets.
+- Staged backup restore validates ZIP paths before extraction to block traversal.
+- Restore remains staged and does not overwrite configured live data paths.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

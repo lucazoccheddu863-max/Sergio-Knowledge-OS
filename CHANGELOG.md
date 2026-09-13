@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha6] — 2026-09-13
+
+### Milestone 6.6 — Staged Backup Restore
+
+#### Added
+- `skos.m6.production.stage_backup_restore()` — safe extraction of verified backup archives into an empty staging directory
+- `BackupRestoreResult` model for restore staging metadata
+- Path traversal protection before extraction starts
+- Staged restore tests covering successful extraction, non-empty target refusal, unready archive refusal and unsafe ZIP paths
+- `setup_milestone6_6.py` + `verify_milestone6_6.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha6`
+- `pyproject.toml` bumped to `0.6.0-alpha6`
+- README and roadmap updated for M6.6
+
+#### Design Decisions
+- Restore remains staged: it never overwrites configured live database or archive paths
+- Restore target must be empty to avoid mixing old and restored files
+- ZIP paths are validated before any extraction occurs
+
+#### Test Results
+- M6 total: 19/19 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha5] — 2026-09-13
 
 ### Milestone 6.5 — Backup Restore Inspection

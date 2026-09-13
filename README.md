@@ -1,7 +1,7 @@
 # Sergio Knowledge OS
 
-**Version:** 0.6.0-alpha5  
-**Status:** M6.5 Backup Restore Inspection verified  
+**Version:** 0.6.0-alpha6  
+**Status:** M6.6 Staged Backup Restore verified  
 **License:** MIT
 
 Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered information retrieval, management, and exploration.
@@ -13,7 +13,7 @@ Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered
 pip install -e ".[dev]"
 
 # Run current milestone and regression tests
-python verify_milestone6_5.py
+python verify_milestone6_6.py
 
 # Start API
 python -m skos.m4.infrastructure.adapters.api.fastapi_adapter
@@ -88,15 +88,16 @@ M4.10 introduces production observability:
 | **M6.3 — Backup Manifest** | **0.6.0-alpha3** | **Verified** |
 | **M6.4 — Backup Archive** | **0.6.0-alpha4** | **Verified** |
 | **M6.5 — Backup Restore Inspection** | **0.6.0-alpha5** | **Verified** |
+| **M6.6 — Staged Backup Restore** | **0.6.0-alpha6** | **Verified** |
 
 ## Development
 
 ```bash
 # Setup
-python setup_milestone6_5.py
+python setup_milestone6_6.py
 
 # Verify
-python verify_milestone6_5.py
+python verify_milestone6_6.py
 
 # Full test suite
 pytest -q

@@ -10,9 +10,11 @@ from skos.m6.production.backup import (
     BackupItem,
     BackupManifest,
     BackupResult,
+    BackupRestoreResult,
     build_backup_manifest,
     create_backup_archive,
     inspect_backup_archive,
+    stage_backup_restore,
 )
 
 __all__ = [
@@ -20,10 +22,12 @@ __all__ = [
     "BackupItem",
     "BackupManifest",
     "BackupResult",
+    "BackupRestoreResult",
     "ReadinessCheck",
     "ReadinessReport",
     "build_backup_manifest",
     "create_backup_archive",
     "inspect_backup_archive",
     "run_production_readiness",
+    "stage_backup_restore",
 ]

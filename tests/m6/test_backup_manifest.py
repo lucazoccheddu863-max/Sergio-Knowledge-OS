@@ -8,7 +8,12 @@ from zipfile import ZipFile
 from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
     HierarchicalConfigAdapter,
 )
-from skos.m6.production import build_backup_manifest, create_backup_archive, inspect_backup_archive
+from skos.m6.production import (
+    build_backup_manifest,
+    create_backup_archive,
+    inspect_backup_archive,
+    stage_backup_restore,
+)
 
 
 def config_for(tmp_path: Path) -> HierarchicalConfigAdapter:
@@ -153,3 +158,83 @@ def test_inspect_backup_archive_warns_when_database_entry_is_missing(tmp_path: P
 
     assert inspection.ready is False
     assert "database entry missing from backup archive" in inspection.warnings
+
+
+def test_stage_backup_restore_extracts_to_empty_target(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+    (tmp_path / "archive" / "chat.txt").write_text("archive-item", encoding="utf-8")
+    result = create_backup_archive(config_for(tmp_path), root_path=tmp_path)
+
+    restore = stage_backup_restore(result.archive_path, tmp_path / "restore-stage")
+
+    target = Path(restore.target_dir)
+    assert restore.inspection.ready is True
+    assert (target / "manifest.json").exists()
+    assert (target / "database" / "sergio.db").read_text(encoding="utf-8") == "database"
+    assert (target / "archive" / "chat.txt").read_text(encoding="utf-8") == "archive-item"
+    assert len(restore.extracted_files) == 3
+
+
+def test_stage_backup_restore_refuses_non_empty_target(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+    (tmp_path / "archive" / "chat.txt").write_text("archive-item", encoding="utf-8")
+    result = create_backup_archive(config_for(tmp_path), root_path=tmp_path)
+    target = tmp_path / "restore-stage"
+    target.mkdir()
+    (target / "existing.txt").write_text("keep-me", encoding="utf-8")
+
+    try:
+        stage_backup_restore(result.archive_path, target)
+    except ValueError as exc:
+        assert "restore target directory must be empty" in str(exc)
+    else:
+        raise AssertionError("expected staged restore to refuse non-empty target")
+    assert (target / "existing.txt").read_text(encoding="utf-8") == "keep-me"
+
+
+def test_stage_backup_restore_refuses_unready_archive(tmp_path: Path) -> None:
+    archive_path = tmp_path / "broken.zip"
+    with ZipFile(archive_path, "w") as archive:
+        archive.writestr("database/sergio.db", "database")
+
+    try:
+        stage_backup_restore(archive_path, tmp_path / "restore-stage")
+    except ValueError as exc:
+        assert "backup archive is not ready for restore" in str(exc)
+    else:
+        raise AssertionError("expected staged restore to refuse unready archive")
+    assert not (tmp_path / "restore-stage").exists()
+
+
+def test_stage_backup_restore_blocks_zip_path_traversal(tmp_path: Path) -> None:
+    manifest = {
+        "ready": True,
+        "items": [
+            {
+                "name": "database",
+                "path": str(tmp_path / "data" / "sergio.db"),
+                "exists": True,
+                "file_count": 1,
+                "total_bytes": 8,
+            }
+        ],
+    }
+    archive_path = tmp_path / "unsafe.zip"
+    with ZipFile(archive_path, "w") as archive:
+        archive.writestr("manifest.json", json.dumps(manifest))
+        archive.writestr("database/sergio.db", "database")
+        archive.writestr("../outside.txt", "unsafe")
+
+    try:
+        stage_backup_restore(archive_path, tmp_path / "restore-stage")
+    except ValueError as exc:
+        assert "unsafe path" in str(exc)
+    else:
+        raise AssertionError("expected staged restore to block unsafe paths")
+    assert not (tmp_path / "outside.txt").exists()

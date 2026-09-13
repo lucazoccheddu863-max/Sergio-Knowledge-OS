@@ -93,6 +93,24 @@ class BackupArchiveInspection:
         }
 
 
+@dataclass(frozen=True)
+class BackupRestoreResult:
+    """Result of a staged backup restore extraction."""
+
+    archive_path: str
+    target_dir: str
+    extracted_files: tuple[str, ...]
+    inspection: BackupArchiveInspection
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "archive_path": self.archive_path,
+            "target_dir": self.target_dir,
+            "extracted_files": list(self.extracted_files),
+            "inspection": self.inspection.as_dict(),
+        }
+
+
 def build_backup_manifest(
     config: ConfigurationPort,
     root_path: str | Path = ".",
@@ -189,6 +207,38 @@ def inspect_backup_archive(archive_path: str | Path) -> BackupArchiveInspection:
     )
 
 
+def stage_backup_restore(
+    archive_path: str | Path,
+    target_dir: str | Path,
+) -> BackupRestoreResult:
+    """Extract a verified backup into an empty staging directory."""
+
+    inspection = inspect_backup_archive(archive_path)
+    if not inspection.ready:
+        raise ValueError("backup archive is not ready for restore: " + "; ".join(inspection.warnings))
+
+    target = Path(target_dir)
+    if target.exists() and any(target.iterdir()):
+        raise ValueError("restore target directory must be empty")
+    target.mkdir(parents=True, exist_ok=True)
+
+    extracted: list[str] = []
+    with ZipFile(inspection.archive_path) as archive:
+        destinations = tuple(_safe_extract_destination(target, entry) for entry in inspection.entries)
+        for entry, destination in zip(inspection.entries, destinations, strict=True):
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            with archive.open(entry) as source, destination.open("wb") as output:
+                output.write(source.read())
+            extracted.append(str(destination))
+
+    return BackupRestoreResult(
+        archive_path=inspection.archive_path,
+        target_dir=str(target),
+        extracted_files=tuple(extracted),
+        inspection=inspection,
+    )
+
+
 def _inspect_path(name: str, path: Path) -> BackupItem:
     if not path.exists():
         return BackupItem(name=name, path=str(path), exists=False, file_count=0, total_bytes=0)
@@ -274,6 +324,18 @@ def _collect_archive_warnings(manifest: dict[str, Any], entries: tuple[str, ...]
         elif name == "archive" and not any(entry.startswith("archive/") for entry in entries):
             warnings.append("archive entries missing from backup archive")
     return warnings
+
+
+def _safe_extract_destination(target: Path, entry: str) -> Path:
+    path = Path(entry)
+    if path.is_absolute() or ".." in path.parts:
+        raise ValueError("backup archive contains an unsafe path")
+    destination = target / path
+    resolved_target = target.resolve()
+    resolved_destination = destination.resolve()
+    if resolved_target != resolved_destination and resolved_target not in resolved_destination.parents:
+        raise ValueError("backup archive contains an unsafe path")
+    return destination
 
 
 def _resolve(root: Path, value: str) -> Path:
