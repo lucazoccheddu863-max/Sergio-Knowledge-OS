@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha8] — 2026-09-13
+
+### Milestone 6.8 — Admin Backup Console
+
+#### Added
+- Backup Operations panel in the `/admin` console
+- Console controls for backup creation, archive inspection and staged restore
+- Backup manifest summary in the admin dashboard
+- Admin console asset tests covering backup panel and endpoint wiring
+- `setup_milestone6_8.py` + `verify_milestone6_8.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha8`
+- `pyproject.toml` bumped to `0.6.0-alpha8`
+- README and roadmap updated for M6.8
+
+#### Design Decisions
+- The console uses the M6.7 admin backup API instead of duplicating backup logic
+- Restore remains staged and requires an explicit target directory
+- The UI exposes operational controls without changing public API Contract v1
+
+#### Test Results
+- M6 total: 24/24 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha7] — 2026-09-13
 
 ### Milestone 6.7 — Admin Backup API

@@ -67,6 +67,20 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/readiness" in response.text
 
 
+def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+
+    html_response = client.get("/admin")
+    js_response = client.get("/admin/assets/app.js")
+
+    assert html_response.status_code == 200
+    assert js_response.status_code == 200
+    assert "Backup Operations" in html_response.text
+    assert "backup-create" in html_response.text
+    assert "/api/v1/admin/backup/manifest" in js_response.text
+    assert "/api/v1/admin/backup/restore/stage" in js_response.text
+
+
 def test_admin_backup_manifest_endpoint_returns_report(tmp_path: Path) -> None:
     seed_backup_inputs(tmp_path)
     client = build_client(tmp_path)

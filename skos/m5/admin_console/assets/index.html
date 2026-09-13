@@ -53,6 +53,27 @@
 
       <section class="panel">
         <div class="panel-heading">
+          <h2>Backup Operations</h2>
+          <span id="backup-summary">Loading</span>
+        </div>
+        <div class="backup-actions">
+          <button id="backup-create" type="button">Create backup</button>
+          <label>
+            Backup ZIP
+            <input id="backup-archive-path" type="text" placeholder="Archive path">
+          </label>
+          <button id="backup-inspect" type="button">Inspect</button>
+          <label>
+            Restore target
+            <input id="backup-restore-target" type="text" placeholder="Empty staging directory">
+          </label>
+          <button id="backup-restore" type="button">Stage restore</button>
+        </div>
+        <div id="backup-list" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
           <h2>Available Engines</h2>
         </div>
         <div id="engine-list" class="chips"></div>

@@ -37,6 +37,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.5 ✅ — Backup restore inspection
 - M6.6 ✅ — Staged backup restore
 - M6.7 ✅ — Admin backup API
+- M6.8 ✅ — Admin backup console
 
 ## Definition of Done
 1. Design approved
