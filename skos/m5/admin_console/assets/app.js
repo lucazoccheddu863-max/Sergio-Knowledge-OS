@@ -3,6 +3,7 @@ const endpoints = {
   health: "/api/v1/health",
   engines: "/api/v1/engines",
   security: "/api/v1/security/status",
+  overview: "/api/v1/admin/overview",
   readiness: "/api/v1/admin/readiness",
   release: "/api/v1/admin/release",
   backupManifest: "/api/v1/admin/backup/manifest",
@@ -55,15 +56,14 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, readiness, release, backupManifest] = await Promise.all([
+  const [status, health, engines, security, overview] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
     getJson(endpoints.security),
-    getJson(endpoints.readiness),
-    getJson(endpoints.release),
-    getJson(endpoints.backupManifest),
+    getJson(endpoints.overview),
   ]);
+  const { release, readiness, backup: backupManifest } = overview;
 
   text("system-status", release.status || status.status);
   text("system-version", release.version);

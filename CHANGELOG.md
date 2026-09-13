@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha10] — 2026-09-14
+
+### Milestone 6.10 — Admin Overview
+
+#### Added
+- `skos.m6.production.build_admin_overview()` — aggregated operator snapshot
+- `GET /api/v1/admin/overview` — release, readiness and backup status in one response
+- Admin console wiring for the overview endpoint
+- Overview tests covering aggregation, serialization and API output
+- `setup_milestone6_10.py` + `verify_milestone6_10.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha10`
+- `pyproject.toml` bumped to `0.6.0-alpha10`
+- README and roadmap updated for M6.10
+
+#### Design Decisions
+- Overview reuses existing release, readiness and backup reports instead of duplicating logic
+- The endpoint is side-effect free and operator-facing under `/api/v1/admin/*`
+- The admin console can load its core status from one stable admin endpoint
+
+#### Test Results
+- M6 total: 30/30 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha9] — 2026-09-14
 
 ### Milestone 6.9 — Admin Release Status

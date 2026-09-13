@@ -465,6 +465,23 @@ class FastAPIAdapter:
             return build_release_status().as_dict()
 
         @self._app.get(
+            "/api/v1/admin/overview",
+            summary="Admin operations overview",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_overview_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import build_admin_overview
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/overview", 200)
+            self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/overview", "success")
+            return build_admin_overview(self._config).as_dict()
+
+        @self._app.get(
             "/api/v1/admin/backup/manifest",
             summary="Backup manifest report",
             tags=["Admin"],

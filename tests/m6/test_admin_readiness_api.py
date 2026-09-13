@@ -70,6 +70,20 @@ def test_admin_release_endpoint_returns_current_release(tmp_path: Path) -> None:
     assert data["status"] == "operational"
 
 
+def test_admin_overview_endpoint_returns_operator_snapshot(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/overview")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert data["release"]["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
+    assert data["readiness"]["ready"] is True
+    assert data["backup"]["ready"] is True
+
+
 def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     client = build_client(tmp_path)
 
@@ -78,6 +92,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert "/api/v1/admin/readiness" in response.text
     assert "/api/v1/admin/release" in response.text
+    assert "/api/v1/admin/overview" in response.text
 
 
 def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
