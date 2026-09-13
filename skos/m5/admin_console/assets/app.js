@@ -4,6 +4,7 @@ const endpoints = {
   engines: "/api/v1/engines",
   security: "/api/v1/security/status",
   readiness: "/api/v1/admin/readiness",
+  release: "/api/v1/admin/release",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -54,18 +55,19 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, readiness, backupManifest] = await Promise.all([
+  const [status, health, engines, security, readiness, release, backupManifest] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
     getJson(endpoints.security),
     getJson(endpoints.readiness),
+    getJson(endpoints.release),
     getJson(endpoints.backupManifest),
   ]);
 
-  text("system-status", status.status);
-  text("system-version", status.version);
-  text("system-milestone", status.milestone);
+  text("system-status", release.status || status.status);
+  text("system-version", release.version);
+  text("system-milestone", release.milestone);
   text("security-status", security.enabled ? "Enabled" : "Open mode");
 
   document.getElementById("health-list").innerHTML = Object.entries(health.engines)

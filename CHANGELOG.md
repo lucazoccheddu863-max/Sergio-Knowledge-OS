@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha9] — 2026-09-14
+
+### Milestone 6.9 — Admin Release Status
+
+#### Added
+- `skos.m6.production.build_release_status()` — operator-facing release metadata
+- `GET /api/v1/admin/release` — current release status endpoint
+- Admin console wiring for real release version and milestone display
+- Release status tests covering metadata serialization and API output
+- `setup_milestone6_9.py` + `verify_milestone6_9.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha9`
+- `pyproject.toml` bumped to `0.6.0-alpha9`
+- README and roadmap updated for M6.9
+
+#### Design Decisions
+- Public `/api/v1/status` remains frozen for API Contract v1 compatibility
+- Operator-facing `/api/v1/admin/release` reports the active SKOS release
+- Admin console displays release metadata from the admin endpoint
+
+#### Test Results
+- M6 total: 27/27 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha8] — 2026-09-13
 
 ### Milestone 6.8 — Admin Backup Console

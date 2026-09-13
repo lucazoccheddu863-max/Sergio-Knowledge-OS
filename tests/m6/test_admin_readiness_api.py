@@ -58,6 +58,18 @@ def test_admin_readiness_endpoint_returns_report(tmp_path: Path) -> None:
     }
 
 
+def test_admin_release_endpoint_returns_current_release(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/release")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
+    assert data["milestone"].startswith("M6.")
+    assert data["status"] == "operational"
+
+
 def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     client = build_client(tmp_path)
 
@@ -65,6 +77,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
 
     assert response.status_code == 200
     assert "/api/v1/admin/readiness" in response.text
+    assert "/api/v1/admin/release" in response.text
 
 
 def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:

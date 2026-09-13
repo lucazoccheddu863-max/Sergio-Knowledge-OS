@@ -448,6 +448,23 @@ class FastAPIAdapter:
             return run_production_readiness(self._config).as_dict()
 
         @self._app.get(
+            "/api/v1/admin/release",
+            summary="Current release status",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_release_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import build_release_status
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/release", 200)
+            self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/release", "success")
+            return build_release_status().as_dict()
+
+        @self._app.get(
             "/api/v1/admin/backup/manifest",
             summary="Backup manifest report",
             tags=["Admin"],

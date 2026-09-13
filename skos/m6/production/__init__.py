@@ -5,6 +5,7 @@ from skos.m6.production.readiness import (
     ReadinessReport,
     run_production_readiness,
 )
+from skos.m6.production.release import ReleaseStatus, build_release_status
 from skos.m6.production.backup import (
     BackupArchiveInspection,
     BackupItem,
@@ -25,7 +26,9 @@ __all__ = [
     "BackupRestoreResult",
     "ReadinessCheck",
     "ReadinessReport",
+    "ReleaseStatus",
     "build_backup_manifest",
+    "build_release_status",
     "create_backup_archive",
     "inspect_backup_archive",
     "run_production_readiness",
