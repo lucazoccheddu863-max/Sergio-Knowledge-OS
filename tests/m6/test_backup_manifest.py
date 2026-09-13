@@ -1,0 +1,67 @@
+"""Tests for M6.3 backup manifest planning."""
+from __future__ import annotations
+
+from pathlib import Path
+
+from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
+    HierarchicalConfigAdapter,
+)
+from skos.m6.production import build_backup_manifest
+
+
+def config_for(tmp_path: Path) -> HierarchicalConfigAdapter:
+    return HierarchicalConfigAdapter(
+        defaults={
+            "database_path": str(tmp_path / "data" / "sergio.db"),
+            "archive_root": str(tmp_path / "archive"),
+            "backup_dir": str(tmp_path / "backups"),
+        }
+    )
+
+
+def test_backup_manifest_reports_database_and_archive_sizes(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+    (tmp_path / "archive" / "chat.txt").write_text("archive-item", encoding="utf-8")
+
+    manifest = build_backup_manifest(config_for(tmp_path), root_path=tmp_path)
+
+    assert manifest.ready is True
+    assert manifest.total_files == 2
+    assert manifest.total_bytes == len("database") + len("archive-item")
+    assert manifest.warnings == ()
+
+
+def test_backup_manifest_warns_for_missing_paths(tmp_path: Path) -> None:
+    manifest = build_backup_manifest(config_for(tmp_path), root_path=tmp_path)
+
+    assert manifest.ready is False
+    assert "database_path does not exist" in manifest.warnings
+    assert "archive_root does not exist" in manifest.warnings
+    assert "backup_dir does not exist" in manifest.warnings
+
+
+def test_backup_manifest_serializes_to_dict(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("db", encoding="utf-8")
+
+    data = build_backup_manifest(config_for(tmp_path), root_path=tmp_path).as_dict()
+
+    assert data["ready"] is True
+    assert data["total_files"] == 1
+    assert {item["name"] for item in data["items"]} == {"database", "archive"}
+
+
+def test_backup_manifest_does_not_create_missing_backup_dir(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("db", encoding="utf-8")
+
+    manifest = build_backup_manifest(config_for(tmp_path), root_path=tmp_path)
+
+    assert manifest.ready is False
+    assert not (tmp_path / "backups").exists()

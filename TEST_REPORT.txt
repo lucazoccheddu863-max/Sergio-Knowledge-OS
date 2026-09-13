@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.2
+TEST REPORT — Sergio Knowledge OS M6.3
 ============================================================
 
 Date: 2026-09-13
-Version: 0.6.0-alpha2
-Milestone: M6.2 — Admin Readiness
+Version: 0.6.0-alpha3
+Milestone: M6.3 — Backup Manifest
 
-M6 Tests: 6/6 PASS
+M6 Tests: 10/10 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 276/276 PASS
+Total: 280/280 PASS
 
 Verification command:
-python3 verify_milestone6_2.py
+python3 verify_milestone6_3.py
 
 Result:
-M6.2 verification complete. All checks PASS.
+M6.3 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-276 passed, 3 warnings
+280 passed, 3 warnings
 
 Notes:
-- Admin readiness is exposed at /api/v1/admin/readiness.
-- The /admin console displays a Production Readiness panel.
-- The readiness report remains side-effect free and does not require external services.
-- API Contract v1 query/error behavior remains unchanged.
+- Backup manifest planning inventories configured database and archive paths.
+- Backup planning reports missing database, archive or backup destination paths.
+- Backup manifest generation is side-effect free and does not copy or create data.
+- Actual backup execution is intentionally deferred to a later milestone.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

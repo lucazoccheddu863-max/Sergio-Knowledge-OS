@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha3] — 2026-09-13
+
+### Milestone 6.3 — Backup Manifest
+
+#### Added
+- `skos.m6.production.build_backup_manifest()` — side-effect-free backup manifest planner
+- `BackupItem` and `BackupManifest` models for structured backup planning
+- Backup inventory for configured database and archive paths
+- Warnings for missing database, archive or backup destination paths
+- `tests/m6/test_backup_manifest.py` — 4 tests covering sizing, missing paths, serialization and no directory creation
+- `setup_milestone6_3.py` + `verify_milestone6_3.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha3`
+- `pyproject.toml` bumped to `0.6.0-alpha3`
+- README and roadmap updated for M6.3
+
+#### Design Decisions
+- Backup planning is side-effect free: it never creates directories or copies data
+- Backup manifest uses existing configured `database_path`, `archive_root` and `backup_dir`
+- Backup execution is intentionally deferred to a later milestone
+
+#### Test Results
+- M6 total: 10/10 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha2] — 2026-09-13
 
 ### Milestone 6.2 — Admin Readiness
