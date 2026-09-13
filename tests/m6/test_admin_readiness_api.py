@@ -1,4 +1,4 @@
-"""Tests for M6.2 admin readiness API integration."""
+"""Tests for M6 admin API integration."""
 from __future__ import annotations
 
 from pathlib import Path
@@ -14,9 +14,9 @@ from skos.m4.infrastructure.ports.query_orchestrator_port import QueryOrchestrat
 
 
 def build_client(tmp_path: Path) -> TestClient:
-    (tmp_path / "data").mkdir()
-    (tmp_path / "archive").mkdir()
-    (tmp_path / "backups").mkdir()
+    (tmp_path / "data").mkdir(exist_ok=True)
+    (tmp_path / "archive").mkdir(exist_ok=True)
+    (tmp_path / "backups").mkdir(exist_ok=True)
     orchestrator = Mock(spec=QueryOrchestratorPort)
     orchestrator.health_check.return_value = True
     config = HierarchicalConfigAdapter(
@@ -30,6 +30,14 @@ def build_client(tmp_path: Path) -> TestClient:
         }
     )
     return TestClient(FastAPIAdapter(orchestrator=orchestrator, config=config).app)
+
+
+def seed_backup_inputs(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir(exist_ok=True)
+    (tmp_path / "archive").mkdir(exist_ok=True)
+    (tmp_path / "backups").mkdir(exist_ok=True)
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+    (tmp_path / "archive" / "chat.txt").write_text("archive-item", encoding="utf-8")
 
 
 def test_admin_readiness_endpoint_returns_report(tmp_path: Path) -> None:
@@ -57,3 +65,70 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
 
     assert response.status_code == 200
     assert "/api/v1/admin/readiness" in response.text
+
+
+def test_admin_backup_manifest_endpoint_returns_report(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/backup/manifest")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert data["total_files"] == 2
+    assert {item["name"] for item in data["items"]} == {"database", "archive"}
+
+
+def test_admin_backup_create_and_inspect_endpoints(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    create_response = client.post("/api/v1/admin/backup/create", params={"label": "api-test"})
+
+    assert create_response.status_code == 200
+    archive_path = create_response.json()["archive_path"]
+    assert Path(archive_path).exists()
+
+    inspect_response = client.get(
+        "/api/v1/admin/backup/inspect",
+        params={"archive_path": archive_path},
+    )
+
+    assert inspect_response.status_code == 200
+    data = inspect_response.json()
+    assert data["ready"] is True
+    assert "manifest.json" in data["entries"]
+
+
+def test_admin_backup_restore_stage_endpoint_extracts_to_target(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+    create_response = client.post("/api/v1/admin/backup/create")
+    archive_path = create_response.json()["archive_path"]
+    target_dir = tmp_path / "restore-stage"
+
+    response = client.post(
+        "/api/v1/admin/backup/restore/stage",
+        params={"archive_path": archive_path, "target_dir": str(target_dir)},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["target_dir"] == str(target_dir)
+    assert (target_dir / "database" / "sergio.db").read_text(encoding="utf-8") == "database"
+    assert (target_dir / "archive" / "chat.txt").read_text(encoding="utf-8") == "archive-item"
+
+
+def test_admin_backup_restore_stage_endpoint_rejects_invalid_archive(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+    broken_archive = tmp_path / "broken.zip"
+    broken_archive.write_text("not-a-zip", encoding="utf-8")
+
+    response = client.post(
+        "/api/v1/admin/backup/restore/stage",
+        params={"archive_path": str(broken_archive), "target_dir": str(tmp_path / "restore-stage")},
+    )
+
+    assert response.status_code == 400
+    assert "backup archive is not ready for restore" in response.json()["message"]

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha7] — 2026-09-13
+
+### Milestone 6.7 — Admin Backup API
+
+#### Added
+- `GET /api/v1/admin/backup/manifest` — backup manifest report
+- `POST /api/v1/admin/backup/create` — backup ZIP creation
+- `GET /api/v1/admin/backup/inspect` — backup archive inspection
+- `POST /api/v1/admin/backup/restore/stage` — staged backup restore
+- Admin API tests covering manifest, create, inspect, staged restore and invalid restore errors
+- `setup_milestone6_7.py` + `verify_milestone6_7.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha7`
+- `pyproject.toml` bumped to `0.6.0-alpha7`
+- README and roadmap updated for M6.7
+
+#### Design Decisions
+- Backup operations are exposed only under admin routes
+- Restore remains staged and never overwrites live configured paths
+- Admin backup errors use the existing APIError contract
+
+#### Test Results
+- M6 total: 23/23 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha6] — 2026-09-13
 
 ### Milestone 6.6 — Staged Backup Restore

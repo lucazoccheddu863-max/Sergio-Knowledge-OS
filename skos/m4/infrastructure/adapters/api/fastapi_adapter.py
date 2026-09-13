@@ -447,6 +447,116 @@ class FastAPIAdapter:
             self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/readiness", "success")
             return run_production_readiness(self._config).as_dict()
 
+        @self._app.get(
+            "/api/v1/admin/backup/manifest",
+            summary="Backup manifest report",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_backup_manifest_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import build_backup_manifest
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/backup/manifest", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "GET",
+                "/api/v1/admin/backup/manifest",
+                "success",
+            )
+            return build_backup_manifest(self._config).as_dict()
+
+        @self._app.post(
+            "/api/v1/admin/backup/create",
+            summary="Create backup archive",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_backup_create_endpoint(
+            request: Request,
+            label: str | None = None,
+        ) -> dict[str, Any]:
+            from skos.m6.production import create_backup_archive
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            try:
+                result = create_backup_archive(self._config, label=label)
+            except ValueError as exc:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+            self._count_request("POST", "/api/v1/admin/backup/create", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                "/api/v1/admin/backup/create",
+                "success",
+            )
+            return result.as_dict()
+
+        @self._app.get(
+            "/api/v1/admin/backup/inspect",
+            summary="Inspect backup archive",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_backup_inspect_endpoint(
+            request: Request,
+            archive_path: str,
+        ) -> dict[str, Any]:
+            from skos.m6.production import inspect_backup_archive
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/backup/inspect", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "GET",
+                "/api/v1/admin/backup/inspect",
+                "success",
+            )
+            return inspect_backup_archive(archive_path).as_dict()
+
+        @self._app.post(
+            "/api/v1/admin/backup/restore/stage",
+            summary="Stage backup restore",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_backup_restore_stage_endpoint(
+            request: Request,
+            archive_path: str,
+            target_dir: str,
+        ) -> dict[str, Any]:
+            from skos.m6.production import stage_backup_restore
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            try:
+                result = stage_backup_restore(archive_path, target_dir)
+            except ValueError as exc:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+            self._count_request("POST", "/api/v1/admin/backup/restore/stage", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                "/api/v1/admin/backup/restore/stage",
+                "success",
+            )
+            return result.as_dict()
+
     # ── Admin Console (/admin) ────────────────────────────────────────────────
 
     def _setup_admin_console_routes(self) -> None:

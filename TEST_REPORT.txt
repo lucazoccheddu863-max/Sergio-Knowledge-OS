@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.6
+TEST REPORT — Sergio Knowledge OS M6.7
 ============================================================
 
 Date: 2026-09-13
-Version: 0.6.0-alpha6
-Milestone: M6.6 — Staged Backup Restore
+Version: 0.6.0-alpha7
+Milestone: M6.7 — Admin Backup API
 
-M6 Tests: 19/19 PASS
+M6 Tests: 23/23 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 289/289 PASS
+Total: 293/293 PASS
 
 Verification command:
-python3 verify_milestone6_6.py
+python3 verify_milestone6_7.py
 
 Result:
-M6.6 verification complete. All checks PASS.
+M6.7 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-289 passed, 3 warnings
+293 passed, 3 warnings
 
 Notes:
-- Staged backup restore extracts verified backups into an empty target directory.
-- Staged backup restore refuses unready archives and non-empty targets.
-- Staged backup restore validates ZIP paths before extraction to block traversal.
+- Admin backup API exposes manifest, create, inspect and staged restore endpoints.
+- Backup operations remain scoped to `/api/v1/admin/*`.
+- Staged restore still refuses invalid archives and preserves the existing API error schema.
 - Restore remains staged and does not overwrite configured live data paths.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================
