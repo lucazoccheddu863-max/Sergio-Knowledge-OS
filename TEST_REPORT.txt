@@ -1,29 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M5.3
+TEST REPORT — Sergio Knowledge OS M6.1
 ============================================================
 
-Date: 2026-09-07
-Version: 0.5.0-alpha3
-Milestone: M5.3 — Admin Console
+Date: 2026-09-13
+Version: 0.6.0-alpha1
+Milestone: M6.1 — Production Readiness
 
-M5 Tests: 32/32 PASS
+M6 Tests: 4/4 PASS
+M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 270/270 PASS
+Total: 274/274 PASS
 
 Verification command:
-python3 verify_milestone5_3.py
+python3 verify_milestone6_1.py
 
 Result:
-M5.3 verification complete. All checks PASS.
+M6.1 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-270 passed, 3 warnings
+274 passed, 3 warnings
 
 Notes:
-- Admin console is served at /admin by the existing FastAPI adapter.
-- Static assets are packaged under skos.m5.admin_console.assets.
-- The console reads existing status, health, security and engines endpoints.
-- API Contract v1 remains frozen; no /api/v1 schema changes were required.
+- Production readiness checks cover environment, persistence, security, storage paths and admin assets.
+- Readiness checks are side-effect free and do not require external services.
+- Development mode may warn without blocking local use.
+- Production mode requires persistent storage and mandatory auth.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

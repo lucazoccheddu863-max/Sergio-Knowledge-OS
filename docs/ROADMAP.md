@@ -29,7 +29,8 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M5.2 ✅ — Runtime wiring and deployment configuration
 - M5.3 ✅ — Frontend/admin console
 
-### M6 — Production Hardening ⏳
+### M6 — Production Hardening 🔄 IN PROGRESS
+- M6.1 ✅ — Production readiness checks
 
 ## Definition of Done
 1. Design approved

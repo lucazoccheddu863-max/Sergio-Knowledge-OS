@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "skos"
-version = "0.5.0-alpha3"
+version = "0.6.0-alpha1"
 description = "Sergio Knowledge OS — Semantic Knowledge Platform"
 requires-python = ">=3.11"
 dependencies = [
@@ -45,6 +45,7 @@ select = ["E", "F", "I", "N", "W", "UP", "B", "C4", "SIM"]
 testpaths = [
     "tests/m4",
     "tests/m5",
+    "tests/m6",
 ]
 
 [tool.mypy]

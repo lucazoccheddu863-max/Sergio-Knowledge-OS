@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.6.0-alpha1] — 2026-09-13
+
+### Milestone 6.1 — Production Readiness
+
+#### Added
+- `skos.m6.production.run_production_readiness()` — side-effect-free readiness checker
+- `ReadinessCheck` and `ReadinessReport` models for structured hardening reports
+- Checks for environment, persistence mode, security posture, storage paths and admin assets
+- `m6.environment` configuration key in `config.yaml`
+- `tests/m6/test_readiness.py` — 4 tests covering hardened production, unsafe production, development warnings and serialization
+- `setup_milestone6_1.py` + `verify_milestone6_1.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha1`
+- `pyproject.toml` bumped to `0.6.0-alpha1`
+- `pytest` discovery now includes `tests/m6`
+- README and roadmap updated for M6.1
+
+#### Design Decisions
+- Readiness checks are side-effect free: no directory creation, socket checks or external service dependencies
+- Production mode requires persistent storage and mandatory auth
+- Development mode may warn without blocking local use
+
+#### Test Results
+- M6 total: 4/4 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.5.0-alpha3] — 2026-09-07
 
 ### Milestone 5.3 — Admin Console
