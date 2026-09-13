@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha2] — 2026-09-13
+
+### Milestone 6.2 — Admin Readiness
+
+#### Added
+- `GET /api/v1/admin/readiness` endpoint exposing the structured M6 readiness report
+- Production Readiness panel in the `/admin` console
+- Console integration with the readiness endpoint via packaged JavaScript assets
+- `tests/m6/test_admin_readiness_api.py` — 2 tests covering the endpoint and console asset wiring
+- `setup_milestone6_2.py` + `verify_milestone6_2.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha2`
+- `pyproject.toml` bumped to `0.6.0-alpha2`
+- README and roadmap updated for M6.2
+
+#### Design Decisions
+- The readiness report is available to operators without adding external services
+- Admin readiness is an additive admin route; API Contract v1 query/error behavior remains unchanged
+- The console continues to use packaged static assets and existing FastAPI serving
+
+#### Test Results
+- M6 total: 6/6 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha1] — 2026-09-13
 
 ### Milestone 6.1 — Production Readiness

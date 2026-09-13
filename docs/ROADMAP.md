@@ -31,6 +31,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 
 ### M6 — Production Hardening 🔄 IN PROGRESS
 - M6.1 ✅ — Production readiness checks
+- M6.2 ✅ — Admin readiness API and console panel
 
 ## Definition of Done
 1. Design approved

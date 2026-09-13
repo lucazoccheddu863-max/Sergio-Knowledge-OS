@@ -430,6 +430,23 @@ class FastAPIAdapter:
                 status="admin_reserved",
             )
 
+        @self._app.get(
+            "/api/v1/admin/readiness",
+            summary="Production readiness report",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_readiness_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import run_production_readiness
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/readiness", 200)
+            self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/readiness", "success")
+            return run_production_readiness(self._config).as_dict()
+
     # ── Admin Console (/admin) ────────────────────────────────────────────────
 
     def _setup_admin_console_routes(self) -> None:
