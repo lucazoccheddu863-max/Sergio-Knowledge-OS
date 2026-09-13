@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha5] — 2026-09-13
+
+### Milestone 6.5 — Backup Restore Inspection
+
+#### Added
+- `skos.m6.production.inspect_backup_archive()` — side-effect-free backup ZIP inspection before restore
+- `BackupArchiveInspection` model for restore preflight metadata
+- Backup inspection checks for readable ZIP packages, `manifest.json`, database payload and archive payload
+- Restore inspection tests covering valid backups, missing manifest and missing database entries
+- `setup_milestone6_5.py` + `verify_milestone6_5.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha5`
+- `pyproject.toml` bumped to `0.6.0-alpha5`
+- README and roadmap updated for M6.5
+
+#### Design Decisions
+- M6.5 does not extract, overwrite or restore data
+- Restore safety starts with a dry-run archive inspection
+- Destructive restore execution remains deferred until stronger operator controls exist
+
+#### Test Results
+- M6 total: 15/15 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha4] — 2026-09-13
 
 ### Milestone 6.4 — Backup Archive

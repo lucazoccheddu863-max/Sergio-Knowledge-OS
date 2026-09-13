@@ -34,6 +34,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.2 ✅ — Admin readiness API and console panel
 - M6.3 ✅ — Backup manifest planning
 - M6.4 ✅ — Backup archive creation
+- M6.5 ✅ — Backup restore inspection
 
 ## Definition of Done
 1. Design approved

@@ -1,13 +1,14 @@
-"""Tests for M6.3 backup manifest planning."""
+"""Tests for M6 backup and restore inspection."""
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from zipfile import ZipFile
 
 from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
     HierarchicalConfigAdapter,
 )
-from skos.m6.production import build_backup_manifest, create_backup_archive
+from skos.m6.production import build_backup_manifest, create_backup_archive, inspect_backup_archive
 
 
 def config_for(tmp_path: Path) -> HierarchicalConfigAdapter:
@@ -94,3 +95,61 @@ def test_create_backup_archive_fails_when_manifest_not_ready(tmp_path: Path) -> 
         assert "backup manifest is not ready" in str(exc)
     else:
         raise AssertionError("expected backup creation to fail")
+
+
+def test_inspect_backup_archive_accepts_valid_archive(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+    (tmp_path / "archive" / "chat.txt").write_text("archive-item", encoding="utf-8")
+
+    result = create_backup_archive(config_for(tmp_path), root_path=tmp_path)
+    inspection = inspect_backup_archive(result.archive_path)
+
+    assert inspection.ready is True
+    assert inspection.warnings == ()
+    assert "manifest.json" in inspection.entries
+    assert inspection.manifest["ready"] is True
+
+
+def test_inspect_backup_archive_warns_when_manifest_is_missing(tmp_path: Path) -> None:
+    archive_path = tmp_path / "broken.zip"
+    with ZipFile(archive_path, "w") as archive:
+        archive.writestr("database/sergio.db", "database")
+
+    inspection = inspect_backup_archive(archive_path)
+
+    assert inspection.ready is False
+    assert "manifest.json missing from backup archive" in inspection.warnings
+
+
+def test_inspect_backup_archive_warns_when_database_entry_is_missing(tmp_path: Path) -> None:
+    manifest = {
+        "ready": True,
+        "items": [
+            {
+                "name": "database",
+                "path": str(tmp_path / "data" / "sergio.db"),
+                "exists": True,
+                "file_count": 1,
+                "total_bytes": 8,
+            },
+            {
+                "name": "archive",
+                "path": str(tmp_path / "archive"),
+                "exists": True,
+                "file_count": 1,
+                "total_bytes": 12,
+            },
+        ],
+    }
+    archive_path = tmp_path / "incomplete.zip"
+    with ZipFile(archive_path, "w") as archive:
+        archive.writestr("manifest.json", json.dumps(manifest))
+        archive.writestr("archive/chat.txt", "archive-item")
+
+    inspection = inspect_backup_archive(archive_path)
+
+    assert inspection.ready is False
+    assert "database entry missing from backup archive" in inspection.warnings

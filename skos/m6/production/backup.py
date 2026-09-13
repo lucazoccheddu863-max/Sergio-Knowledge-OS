@@ -1,4 +1,4 @@
-"""Backup manifest planning for SKOS production hardening."""
+"""Backup and restore inspection for SKOS production hardening."""
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 from typing import Any
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
 
@@ -73,6 +73,26 @@ class BackupResult:
         }
 
 
+@dataclass(frozen=True)
+class BackupArchiveInspection:
+    """Side-effect-free inspection of a backup archive before restore."""
+
+    archive_path: str
+    ready: bool
+    manifest: dict[str, Any]
+    entries: tuple[str, ...]
+    warnings: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "archive_path": self.archive_path,
+            "ready": self.ready,
+            "manifest": self.manifest,
+            "entries": list(self.entries),
+            "warnings": list(self.warnings),
+        }
+
+
 def build_backup_manifest(
     config: ConfigurationPort,
     root_path: str | Path = ".",
@@ -120,6 +140,53 @@ def create_backup_archive(
             _write_item(archive, item)
 
     return BackupResult(archive_path=str(archive_path), manifest=manifest)
+
+
+def inspect_backup_archive(archive_path: str | Path) -> BackupArchiveInspection:
+    """Inspect a backup ZIP without extracting or modifying local data."""
+
+    path = Path(archive_path)
+    warnings: list[str] = []
+    manifest: dict[str, Any] = {}
+    entries: tuple[str, ...] = ()
+
+    if not path.exists():
+        return BackupArchiveInspection(
+            archive_path=str(path),
+            ready=False,
+            manifest=manifest,
+            entries=entries,
+            warnings=("backup archive does not exist",),
+        )
+
+    try:
+        with ZipFile(path) as archive:
+            entries = tuple(sorted(name for name in archive.namelist() if not name.endswith("/")))
+            if "manifest.json" not in entries:
+                warnings.append("manifest.json missing from backup archive")
+            else:
+                loaded = json.loads(archive.read("manifest.json").decode("utf-8"))
+                if isinstance(loaded, dict):
+                    manifest = loaded
+                else:
+                    warnings.append("manifest.json is not an object")
+    except (BadZipFile, OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return BackupArchiveInspection(
+            archive_path=str(path),
+            ready=False,
+            manifest=manifest,
+            entries=entries,
+            warnings=("backup archive is not a readable SKOS ZIP",),
+        )
+
+    warnings.extend(_collect_archive_warnings(manifest, entries))
+    return BackupArchiveInspection(
+        archive_path=str(path),
+        ready=not warnings,
+        manifest=manifest,
+        entries=entries,
+        warnings=tuple(warnings),
+    )
 
 
 def _inspect_path(name: str, path: Path) -> BackupItem:
@@ -176,6 +243,36 @@ def _collect_warnings(database_path: Path, archive_root: Path, backup_dir: Path)
         warnings.append("backup_dir does not exist")
     elif not backup_dir.is_dir():
         warnings.append("backup_dir is not a directory")
+    return warnings
+
+
+def _collect_archive_warnings(manifest: dict[str, Any], entries: tuple[str, ...]) -> list[str]:
+    warnings: list[str] = []
+    if not manifest:
+        return warnings
+    if manifest.get("ready") is not True:
+        warnings.append("manifest is not ready")
+
+    items = manifest.get("items")
+    if not isinstance(items, list):
+        warnings.append("manifest items are missing")
+        return warnings
+
+    for item in items:
+        if not isinstance(item, dict):
+            warnings.append("manifest item is not an object")
+            continue
+        name = item.get("name")
+        exists = item.get("exists") is True
+        file_count = item.get("file_count") if isinstance(item.get("file_count"), int) else 0
+        if not exists or file_count <= 0:
+            continue
+        if name == "database":
+            database_name = Path(str(item.get("path", ""))).name
+            if database_name and f"database/{database_name}" not in entries:
+                warnings.append("database entry missing from backup archive")
+        elif name == "archive" and not any(entry.startswith("archive/") for entry in entries):
+            warnings.append("archive entries missing from backup archive")
     return warnings
 
 
