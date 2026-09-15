@@ -482,6 +482,23 @@ class FastAPIAdapter:
             return build_admin_overview(self._config).as_dict()
 
         @self._app.get(
+            "/api/v1/admin/smoke",
+            summary="Admin smoke check",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_smoke_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import build_admin_smoke_report
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/smoke", 200)
+            self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/smoke", "success")
+            return build_admin_smoke_report(self._config).as_dict()
+
+        @self._app.get(
             "/api/v1/admin/backup/manifest",
             summary="Backup manifest report",
             tags=["Admin"],

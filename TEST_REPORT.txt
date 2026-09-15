@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.10
+TEST REPORT — Sergio Knowledge OS M6.11
 ============================================================
 
 Date: 2026-09-13
-Version: 0.6.0-alpha10
-Milestone: M6.10 — Admin Overview
+Version: 0.6.0-alpha11
+Milestone: M6.11 — Admin Smoke Check
 
-M6 Tests: 30/30 PASS
+M6 Tests: 33/33 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 300/300 PASS
+Total: 303/303 PASS
 
 Verification command:
-python3 verify_milestone6_10.py
+python3 verify_milestone6_11.py
 
 Result:
-M6.10 verification complete. All checks PASS.
+M6.11 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-300 passed, 2 warnings
+303 passed, 2 warnings
 
 Notes:
-- Admin overview endpoint aggregates release, readiness and backup status.
-- Admin console loads its core operator state from `/api/v1/admin/overview`.
-- Overview generation is side-effect free and reuses existing M6 reports.
+- Admin smoke endpoint summarizes release, readiness, backup and admin console checks.
+- Admin console displays a compact Operator Smoke Check panel.
+- Smoke generation is side-effect free and reuses existing M6 reports.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

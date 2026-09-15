@@ -40,6 +40,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.8 ✅ — Admin backup console
 - M6.9 ✅ — Admin release status
 - M6.10 ✅ — Admin overview
+- M6.11 ✅ — Admin smoke check
 
 ## Definition of Done
 1. Design approved

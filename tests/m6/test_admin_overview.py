@@ -6,7 +6,7 @@ from pathlib import Path
 from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
     HierarchicalConfigAdapter,
 )
-from skos.m6.production import build_admin_overview
+from skos.m6.production import build_admin_overview, build_admin_smoke_report
 
 
 def config_for(tmp_path: Path) -> HierarchicalConfigAdapter:
@@ -43,3 +43,27 @@ def test_admin_overview_serializes_nested_reports(tmp_path: Path) -> None:
     assert data["release"]["milestone"].startswith("M6.")
     assert "checks" in data["readiness"]
     assert "items" in data["backup"]
+
+
+def test_admin_smoke_report_passes_for_ready_system(tmp_path: Path) -> None:
+    (tmp_path / "data").mkdir()
+    (tmp_path / "archive").mkdir()
+    (tmp_path / "backups").mkdir()
+    (tmp_path / "data" / "sergio.db").write_text("database", encoding="utf-8")
+
+    report = build_admin_smoke_report(config_for(tmp_path), root_path=tmp_path)
+
+    assert report.ready is True
+    assert {check.name for check in report.checks} == {
+        "release",
+        "readiness",
+        "backup",
+        "admin_console",
+    }
+
+
+def test_admin_smoke_report_serializes_failures(tmp_path: Path) -> None:
+    data = build_admin_smoke_report(config_for(tmp_path), root_path=tmp_path).as_dict()
+
+    assert data["ready"] is False
+    assert any(check["name"] == "backup" and check["status"] == "fail" for check in data["checks"])

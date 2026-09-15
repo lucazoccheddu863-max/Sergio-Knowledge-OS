@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha11] — 2026-09-14
+
+### Milestone 6.11 — Admin Smoke Check
+
+#### Added
+- `skos.m6.production.build_admin_smoke_report()` — compact operator smoke report
+- `GET /api/v1/admin/smoke` — release, readiness, backup and admin console checks
+- Operator Smoke Check panel in the `/admin` console
+- Smoke tests covering ready and failing states plus API output
+- `setup_milestone6_11.py` + `verify_milestone6_11.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha11`
+- `pyproject.toml` bumped to `0.6.0-alpha11`
+- README and roadmap updated for M6.11
+
+#### Design Decisions
+- Smoke checks are side-effect free and operator-facing
+- The smoke report summarizes the minimum evidence needed before manual local testing
+- The admin console displays the smoke result separately from detailed readiness
+
+#### Test Results
+- M6 total: 33/33 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha10] — 2026-09-14
 
 ### Milestone 6.10 — Admin Overview

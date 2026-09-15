@@ -4,6 +4,7 @@ const endpoints = {
   engines: "/api/v1/engines",
   security: "/api/v1/security/status",
   overview: "/api/v1/admin/overview",
+  smoke: "/api/v1/admin/smoke",
   readiness: "/api/v1/admin/readiness",
   release: "/api/v1/admin/release",
   backupManifest: "/api/v1/admin/backup/manifest",
@@ -56,12 +57,13 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, overview] = await Promise.all([
+  const [status, health, engines, security, overview, smoke] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
     getJson(endpoints.security),
     getJson(endpoints.overview),
+    getJson(endpoints.smoke),
   ]);
   const { release, readiness, backup: backupManifest } = overview;
 
@@ -76,6 +78,11 @@ async function refreshDashboard() {
 
   text("readiness-summary", readiness.ready ? "Ready" : "Needs attention");
   document.getElementById("readiness-list").innerHTML = readiness.checks
+    .map((check) => `<div class="row"><span>${check.name}: ${check.message}</span>${badge(check.status)}</div>`)
+    .join("");
+
+  text("smoke-summary", smoke.ready ? "Pass" : "Needs attention");
+  document.getElementById("smoke-list").innerHTML = smoke.checks
     .map((check) => `<div class="row"><span>${check.name}: ${check.message}</span>${badge(check.status)}</div>`)
     .join("");
 
@@ -99,6 +106,7 @@ document.getElementById("refresh").addEventListener("click", () => {
     text("system-status", "Error");
     document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
     document.getElementById("readiness-list").innerHTML = "";
+    document.getElementById("smoke-list").innerHTML = "";
   });
 });
 
@@ -167,6 +175,7 @@ refreshDashboard().catch((error) => {
   text("system-status", "Error");
   document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
   document.getElementById("readiness-list").innerHTML = "";
+  document.getElementById("smoke-list").innerHTML = "";
   refreshBackupManifest().catch(() => {
     text("backup-summary", "Error");
   });

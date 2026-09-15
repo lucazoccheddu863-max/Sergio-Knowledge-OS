@@ -84,6 +84,23 @@ def test_admin_overview_endpoint_returns_operator_snapshot(tmp_path: Path) -> No
     assert data["backup"]["ready"] is True
 
 
+def test_admin_smoke_endpoint_returns_operator_checks(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/smoke")
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert {check["name"] for check in data["checks"]} >= {
+        "release",
+        "readiness",
+        "backup",
+        "admin_console",
+    }
+
+
 def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     client = build_client(tmp_path)
 
@@ -93,6 +110,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/readiness" in response.text
     assert "/api/v1/admin/release" in response.text
     assert "/api/v1/admin/overview" in response.text
+    assert "/api/v1/admin/smoke" in response.text
 
 
 def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
@@ -104,6 +122,7 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert html_response.status_code == 200
     assert js_response.status_code == 200
     assert "Backup Operations" in html_response.text
+    assert "Operator Smoke Check" in html_response.text
     assert "backup-create" in html_response.text
     assert "/api/v1/admin/backup/manifest" in js_response.text
     assert "/api/v1/admin/backup/restore/stage" in js_response.text
