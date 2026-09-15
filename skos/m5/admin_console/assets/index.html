@@ -61,6 +61,18 @@
 
       <section class="panel">
         <div class="panel-heading">
+          <h2>Release Package</h2>
+          <span id="release-package-summary">Idle</span>
+        </div>
+        <div class="backup-actions">
+          <button id="release-package-create" type="button">Create release ZIP</button>
+          <input id="release-package-path" type="text" readonly placeholder="Release package path">
+        </div>
+        <div id="release-package-list" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
           <h2>Backup Operations</h2>
           <span id="backup-summary">Loading</span>
         </div>

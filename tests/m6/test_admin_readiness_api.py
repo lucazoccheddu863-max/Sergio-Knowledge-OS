@@ -24,6 +24,7 @@ def build_client(tmp_path: Path) -> TestClient:
             "database_path": str(tmp_path / "data" / "sergio.db"),
             "archive_root": str(tmp_path / "archive"),
             "backup_dir": str(tmp_path / "backups"),
+            "release_dir": str(tmp_path / "releases"),
             "m4": {"security": {"enabled": True, "auth_required": True}},
             "m5": {"persistence": {"mode": "persistent"}},
             "m6": {"environment": "production"},
@@ -109,6 +110,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert response.status_code == 200
     assert "/api/v1/admin/readiness" in response.text
     assert "/api/v1/admin/release" in response.text
+    assert "/api/v1/admin/release/package" in response.text
     assert "/api/v1/admin/overview" in response.text
     assert "/api/v1/admin/smoke" in response.text
 
@@ -123,9 +125,24 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert js_response.status_code == 200
     assert "Backup Operations" in html_response.text
     assert "Operator Smoke Check" in html_response.text
+    assert "Release Package" in html_response.text
     assert "backup-create" in html_response.text
     assert "/api/v1/admin/backup/manifest" in js_response.text
     assert "/api/v1/admin/backup/restore/stage" in js_response.text
+
+
+def test_admin_release_package_endpoint_creates_zip(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+
+    response = client.post("/api/v1/admin/release/package", params={"label": "api-release"})
+
+    assert response.status_code == 200
+    data = response.json()
+    archive_path = Path(data["archive_path"])
+    assert archive_path.exists()
+    assert archive_path.parent == tmp_path / "releases"
+    assert data["manifest"]["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
+    assert data["manifest"]["total_files"] > 0
 
 
 def test_admin_backup_manifest_endpoint_returns_report(tmp_path: Path) -> None:

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha12] — 2026-09-15
+
+### Milestone 6.12 — Release Package Export
+
+#### Added
+- `skos.m6.production.create_release_package()` — clean source release ZIP export
+- `ReleasePackageManifest` with per-file SHA256 hashes and byte counts
+- `POST /api/v1/admin/release/package` — operator-triggered release package creation
+- Release Package panel in the `/admin` console
+- Release package tests covering archive contents, manifest hashes and API output
+- `setup_milestone6_12.py` + `verify_milestone6_12.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha12`
+- `pyproject.toml` bumped to `0.6.0-alpha12`
+- README, config and roadmap updated for M6.12
+
+#### Design Decisions
+- Release packages use an explicit allowlist of source, test, config and documentation paths
+- Local data, cache files and generated Python bytecode are excluded from release ZIPs
+- The public API contract remains frozen; packaging is exposed only under admin routes
+
+#### Test Results
+- M6 total: 36/36 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha11] — 2026-09-14
 
 ### Milestone 6.11 — Admin Smoke Check

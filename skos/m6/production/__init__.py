@@ -12,7 +12,14 @@ from skos.m6.production.overview import (
     build_admin_overview,
     build_admin_smoke_report,
 )
-from skos.m6.production.release import ReleaseStatus, build_release_status
+from skos.m6.production.release import (
+    ReleasePackageFile,
+    ReleasePackageManifest,
+    ReleasePackageResult,
+    ReleaseStatus,
+    build_release_status,
+    create_release_package,
+)
 from skos.m6.production.backup import (
     BackupArchiveInspection,
     BackupItem,
@@ -36,12 +43,16 @@ __all__ = [
     "AdminSmokeReport",
     "ReadinessCheck",
     "ReadinessReport",
+    "ReleasePackageFile",
+    "ReleasePackageManifest",
+    "ReleasePackageResult",
     "ReleaseStatus",
     "build_backup_manifest",
     "build_admin_overview",
     "build_admin_smoke_report",
     "build_release_status",
     "create_backup_archive",
+    "create_release_package",
     "inspect_backup_archive",
     "run_production_readiness",
     "stage_backup_restore",

@@ -464,6 +464,37 @@ class FastAPIAdapter:
             self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/release", "success")
             return build_release_status().as_dict()
 
+        @self._app.post(
+            "/api/v1/admin/release/package",
+            summary="Create clean release package",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_release_package_endpoint(
+            request: Request,
+            label: str | None = None,
+        ) -> dict[str, Any]:
+            from skos.m6.production import create_release_package
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            try:
+                output_dir = self._config.get("release_dir", default="data/releases")
+                result = create_release_package(output_dir=output_dir, label=label)
+            except ValueError as exc:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+            self._count_request("POST", "/api/v1/admin/release/package", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                "/api/v1/admin/release/package",
+                "success",
+            )
+            return result.as_dict()
+
         @self._app.get(
             "/api/v1/admin/overview",
             summary="Admin operations overview",

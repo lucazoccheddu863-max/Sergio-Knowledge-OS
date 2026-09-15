@@ -7,6 +7,7 @@ const endpoints = {
   smoke: "/api/v1/admin/smoke",
   readiness: "/api/v1/admin/readiness",
   release: "/api/v1/admin/release",
+  releasePackage: "/api/v1/admin/release/package",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -41,6 +42,12 @@ async function postJson(url) {
 
 const setBackupRows = (rows) => {
   document.getElementById("backup-list").innerHTML = rows
+    .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
+    .join("");
+};
+
+const setReleasePackageRows = (rows) => {
+  document.getElementById("release-package-list").innerHTML = rows
     .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
     .join("");
 };
@@ -124,6 +131,25 @@ document.getElementById("backup-create").addEventListener("click", () => {
     .catch((error) => {
       text("backup-summary", "Error");
       setBackupRows([["Error", error.message]]);
+    });
+});
+
+document.getElementById("release-package-create").addEventListener("click", () => {
+  postJson(endpoints.releasePackage)
+    .then((result) => {
+      document.getElementById("release-package-path").value = result.archive_path;
+      text("release-package-summary", "Created");
+      setReleasePackageRows([
+        ["Archive", result.archive_path],
+        ["Version", result.manifest.version],
+        ["Milestone", result.manifest.milestone],
+        ["Files", result.manifest.total_files],
+        ["Size", `${result.manifest.total_bytes} bytes`],
+      ]);
+    })
+    .catch((error) => {
+      text("release-package-summary", "Error");
+      setReleasePackageRows([["Error", error.message]]);
     });
 });
 

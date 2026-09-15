@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.11
+TEST REPORT — Sergio Knowledge OS M6.12
 ============================================================
 
-Date: 2026-09-13
-Version: 0.6.0-alpha11
-Milestone: M6.11 — Admin Smoke Check
+Date: 2026-09-15
+Version: 0.6.0-alpha12
+Milestone: M6.12 — Release Package Export
 
-M6 Tests: 33/33 PASS
+M6 Tests: 36/36 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 303/303 PASS
+Total: 306/306 PASS
 
 Verification command:
-python3 verify_milestone6_11.py
+python3 verify_milestone6_12.py
 
 Result:
-M6.11 verification complete. All checks PASS.
+M6.12 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-303 passed, 2 warnings
+306 passed, 2 warnings
 
 Notes:
-- Admin smoke endpoint summarizes release, readiness, backup and admin console checks.
-- Admin console displays a compact Operator Smoke Check panel.
-- Smoke generation is side-effect free and reuses existing M6 reports.
+- Release package export creates a clean source ZIP with manifest and SHA256 hashes.
+- Admin release package endpoint and console panel are operator-facing only.
+- Local data, cache files and Python bytecode are excluded from release packages.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================
