@@ -17,10 +17,12 @@ from skos.m6.production.release import (
     ReleasePackageInspection,
     ReleasePackageManifest,
     ReleasePackageResult,
+    ReleaseReadinessGate,
     ReleaseStatus,
     build_release_status,
     create_release_package,
     inspect_release_package,
+    run_release_readiness_gate,
 )
 from skos.m6.production.backup import (
     BackupArchiveInspection,
@@ -49,6 +51,7 @@ __all__ = [
     "ReleasePackageInspection",
     "ReleasePackageManifest",
     "ReleasePackageResult",
+    "ReleaseReadinessGate",
     "ReleaseStatus",
     "build_backup_manifest",
     "build_admin_overview",
@@ -57,6 +60,7 @@ __all__ = [
     "create_backup_archive",
     "create_release_package",
     "inspect_release_package",
+    "run_release_readiness_gate",
     "inspect_backup_archive",
     "run_production_readiness",
     "stage_backup_restore",

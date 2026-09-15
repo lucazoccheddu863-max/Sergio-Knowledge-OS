@@ -9,6 +9,7 @@ const endpoints = {
   release: "/api/v1/admin/release",
   releasePackage: "/api/v1/admin/release/package",
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
+  releaseGate: "/api/v1/admin/release/gate",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -167,6 +168,25 @@ document.getElementById("release-package-inspect").addEventListener("click", () 
         ["Archive", inspection.archive_path],
         ["Entries", inspection.entries.length],
         ["Warnings", inspection.warnings.length ? inspection.warnings.join("; ") : "None"],
+      ]);
+    })
+    .catch((error) => {
+      text("release-package-summary", "Error");
+      setReleasePackageRows([["Error", error.message]]);
+    });
+});
+
+document.getElementById("release-gate-run").addEventListener("click", () => {
+  postJson(endpoints.releaseGate)
+    .then((gate) => {
+      document.getElementById("release-package-path").value = gate.package.archive_path;
+      text("release-package-summary", gate.ready ? "Gate ready" : "Gate warning");
+      setReleasePackageRows([
+        ["Archive", gate.package.archive_path],
+        ["Version", gate.release.version],
+        ["Milestone", gate.release.milestone],
+        ["Entries", gate.inspection.entries.length],
+        ["Warnings", gate.warnings.length ? gate.warnings.join("; ") : "None"],
       ]);
     })
     .catch((error) => {

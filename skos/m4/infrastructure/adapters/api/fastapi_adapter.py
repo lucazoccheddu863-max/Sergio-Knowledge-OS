@@ -521,6 +521,34 @@ class FastAPIAdapter:
             )
             return inspect_release_package(archive_path).as_dict()
 
+        @self._app.post(
+            "/api/v1/admin/release/gate",
+            summary="Run release readiness gate",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_release_gate_endpoint(
+            request: Request,
+            label: str | None = None,
+        ) -> dict[str, Any]:
+            from skos.m6.production import run_release_readiness_gate
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            output_dir = self._config.get("release_dir", default="data/releases")
+            result = run_release_readiness_gate(output_dir=output_dir, label=label)
+            self._count_request("POST", "/api/v1/admin/release/gate", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                "/api/v1/admin/release/gate",
+                "success",
+            )
+            return result.as_dict()
+
         @self._app.get(
             "/api/v1/admin/overview",
             summary="Admin operations overview",

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha14] — 2026-09-15
+
+### Milestone 6.14 — Release Readiness Gate
+
+#### Added
+- `skos.m6.production.run_release_readiness_gate()` — final package creation and inspection verdict
+- `ReleaseReadinessGate` model for distribution readiness results
+- `POST /api/v1/admin/release/gate` — operator release gate endpoint
+- Admin console action to run the release readiness gate
+- Tests covering gate creation, serialization and API output
+- `setup_milestone6_14.py` + `verify_milestone6_14.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha14`
+- `pyproject.toml` bumped to `0.6.0-alpha14`
+- README, roadmap and test report updated for M6.14
+
+#### Design Decisions
+- The gate creates a fresh release package, inspects it and returns one distribution verdict
+- Gate warnings combine package inspection warnings and release metadata mismatches
+- The public API contract remains frozen; release gate remains admin-only
+
+#### Test Results
+- M6 total: 43/43 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha13] — 2026-09-15
 
 ### Milestone 6.13 — Release Package Inspection

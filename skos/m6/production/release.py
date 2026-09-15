@@ -104,6 +104,28 @@ class ReleasePackageInspection:
         }
 
 
+@dataclass(frozen=True)
+class ReleaseReadinessGate:
+    """Final operator gate before distributing a release package."""
+
+    ready: bool
+    release: ReleaseStatus
+    package: ReleasePackageResult
+    inspection: ReleasePackageInspection
+    checks: tuple[str, ...]
+    warnings: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "ready": self.ready,
+            "release": self.release.as_dict(),
+            "package": self.package.as_dict(),
+            "inspection": self.inspection.as_dict(),
+            "checks": list(self.checks),
+            "warnings": list(self.warnings),
+        }
+
+
 def build_release_status(root_path: str | Path = ".") -> ReleaseStatus:
     """Build release metadata without changing the frozen public API status contract."""
 
@@ -192,6 +214,40 @@ def inspect_release_package(archive_path: str | Path) -> ReleasePackageInspectio
         ready=not warnings,
         manifest=manifest,
         entries=entries,
+        warnings=tuple(warnings),
+    )
+
+
+def run_release_readiness_gate(
+    root_path: str | Path = ".",
+    output_dir: str | Path = "data/releases",
+    label: str | None = None,
+) -> ReleaseReadinessGate:
+    """Create and inspect a release package, then return one distribution verdict."""
+
+    release = build_release_status(root_path)
+    package = create_release_package(root_path=root_path, output_dir=output_dir, label=label)
+    inspection = inspect_release_package(package.archive_path)
+    warnings = list(inspection.warnings)
+    checks = [
+        f"release metadata: {release.version} ({release.milestone})",
+        f"package archive: {package.archive_path}",
+        f"package entries: {len(inspection.entries)}",
+    ]
+
+    if release.version == "unknown" or release.milestone == "unknown":
+        warnings.append("release metadata is unavailable")
+    if inspection.manifest.get("version") != release.version:
+        warnings.append("release package version does not match current VERSION")
+    if inspection.manifest.get("milestone") != release.milestone:
+        warnings.append("release package milestone does not match current release milestone")
+
+    return ReleaseReadinessGate(
+        ready=not warnings,
+        release=release,
+        package=package,
+        inspection=inspection,
+        checks=tuple(checks),
         warnings=tuple(warnings),
     )
 

@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.13
+TEST REPORT — Sergio Knowledge OS M6.14
 ============================================================
 
 Date: 2026-09-15
-Version: 0.6.0-alpha13
-Milestone: M6.13 — Release Package Inspection
+Version: 0.6.0-alpha14
+Milestone: M6.14 — Release Readiness Gate
 
-M6 Tests: 40/40 PASS
+M6 Tests: 43/43 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 310/310 PASS
+Total: 313/313 PASS
 
 Verification command:
-python3 verify_milestone6_13.py
+python3 verify_milestone6_14.py
 
 Result:
-M6.13 verification complete. All checks PASS.
+M6.14 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-310 passed, 2 warnings
+313 passed, 2 warnings
 
 Notes:
-- Release package inspection validates manifest, entries, SHA256 hashes and sizes.
-- Admin release package inspect endpoint and console action are operator-facing only.
-- Local data, cache files and unlisted entries are flagged before distribution.
+- Release readiness gate creates and inspects a fresh package before distribution.
+- Admin release gate endpoint and console action are operator-facing only.
+- Gate warnings combine release metadata mismatches and package inspection warnings.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

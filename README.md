@@ -1,7 +1,7 @@
 # Sergio Knowledge OS
 
-**Version:** 0.6.0-alpha13  
-**Status:** M6.13 Release Package Inspection verified  
+**Version:** 0.6.0-alpha14  
+**Status:** M6.14 Release Readiness Gate verified  
 **License:** MIT
 
 Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered information retrieval, management, and exploration.
@@ -13,7 +13,7 @@ Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered
 pip install -e ".[dev]"
 
 # Run current milestone and regression tests
-python verify_milestone6_13.py
+python verify_milestone6_14.py
 
 # Start API
 python -m skos.m4.infrastructure.adapters.api.fastapi_adapter
@@ -42,6 +42,7 @@ Key endpoints:
 - `GET /api/v1/admin/release` — Current release status for operators
 - `POST /api/v1/admin/release/package` — Create a clean release ZIP with manifest and hashes
 - `GET /api/v1/admin/release/package/inspect` — Inspect a release ZIP before distribution
+- `POST /api/v1/admin/release/gate` — Create, inspect and approve a release package for distribution
 - `GET /api/v1/admin/readiness` — Production readiness report
 - `GET /admin` — Admin console
 - `GET /metrics` — Prometheus metrics
@@ -101,15 +102,16 @@ M4.10 introduces production observability:
 | **M6.11 — Admin Smoke Check** | **0.6.0-alpha11** | **Verified** |
 | **M6.12 — Release Package Export** | **0.6.0-alpha12** | **Verified** |
 | **M6.13 — Release Package Inspection** | **0.6.0-alpha13** | **Verified** |
+| **M6.14 — Release Readiness Gate** | **0.6.0-alpha14** | **Verified** |
 
 ## Development
 
 ```bash
 # Setup
-python setup_milestone6_13.py
+python setup_milestone6_14.py
 
 # Verify
-python verify_milestone6_13.py
+python verify_milestone6_14.py
 
 # Full test suite
 pytest -q

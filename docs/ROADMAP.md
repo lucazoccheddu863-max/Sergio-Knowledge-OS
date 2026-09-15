@@ -43,6 +43,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.11 ✅ — Admin smoke check
 - M6.12 ✅ — Release package export
 - M6.13 ✅ — Release package inspection
+- M6.14 ✅ — Release readiness gate
 
 ## Definition of Done
 1. Design approved

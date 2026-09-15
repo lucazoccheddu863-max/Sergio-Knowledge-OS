@@ -5,7 +5,12 @@ import json
 from pathlib import Path
 from zipfile import ZipFile
 
-from skos.m6.production import build_release_status, create_release_package, inspect_release_package
+from skos.m6.production import (
+    build_release_status,
+    create_release_package,
+    inspect_release_package,
+    run_release_readiness_gate,
+)
 
 
 def current_version() -> str:
@@ -95,3 +100,23 @@ def test_inspect_release_package_warns_for_hash_mismatch(tmp_path: Path) -> None
 
     assert inspection.ready is False
     assert "VERSION sha256 mismatch" in inspection.warnings
+
+
+def test_release_readiness_gate_creates_and_inspects_package(tmp_path: Path) -> None:
+    gate = run_release_readiness_gate(output_dir=tmp_path, label="gate-test")
+
+    assert gate.ready is True
+    assert gate.warnings == ()
+    assert Path(gate.package.archive_path).exists()
+    assert gate.inspection.ready is True
+    assert gate.release.version == current_version()
+
+
+def test_release_readiness_gate_serializes_to_dict(tmp_path: Path) -> None:
+    data = run_release_readiness_gate(output_dir=tmp_path).as_dict()
+
+    assert data["ready"] is True
+    assert data["release"]["version"] == current_version()
+    assert data["package"]["archive_path"].endswith("-release.zip")
+    assert data["inspection"]["ready"] is True
+    assert data["warnings"] == []
