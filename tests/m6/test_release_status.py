@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from zipfile import ZipFile
 
-from skos.m6.production import build_release_status, create_release_package
+from skos.m6.production import build_release_status, create_release_package, inspect_release_package
 
 
 def current_version() -> str:
@@ -59,3 +59,39 @@ def test_release_package_manifest_contains_file_hashes(tmp_path: Path) -> None:
     version_file = next(file for file in manifest["files"] if file["path"] == "VERSION")
     assert len(version_file["sha256"]) == 64
     assert version_file["size_bytes"] == len(Path("VERSION").read_bytes())
+
+
+def test_inspect_release_package_accepts_valid_archive(tmp_path: Path) -> None:
+    result = create_release_package(output_dir=tmp_path)
+
+    inspection = inspect_release_package(result.archive_path)
+
+    assert inspection.ready is True
+    assert inspection.warnings == ()
+    assert "release_manifest.json" in inspection.entries
+    assert inspection.manifest["version"] == current_version()
+
+
+def test_inspect_release_package_warns_for_missing_manifest(tmp_path: Path) -> None:
+    archive_path = tmp_path / "broken-release.zip"
+    with ZipFile(archive_path, "w") as archive:
+        archive.writestr("VERSION", current_version())
+
+    inspection = inspect_release_package(archive_path)
+
+    assert inspection.ready is False
+    assert "release_manifest.json missing from release package" in inspection.warnings
+
+
+def test_inspect_release_package_warns_for_hash_mismatch(tmp_path: Path) -> None:
+    result = create_release_package(output_dir=tmp_path)
+    archive_path = tmp_path / "tampered-release.zip"
+    with ZipFile(result.archive_path) as source, ZipFile(archive_path, "w") as target:
+        for name in source.namelist():
+            content = b"tampered" if name == "VERSION" else source.read(name)
+            target.writestr(name, content)
+
+    inspection = inspect_release_package(archive_path)
+
+    assert inspection.ready is False
+    assert "VERSION sha256 mismatch" in inspection.warnings

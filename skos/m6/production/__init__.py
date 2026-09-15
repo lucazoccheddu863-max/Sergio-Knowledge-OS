@@ -14,11 +14,13 @@ from skos.m6.production.overview import (
 )
 from skos.m6.production.release import (
     ReleasePackageFile,
+    ReleasePackageInspection,
     ReleasePackageManifest,
     ReleasePackageResult,
     ReleaseStatus,
     build_release_status,
     create_release_package,
+    inspect_release_package,
 )
 from skos.m6.production.backup import (
     BackupArchiveInspection,
@@ -44,6 +46,7 @@ __all__ = [
     "ReadinessCheck",
     "ReadinessReport",
     "ReleasePackageFile",
+    "ReleasePackageInspection",
     "ReleasePackageManifest",
     "ReleasePackageResult",
     "ReleaseStatus",
@@ -53,6 +56,7 @@ __all__ = [
     "build_release_status",
     "create_backup_archive",
     "create_release_package",
+    "inspect_release_package",
     "inspect_backup_archive",
     "run_production_readiness",
     "stage_backup_restore",

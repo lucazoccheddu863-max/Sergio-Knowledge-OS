@@ -8,6 +8,7 @@ const endpoints = {
   readiness: "/api/v1/admin/readiness",
   release: "/api/v1/admin/release",
   releasePackage: "/api/v1/admin/release/package",
+  releasePackageInspect: "/api/v1/admin/release/package/inspect",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -145,6 +146,27 @@ document.getElementById("release-package-create").addEventListener("click", () =
         ["Milestone", result.manifest.milestone],
         ["Files", result.manifest.total_files],
         ["Size", `${result.manifest.total_bytes} bytes`],
+      ]);
+    })
+    .catch((error) => {
+      text("release-package-summary", "Error");
+      setReleasePackageRows([["Error", error.message]]);
+    });
+});
+
+document.getElementById("release-package-inspect").addEventListener("click", () => {
+  const archivePath = document.getElementById("release-package-path").value.trim();
+  if (!archivePath) {
+    text("release-package-summary", "Missing release package path");
+    return;
+  }
+  getJson(`${endpoints.releasePackageInspect}?archive_path=${encodeURIComponent(archivePath)}`)
+    .then((inspection) => {
+      text("release-package-summary", inspection.ready ? "Package ready" : "Package warning");
+      setReleasePackageRows([
+        ["Archive", inspection.archive_path],
+        ["Entries", inspection.entries.length],
+        ["Warnings", inspection.warnings.length ? inspection.warnings.join("; ") : "None"],
       ]);
     })
     .catch((error) => {

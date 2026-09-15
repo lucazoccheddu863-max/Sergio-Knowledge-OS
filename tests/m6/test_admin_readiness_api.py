@@ -111,6 +111,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/readiness" in response.text
     assert "/api/v1/admin/release" in response.text
     assert "/api/v1/admin/release/package" in response.text
+    assert "/api/v1/admin/release/package/inspect" in response.text
     assert "/api/v1/admin/overview" in response.text
     assert "/api/v1/admin/smoke" in response.text
 
@@ -126,6 +127,7 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert "Backup Operations" in html_response.text
     assert "Operator Smoke Check" in html_response.text
     assert "Release Package" in html_response.text
+    assert "release-package-inspect" in html_response.text
     assert "backup-create" in html_response.text
     assert "/api/v1/admin/backup/manifest" in js_response.text
     assert "/api/v1/admin/backup/restore/stage" in js_response.text
@@ -143,6 +145,23 @@ def test_admin_release_package_endpoint_creates_zip(tmp_path: Path) -> None:
     assert archive_path.parent == tmp_path / "releases"
     assert data["manifest"]["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
     assert data["manifest"]["total_files"] > 0
+
+
+def test_admin_release_package_inspect_endpoint_validates_zip(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+    create_response = client.post("/api/v1/admin/release/package")
+    archive_path = create_response.json()["archive_path"]
+
+    response = client.get(
+        "/api/v1/admin/release/package/inspect",
+        params={"archive_path": archive_path},
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert data["warnings"] == []
+    assert "release_manifest.json" in data["entries"]
 
 
 def test_admin_backup_manifest_endpoint_returns_report(tmp_path: Path) -> None:

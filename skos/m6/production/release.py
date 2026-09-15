@@ -7,7 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 from typing import Any
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_DEFLATED, BadZipFile, ZipFile
 
 
 @dataclass(frozen=True)
@@ -84,6 +84,26 @@ class ReleasePackageResult:
         }
 
 
+@dataclass(frozen=True)
+class ReleasePackageInspection:
+    """Side-effect-free inspection of a release ZIP package."""
+
+    archive_path: str
+    ready: bool
+    manifest: dict[str, Any]
+    entries: tuple[str, ...]
+    warnings: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "archive_path": self.archive_path,
+            "ready": self.ready,
+            "manifest": self.manifest,
+            "entries": list(self.entries),
+            "warnings": list(self.warnings),
+        }
+
+
 def build_release_status(root_path: str | Path = ".") -> ReleaseStatus:
     """Build release metadata without changing the frozen public API status contract."""
 
@@ -129,6 +149,51 @@ def create_release_package(
             archive.write(path, path.relative_to(root).as_posix())
 
     return ReleasePackageResult(archive_path=str(archive_path), manifest=manifest)
+
+
+def inspect_release_package(archive_path: str | Path) -> ReleasePackageInspection:
+    """Inspect a release ZIP and verify manifest, entries and SHA256 hashes."""
+
+    path = Path(archive_path)
+    if not path.exists():
+        return ReleasePackageInspection(
+            archive_path=str(path),
+            ready=False,
+            manifest={},
+            entries=(),
+            warnings=("release package does not exist",),
+        )
+
+    manifest: dict[str, Any] = {}
+    warnings: list[str] = []
+    try:
+        with ZipFile(path) as archive:
+            entries = tuple(sorted(name for name in archive.namelist() if not name.endswith("/")))
+            if "release_manifest.json" not in entries:
+                warnings.append("release_manifest.json missing from release package")
+            else:
+                loaded = json.loads(archive.read("release_manifest.json").decode("utf-8"))
+                if isinstance(loaded, dict):
+                    manifest = loaded
+                else:
+                    warnings.append("release_manifest.json is not an object")
+            warnings.extend(_collect_release_package_warnings(archive, manifest, entries))
+    except (BadZipFile, OSError, UnicodeDecodeError, json.JSONDecodeError):
+        return ReleasePackageInspection(
+            archive_path=str(path),
+            ready=False,
+            manifest={},
+            entries=(),
+            warnings=("release package is not a readable SKOS ZIP",),
+        )
+
+    return ReleasePackageInspection(
+        archive_path=str(path),
+        ready=not warnings,
+        manifest=manifest,
+        entries=entries,
+        warnings=tuple(warnings),
+    )
 
 
 def _read_version(root: Path) -> str:
@@ -215,3 +280,54 @@ def _package_file(root: Path, path: Path) -> ReleasePackageFile:
 def _safe_label(label: str) -> str:
     safe = "".join(char.lower() if char.isalnum() else "-" for char in label).strip("-")
     return safe or "skos"
+
+
+def _collect_release_package_warnings(
+    archive: ZipFile,
+    manifest: dict[str, Any],
+    entries: tuple[str, ...],
+) -> list[str]:
+    warnings: list[str] = []
+    if not manifest:
+        return warnings
+
+    files = manifest.get("files")
+    if not isinstance(files, list):
+        return ["release manifest files list missing"]
+
+    entry_set = set(entries)
+    if "VERSION" not in entry_set:
+        warnings.append("VERSION missing from release package")
+    if "README.md" not in entry_set:
+        warnings.append("README.md missing from release package")
+    if any(entry.startswith("data/") for entry in entries):
+        warnings.append("local data entries must not be included")
+    if any("__pycache__" in entry or entry.endswith(".pyc") for entry in entries):
+        warnings.append("cache or bytecode entries must not be included")
+
+    manifest_paths = set()
+    for file_info in files:
+        if not isinstance(file_info, dict):
+            warnings.append("release manifest contains a non-object file entry")
+            continue
+        file_path = file_info.get("path")
+        expected_sha = file_info.get("sha256")
+        expected_size = file_info.get("size_bytes")
+        if not isinstance(file_path, str):
+            warnings.append("release manifest file entry missing path")
+            continue
+        manifest_paths.add(file_path)
+        if file_path not in entry_set:
+            warnings.append(f"{file_path} missing from release package")
+            continue
+        content = archive.read(file_path)
+        actual_sha = hashlib.sha256(content).hexdigest()
+        if actual_sha != expected_sha:
+            warnings.append(f"{file_path} sha256 mismatch")
+        if len(content) != expected_size:
+            warnings.append(f"{file_path} size mismatch")
+
+    extra_entries = entry_set - manifest_paths - {"release_manifest.json"}
+    if extra_entries:
+        warnings.append("release package contains entries not listed in manifest")
+    return warnings

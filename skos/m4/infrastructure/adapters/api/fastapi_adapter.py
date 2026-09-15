@@ -496,6 +496,32 @@ class FastAPIAdapter:
             return result.as_dict()
 
         @self._app.get(
+            "/api/v1/admin/release/package/inspect",
+            summary="Inspect clean release package",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_release_package_inspect_endpoint(
+            request: Request,
+            archive_path: str,
+        ) -> dict[str, Any]:
+            from skos.m6.production import inspect_release_package
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/release/package/inspect", 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "GET",
+                "/api/v1/admin/release/package/inspect",
+                "success",
+            )
+            return inspect_release_package(archive_path).as_dict()
+
+        @self._app.get(
             "/api/v1/admin/overview",
             summary="Admin operations overview",
             tags=["Admin"],

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha13] — 2026-09-15
+
+### Milestone 6.13 — Release Package Inspection
+
+#### Added
+- `skos.m6.production.inspect_release_package()` — side-effect-free release ZIP inspection
+- `ReleasePackageInspection` model for package verification results
+- `GET /api/v1/admin/release/package/inspect` — operator release package validation endpoint
+- Admin console action to inspect a generated release ZIP
+- Tests for valid packages, missing manifests, hash mismatches and API output
+- `setup_milestone6_13.py` + `verify_milestone6_13.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha13`
+- `pyproject.toml` bumped to `0.6.0-alpha13`
+- README, roadmap and test report updated for M6.13
+
+#### Design Decisions
+- Release inspection never extracts or modifies package contents
+- Inspection verifies manifest presence, required entries, per-file SHA256 and size
+- Packages containing local data, cache files or unlisted entries are flagged before distribution
+
+#### Test Results
+- M6 total: 40/40 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha12] — 2026-09-15
 
 ### Milestone 6.12 — Release Package Export
