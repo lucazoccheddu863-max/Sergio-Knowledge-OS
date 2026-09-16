@@ -78,6 +78,7 @@ class FastAPIAdapter:
         rate_limiter: RateLimitPort | None = None,
         audit: AuditPort | None = None,
         document_importer: Any | None = None,
+        ai_status: Any | None = None,
     ) -> None:
         self._orchestrator = orchestrator
         self._config = config
@@ -89,6 +90,7 @@ class FastAPIAdapter:
         self._rate_limiter = rate_limiter
         self._audit = audit
         self._document_importer = document_importer
+        self._ai_status = ai_status
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
             version="0.4.0",
@@ -412,6 +414,28 @@ class FastAPIAdapter:
     # ── Admin Routes (/api/v1/admin/*) ──────────────────────────────────────────
 
     def _setup_admin_routes(self) -> None:
+        @self._app.get(
+            "/api/v1/admin/ai/status",
+            summary="Configured AI runtime status",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_ai_status_endpoint(request: Request) -> dict[str, Any]:
+            ctx = self._resolve_security_context(request)
+            if self._get_security_config()["auth_required"]:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            if self._ai_status is None:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="AI runtime status is not configured",
+                )
+            result = self._ai_status.inspect()
+            path = "/api/v1/admin/ai/status"
+            self._count_request("GET", path, 200)
+            self._audit_event("admin", ctx.principal, "GET", path, "success")
+            return result.as_dict()
+
         @self._app.post(
             "/api/v1/admin/import/file",
             summary="Archive and index a local document",

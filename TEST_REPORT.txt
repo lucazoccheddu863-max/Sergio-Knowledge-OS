@@ -1,31 +1,31 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.5
+TEST REPORT — Sergio Knowledge OS M7.6
 ============================================================
 
 Date: 2026-09-17
-Version: 0.7.0-alpha5
-Milestone: M7.5 — Ask Sergio Console
+Version: 0.7.0-alpha6
+Milestone: M7.6 — Local AI Readiness
 
-M7 Tests: 16/16 PASS
+M7 Tests: 18/18 PASS
 M6 Regression: 67/67 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 353/353 PASS
+Total: 355/355 PASS
 
 Verification command:
-python3 verify_milestone7_5.py
+python3 verify_milestone7_6.py
 
 Result:
-M7.5 verification complete. All checks PASS.
+M7.6 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-353 passed, 2 warnings
+355 passed, 2 warnings
 
 Notes:
-- The console supports grounded answers and direct semantic searches.
-- RAG answers return their source documents in the same API response.
-- Source names, relevance and excerpts are rendered safely.
-- Desktop visual verification confirms visible controls and zero horizontal overflow.
+- Local-first configuration selects Ollama and explicit chat/embedding models.
+- The console reports provider connectivity and missing required models.
+- Configured model names are applied to structured AI requests.
+- Live Mac verification correctly reports Ollama offline when it is not installed.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

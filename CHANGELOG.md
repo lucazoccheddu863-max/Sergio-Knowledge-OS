@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.7.0-alpha6] — 2026-09-17
+
+### Milestone 7.6 (M7.6) — Local AI Readiness
+
+#### Added
+- AI runtime status service for provider health and model availability
+- `GET /api/v1/admin/ai/status` operational endpoint
+- AI Runtime panel showing provider, connection and required models
+- Required-model matching that accepts tagged and untagged Ollama model names
+- Tests for configured model propagation and readiness reporting
+- `setup_milestone7_6.py` + `verify_milestone7_6.py`
+
+#### Changed
+- Local-first configuration now uses Ollama instead of an unconfigured cloud provider
+- Structured chat and embedding requests apply configured model names
+- Default local models are `qwen2.5:1.5b` and `nomic-embed-text`
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha6`
+
+#### Test Results
+- M7 total: 18/18 PASS
+- M6 regression: 67/67 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha5] — 2026-09-17
 
 ### Milestone 7.5 (M7.5) — Ask Sergio Console

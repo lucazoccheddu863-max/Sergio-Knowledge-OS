@@ -33,6 +33,7 @@ from skos.m4.infrastructure.ports.vector_store_port import VectorStorePort
 from skos.m4.infrastructure.ports.event_bus_port import DomainEvent, EventBusPort, Subscription
 from skos.m5.runtime import PersistenceRuntime, build_persistence_runtime
 from skos.m7.runtime.document_import import DocumentImportService
+from skos.m7.runtime.ai_status import AIRuntimeStatusService
 
 
 @dataclass(frozen=True)
@@ -49,6 +50,7 @@ class ApplicationRuntime:
     embedding_pipeline: EmbeddingPipeline
     document_indexer: DocumentIndexerService
     document_import: DocumentImportService
+    ai_status: AIRuntimeStatusService
     semantic_search: SemanticSearchService
     rag_pipeline: RAGPipelineService
     knowledge_graph: KnowledgeGraphService
@@ -104,6 +106,8 @@ def build_runtime_config(root_path: str | Path = ".") -> HierarchicalConfigAdapt
             "backup_dir": str(root / "data" / "backups"),
             "release_dir": str(root / "data" / "releases"),
             "ai_primary_provider": "ollama",
+            "ai_local_model": "qwen2.5:1.5b",
+            "ai_embedding_model": "nomic-embed-text",
             "m4": {
                 "security": {"enabled": False, "auth_required": False},
                 "semantic_search": {
@@ -169,6 +173,7 @@ def build_application_runtime(
         config.get("archive_root", default=root / "data" / "archive"),
         document_indexer,
     )
+    ai_status = AIRuntimeStatusService(ai_service, config)
     semantic_search = SemanticSearchService(store, ai_service, config, event_bus)
     rag_pipeline = RAGPipelineService(semantic_search, ai_service, config, event_bus)
     knowledge_graph = KnowledgeGraphService(
@@ -191,6 +196,7 @@ def build_application_runtime(
         rate_limiter=persistence.rate_limiter,
         audit=persistence.audit,
         document_importer=document_import,
+        ai_status=ai_status,
     ).app
     return ApplicationRuntime(
         root_path=root,
@@ -203,6 +209,7 @@ def build_application_runtime(
         embedding_pipeline=embedding_pipeline,
         document_indexer=document_indexer,
         document_import=document_import,
+        ai_status=ai_status,
         semantic_search=semantic_search,
         rag_pipeline=rag_pipeline,
         knowledge_graph=knowledge_graph,

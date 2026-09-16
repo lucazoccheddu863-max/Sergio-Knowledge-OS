@@ -19,6 +19,9 @@ from skos.m6.production import build_release_status
 
 
 class FakeProvider(AIProviderPort):
+    last_chat_model = ""
+    last_embedding_model = ""
+
     def __init__(self, **kwargs) -> None:
         self.kwargs = kwargs
 
@@ -27,9 +30,11 @@ class FakeProvider(AIProviderPort):
         return "fake"
 
     def chat(self, request: ChatRequest) -> ChatResponse:
+        type(self).last_chat_model = request.model
         return ChatResponse(content=request.messages[-1].content, model="fake-chat")
 
     def embed(self, request: EmbeddingRequest) -> EmbeddingResult:
+        type(self).last_embedding_model = request.model
         return EmbeddingResult(
             vectors=[[float(len(text))] for text in request.texts],
             model="fake-embed",
@@ -93,3 +98,22 @@ def test_release_status_supports_m7_and_future_alpha_milestones(tmp_path) -> Non
     status = build_release_status(tmp_path)
 
     assert status.milestone == "M7.1"
+
+
+def test_structured_requests_use_configured_models() -> None:
+    registry = AIProviderRegistry()
+    registry.register("fake", FakeProvider)
+    config = HierarchicalConfigAdapter(
+        defaults={
+            "ai_primary_provider": "fake",
+            "ai_local_model": "configured-chat",
+            "ai_embedding_model": "configured-embed",
+        }
+    )
+    service = AIService(registry, config, EmptySecrets())
+
+    service.chat(ChatRequest(messages=[ChatMessage(role="user", content="hello")]))
+    service.embed(EmbeddingRequest(texts=["knowledge"]))
+
+    assert FakeProvider.last_chat_model == "configured-chat"
+    assert FakeProvider.last_embedding_model == "configured-embed"

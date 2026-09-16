@@ -21,6 +21,7 @@ const endpoints = {
   backupRestoreStage: "/api/v1/admin/backup/restore/stage",
   documentUpload: "/api/v1/admin/import/upload",
   query: "/api/v1/query",
+  aiStatus: "/api/v1/admin/ai/status",
 };
 
 const text = (id, value) => {
@@ -187,7 +188,7 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, overview, smoke, snapshot, launch, manual] = await Promise.all([
+  const [status, health, engines, security, overview, smoke, snapshot, launch, manual, aiStatus] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
@@ -197,6 +198,7 @@ async function refreshDashboard() {
     getJson(endpoints.snapshot),
     getJson(endpoints.localLaunch),
     getJson(endpoints.manual),
+    getJson(endpoints.aiStatus),
   ]);
   const { release, readiness, backup: backupManifest } = overview;
 
@@ -204,6 +206,18 @@ async function refreshDashboard() {
   text("system-version", release.version);
   text("system-milestone", release.milestone);
   text("security-status", security.enabled ? "Enabled" : "Open mode");
+
+  text("ai-summary", aiStatus.ready ? "Ready" : aiStatus.healthy ? "Models missing" : "Offline");
+  document.getElementById("ai-list").innerHTML = [
+    row("Provider", code(aiStatus.provider)),
+    row("Connection", badge(aiStatus.healthy)),
+    row("Chat model", code(aiStatus.chat_model || "Not configured")),
+    row("Search model", code(aiStatus.embedding_model || "Not configured")),
+    row(
+      "Missing",
+      aiStatus.missing_models.length ? escapeHtml(aiStatus.missing_models.join(", ")) : "None"
+    ),
+  ].join("");
 
   document.getElementById("health-list").innerHTML = Object.entries(health.engines)
     .map(([name, value]) => row(name, badge(value)))
@@ -252,6 +266,7 @@ document.getElementById("refresh").addEventListener("click", () => {
     document.getElementById("snapshot-list").innerHTML = "";
     document.getElementById("launch-list").innerHTML = "";
     document.getElementById("manual-list").innerHTML = "";
+    document.getElementById("ai-list").innerHTML = "";
   });
 });
 
@@ -465,6 +480,7 @@ refreshDashboard().catch((error) => {
   document.getElementById("snapshot-list").innerHTML = "";
   document.getElementById("launch-list").innerHTML = "";
   document.getElementById("manual-list").innerHTML = "";
+  document.getElementById("ai-list").innerHTML = "";
   refreshBackupManifest().catch(() => {
     text("backup-summary", "Error");
   });

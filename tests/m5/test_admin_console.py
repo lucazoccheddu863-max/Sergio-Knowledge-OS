@@ -30,6 +30,8 @@ def test_admin_console_serves_html() -> None:
     assert 'id="document-import"' in response.text
     assert 'id="query-text"' in response.text
     assert 'id="query-submit"' in response.text
+    assert 'id="ai-summary"' in response.text
+    assert 'id="ai-list"' in response.text
 
 
 def test_admin_console_serves_css_asset() -> None:
@@ -54,3 +56,4 @@ def test_admin_console_serves_js_asset() -> None:
     assert 'document.getElementById("document-import")' in response.text
     assert 'document.getElementById("query-submit")' in response.text
     assert "result.rag_result?.context?.documents" in response.text
+    assert "/api/v1/admin/ai/status" in response.text

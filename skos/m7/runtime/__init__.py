@@ -7,6 +7,7 @@ from skos.m7.runtime.application_factory import (
     build_runtime_config,
 )
 from skos.m7.runtime.document_import import DocumentImportResult, DocumentImportService
+from skos.m7.runtime.ai_status import AIRuntimeStatus, AIRuntimeStatusService
 
 __all__ = [
     "ApplicationRuntime",
@@ -15,4 +16,6 @@ __all__ = [
     "build_runtime_config",
     "DocumentImportResult",
     "DocumentImportService",
+    "AIRuntimeStatus",
+    "AIRuntimeStatusService",
 ]

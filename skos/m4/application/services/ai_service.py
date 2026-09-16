@@ -1,6 +1,7 @@
 """Application service for AI provider operations."""
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any
 
 from skos.m4.domain.ai_models import ChatMessage, ChatRequest, ChatResponse, EmbeddingRequest, EmbeddingResult
@@ -43,6 +44,13 @@ class AIService:
         if isinstance(provider_or_request, ChatRequest):
             provider_name = self._default_provider_name()
             request = provider_or_request
+            if not request.model:
+                configured_model = self._config.get(
+                    f"ai_providers.{provider_name}.chat_model",
+                    default=self._config.get("ai_local_model", default=""),
+                )
+                if configured_model:
+                    request = replace(request, model=str(configured_model))
         else:
             provider_name = provider_or_request
             request = ChatRequest(messages=messages or [], **kwargs)
@@ -58,6 +66,13 @@ class AIService:
         if isinstance(provider_or_request, EmbeddingRequest):
             provider_name = self._default_provider_name()
             request = provider_or_request
+            if not request.model:
+                configured_model = self._config.get(
+                    f"ai_providers.{provider_name}.embedding_model",
+                    default=self._config.get("ai_embedding_model", default=""),
+                )
+                if configured_model:
+                    request = replace(request, model=str(configured_model))
         else:
             provider_name = provider_or_request
             request = EmbeddingRequest(texts=texts or [], **kwargs)

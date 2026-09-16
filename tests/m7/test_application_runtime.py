@@ -165,3 +165,16 @@ def test_rag_query_api_returns_answer_with_sources(tmp_path: Path) -> None:
     payload = response.json()
     assert payload["rag_result"]["response"]["content"] == "runtime answer"
     assert payload["rag_result"]["context"]["documents"][0]["source_id"] == "source-1"
+
+
+def test_ai_status_api_reports_provider_and_missing_models(tmp_path: Path) -> None:
+    client = TestClient(build_test_runtime(tmp_path).app)
+
+    response = client.get("/api/v1/admin/ai/status")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["provider"] == "ollama"
+    assert payload["healthy"] is True
+    assert payload["ready"] is False
+    assert payload["missing_models"] == ["qwen2.5:1.5b", "nomic-embed-text"]
