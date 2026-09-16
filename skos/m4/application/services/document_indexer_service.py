@@ -5,6 +5,7 @@ Talks to EmbeddingPipeline and VectorStoreService, never to concrete adapters.
 """
 from __future__ import annotations
 
+from dataclasses import replace
 from typing import Any
 
 from skos.m4.domain.chunking import ParagraphChunking
@@ -43,12 +44,16 @@ class DocumentIndexerService:
         doc_id: str,
         source_id: str = "",
         metadata: dict[str, Any] | None = None,
-    ) -> None:
+    ) -> int:
         """Index a text document: chunk → embed → store."""
         try:
             chunker = ParagraphChunking()
             chunks = chunker.chunk(text, source_id=source_id or doc_id)
-            vectors = self._embed.embed_chunks(chunks)
+            if metadata:
+                chunk_metadata = {str(key): str(value) for key, value in metadata.items()}
+                chunks = [replace(chunk, metadata=chunk_metadata) for chunk in chunks]
+            embedding_result = self._embed.embed_chunks(chunks)
+            vectors = getattr(embedding_result, "vectors", embedding_result)
             self._store.index_chunks(self._collection, chunks, vectors)
 
             self._bus.publish(
@@ -61,6 +66,7 @@ class DocumentIndexerService:
                     "source_id": source_id,
                 },
             )
+            return len(chunks)
 
         except Exception as exc:
             self._bus.publish(

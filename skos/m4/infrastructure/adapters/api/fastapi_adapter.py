@@ -77,6 +77,7 @@ class FastAPIAdapter:
         authorization: AuthorizationPort | None = None,
         rate_limiter: RateLimitPort | None = None,
         audit: AuditPort | None = None,
+        document_importer: Any | None = None,
     ) -> None:
         self._orchestrator = orchestrator
         self._config = config
@@ -87,6 +88,7 @@ class FastAPIAdapter:
         self._authorization = authorization
         self._rate_limiter = rate_limiter
         self._audit = audit
+        self._document_importer = document_importer
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
             version="0.4.0",
@@ -410,6 +412,43 @@ class FastAPIAdapter:
     # ── Admin Routes (/api/v1/admin/*) ──────────────────────────────────────────
 
     def _setup_admin_routes(self) -> None:
+        @self._app.post(
+            "/api/v1/admin/import/file",
+            summary="Archive and index a local document",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_import_file_endpoint(
+            request: Request,
+            source_path: str,
+        ) -> dict[str, Any]:
+            ctx = self._resolve_security_context(request)
+            if self._get_security_config()["auth_required"]:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            if self._document_importer is None:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Document import is not configured",
+                )
+            try:
+                result = self._document_importer.import_file(source_path)
+            except FileNotFoundError as exc:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+            except ValueError as exc:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+            path = "/api/v1/admin/import/file"
+            self._count_request("POST", path, 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                path,
+                "success",
+                {"source_path": source_path, "sha256": result.sha256},
+            )
+            return result.as_dict()
+
         @self._app.get(
             "/api/v1/admin/status",
             response_model=StatusResponse,

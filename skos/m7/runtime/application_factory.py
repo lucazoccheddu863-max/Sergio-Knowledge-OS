@@ -9,10 +9,13 @@ from typing import Any, Callable
 from fastapi import FastAPI
 
 from skos.m4.application.services.ai_service import AIService
+from skos.m4.application.services.document_indexer_service import DocumentIndexerService
+from skos.m4.application.services.embedding_pipeline import EmbeddingPipeline
 from skos.m4.application.services.knowledge_graph_service import KnowledgeGraphService
 from skos.m4.application.services.query_orchestrator_service import QueryOrchestratorService
 from skos.m4.application.services.rag_pipeline_service import RAGPipelineService
 from skos.m4.application.services.semantic_search_service import SemanticSearchService
+from skos.m4.application.services.vector_store_service import VectorStoreService
 from skos.m4.infrastructure.adapters.ai_providers.claude_adapter import ClaudeAdapter
 from skos.m4.infrastructure.adapters.ai_providers.gemini_adapter import GeminiAdapter
 from skos.m4.infrastructure.adapters.ai_providers.kimi_adapter import KimiAdapter
@@ -29,6 +32,7 @@ from skos.m4.infrastructure.ports.secret_port import SecretManagerPort
 from skos.m4.infrastructure.ports.vector_store_port import VectorStorePort
 from skos.m4.infrastructure.ports.event_bus_port import DomainEvent, EventBusPort, Subscription
 from skos.m5.runtime import PersistenceRuntime, build_persistence_runtime
+from skos.m7.runtime.document_import import DocumentImportService
 
 
 @dataclass(frozen=True)
@@ -42,6 +46,9 @@ class ApplicationRuntime:
     providers: AIProviderRegistry
     ai_service: AIService
     vector_store: VectorStorePort
+    embedding_pipeline: EmbeddingPipeline
+    document_indexer: DocumentIndexerService
+    document_import: DocumentImportService
     semantic_search: SemanticSearchService
     rag_pipeline: RAGPipelineService
     knowledge_graph: KnowledgeGraphService
@@ -150,6 +157,18 @@ def build_application_runtime(
     )
     store_path = configured_store_path if configured_store_path.is_absolute() else root / configured_store_path
     store = vector_store or ChromaDBAdapter(persist_directory=str(store_path))
+    embedding_pipeline = EmbeddingPipeline(ai_service, event_bus, config)
+    vector_store_service = VectorStoreService(store)
+    document_indexer = DocumentIndexerService(
+        embedding_pipeline,
+        vector_store_service,
+        config,
+        event_bus,
+    )
+    document_import = DocumentImportService(
+        config.get("archive_root", default=root / "data" / "archive"),
+        document_indexer,
+    )
     semantic_search = SemanticSearchService(store, ai_service, config, event_bus)
     rag_pipeline = RAGPipelineService(semantic_search, ai_service, config, event_bus)
     knowledge_graph = KnowledgeGraphService(
@@ -170,6 +189,7 @@ def build_application_runtime(
         auth=persistence.auth,
         rate_limiter=persistence.rate_limiter,
         audit=persistence.audit,
+        document_importer=document_import,
     ).app
     return ApplicationRuntime(
         root_path=root,
@@ -179,6 +199,9 @@ def build_application_runtime(
         providers=provider_registry,
         ai_service=ai_service,
         vector_store=store,
+        embedding_pipeline=embedding_pipeline,
+        document_indexer=document_indexer,
+        document_import=document_import,
         semantic_search=semantic_search,
         rag_pipeline=rag_pipeline,
         knowledge_graph=knowledge_graph,

@@ -1,32 +1,32 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.2
+TEST REPORT — Sergio Knowledge OS M7.3
 ============================================================
 
-Date: 2026-09-16
-Version: 0.7.0-alpha2
-Milestone: M7.2 — Complete Application Runtime Assembly
+Date: 2026-09-17
+Version: 0.7.0-alpha3
+Milestone: M7.3 — Safe Document Import
 
-M7 Tests: 8/8 PASS
-M6 Regression: 66/66 PASS
+M7 Tests: 12/12 PASS
+M6 Regression: 67/67 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 344/344 PASS
+Total: 349/349 PASS
 
 Verification command:
-python3 verify_milestone7_2.py
+python3 verify_milestone7_3.py
 
 Result:
-M7.2 verification complete. All checks PASS.
+M7.3 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-344 passed, 2 warnings
+349 passed, 2 warnings
 
 Notes:
-- Complete runtime factory assembles AI, vector search, RAG, graph, persistence and API.
-- Semantic and graph queries run end-to-end through the assembled application.
-- Local server startup is lazy and import-time filesystem writes are avoided.
-- Event bridge makes concrete persistence buses compatible with application services.
-- Public `/api/v1/status` remains compatible with API Contract v1.
+- UTF-8 text, Markdown and JSON files are archived byte-for-byte and indexed.
+- SHA-256 identity prevents duplicate archives and duplicate vector indexing.
+- Provenance metadata links indexed chunks to source and archived paths.
+- Interrupted indexing remains retryable while preserving the original archive.
+- Import is available through the operator CLI and admin API.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

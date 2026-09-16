@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.7.0-alpha3] — 2026-09-17
+
+### Milestone 7.3 (M7.3) — Safe Document Import
+
+#### Added
+- Safe local import service for UTF-8 `.txt`, `.md` and `.json` documents
+- SHA-256 content identity and duplicate prevention across differently named files
+- Immutable original-byte archive with recoverable indexing marker
+- Provenance metadata propagated to every indexed vector chunk
+- `POST /api/v1/admin/import/file` for authenticated or local-open runtime use
+- `sergio-knowledge import <file>` operator command
+- End-to-end tests for archive integrity, semantic retrieval, duplicates and API errors
+- `setup_milestone7_3.py` + `verify_milestone7_3.py`
+
+#### Changed
+- Embedding pipelines now default to the configured primary AI provider
+- Document indexing returns its indexed chunk count and preserves supplied metadata
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha3`
+
+#### Design Decisions
+- Source documents are read-only; the archive receives a byte-identical copy
+- A failed indexing operation can be retried without losing the archived original
+- Content hashes, rather than filenames, define duplicates
+
+#### Test Results
+- M7 total: 12/12 PASS
+- M6 regression: 67/67 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha2] — 2026-09-16
 
 ### Milestone 7.2 (M7.2) — Complete Application Runtime Assembly

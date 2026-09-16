@@ -27,6 +27,8 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--output", type=Path, help="Report destination path")
     report.add_argument("--overwrite", action="store_true", help="Replace an existing report")
     commands.add_parser("start", help="Prepare and start the local admin console")
+    import_command = commands.add_parser("import", help="Archive and index a local document")
+    import_command.add_argument("source_path", type=Path, help="UTF-8 .txt, .md or .json document")
     return parser
 
 
@@ -56,6 +58,20 @@ def run_command(
 
     root = Path(args.root).resolve()
     config = build_operator_config(root)
+
+    if args.command == "import":
+        from skos.m7.runtime import build_application_runtime
+
+        try:
+            result = build_application_runtime(root).document_import.import_file(args.source_path)
+        except (FileNotFoundError, ValueError) as exc:
+            print(f"Import failed: {exc}", file=stderr)
+            return 2
+        print(f"Document {result.status}: {result.source_path}", file=stdout)
+        print(f"Archive: {result.archived_path}", file=stdout)
+        print(f"SHA-256: {result.sha256}", file=stdout)
+        print(f"Indexed chunks: {result.chunk_count}", file=stdout)
+        return 0
 
     if args.command == "prepare":
         result = _prepare(root, config)

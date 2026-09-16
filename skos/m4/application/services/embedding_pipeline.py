@@ -39,11 +39,12 @@ class EmbeddingPipeline:
     def embed_texts(
         self,
         texts: list[str],
-        provider_name: str = "ollama",
+        provider_name: str | None = None,
         source_id: str = "",
     ) -> EmbeddingResult:
         """Generate embeddings for a list of texts with automatic chunking and batching."""
         batch_size = self._config.get("m4.embedding.batch_size", default=100)
+        provider = provider_name or self._config.get("ai_primary_provider", default="ollama")
 
         # Step 1: Chunk all texts
         all_chunks: list[TextChunk] = []
@@ -62,7 +63,7 @@ class EmbeddingPipeline:
         for i in range(0, len(all_chunks), batch_size):
             batch = all_chunks[i : i + batch_size]
             batch_texts = [c.text for c in batch]
-            result = self._ai_service.embed(provider_name, batch_texts)
+            result = self._ai_service.embed(provider, batch_texts)
             all_vectors.extend(result.vectors)
             model_name = result.model
             dimensions = result.dimensions
@@ -75,10 +76,11 @@ class EmbeddingPipeline:
     def embed_chunks(
         self,
         chunks: list[TextChunk],
-        provider_name: str = "ollama",
+        provider_name: str | None = None,
     ) -> EmbeddingResult:
         """Generate embeddings for pre-chunked texts."""
         batch_size = self._config.get("m4.embedding.batch_size", default=100)
+        provider = provider_name or self._config.get("ai_primary_provider", default="ollama")
 
         if not chunks:
             return EmbeddingResult(vectors=[], model="", dimensions=0)
@@ -90,7 +92,7 @@ class EmbeddingPipeline:
         for i in range(0, len(chunks), batch_size):
             batch = chunks[i : i + batch_size]
             batch_texts = [c.text for c in batch]
-            result = self._ai_service.embed(provider_name, batch_texts)
+            result = self._ai_service.embed(provider, batch_texts)
             all_vectors.extend(result.vectors)
             model_name = result.model
             dimensions = result.dimensions

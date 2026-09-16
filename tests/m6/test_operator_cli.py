@@ -3,8 +3,10 @@ from __future__ import annotations
 
 from io import StringIO
 from pathlib import Path
+from types import SimpleNamespace
 
 from skos.m6.production import operator_cli
+import skos.m7.runtime
 
 
 def parse(*args: str):
@@ -90,3 +92,28 @@ def test_start_command_runs_server_after_preflight(tmp_path: Path, monkeypatch) 
     assert result == 0
     assert calls == [("127.0.0.1", 8765)]
     assert "http://127.0.0.1:8765/admin" in output.getvalue()
+
+
+def test_import_command_reports_archived_document(tmp_path: Path, monkeypatch) -> None:
+    source = tmp_path / "notes.txt"
+    source.write_text("local knowledge", encoding="utf-8")
+    result = SimpleNamespace(
+        status="imported",
+        source_path=str(source),
+        archived_path=str(tmp_path / "archive" / "notes.txt"),
+        sha256="a" * 64,
+        chunk_count=1,
+    )
+    importer = SimpleNamespace(import_file=lambda path: result)
+    runtime = SimpleNamespace(document_import=importer)
+    monkeypatch.setattr(skos.m7.runtime, "build_application_runtime", lambda root: runtime)
+    output = StringIO()
+
+    exit_code = operator_cli.run_command(
+        parse("--root", str(tmp_path), "import", str(source)),
+        stdout=output,
+    )
+
+    assert exit_code == 0
+    assert "Document imported" in output.getvalue()
+    assert "Indexed chunks: 1" in output.getvalue()
