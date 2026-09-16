@@ -183,10 +183,11 @@ def build_application_runtime(
         config,
         event_bus,
     )
+    auth_required = bool(config.get("m4.security.auth_required", default=False))
     app = FastAPIAdapter(
         orchestrator=orchestrator,
         config=config,
-        auth=persistence.auth,
+        auth=persistence.auth if auth_required else None,
         rate_limiter=persistence.rate_limiter,
         audit=persistence.audit,
         document_importer=document_import,

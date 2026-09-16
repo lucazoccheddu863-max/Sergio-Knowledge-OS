@@ -71,3 +71,41 @@ def test_import_api_exposes_structured_result_and_errors(tmp_path: Path) -> None
     assert response.json()["chunk_count"] == 1
     assert missing.status_code == 404
     assert missing.json()["error_code"] == "HTTP_404"
+
+
+def test_upload_api_archives_indexes_and_deduplicates_bytes(tmp_path: Path) -> None:
+    runtime = build_test_runtime(tmp_path)
+    client = TestClient(runtime.app)
+    content = b"Knowledge uploaded from the admin console"
+
+    imported = client.post(
+        "/api/v1/admin/import/upload",
+        params={"filename": "console-note.txt"},
+        content=content,
+        headers={"content-type": "application/octet-stream"},
+    )
+    duplicate = client.post(
+        "/api/v1/admin/import/upload",
+        params={"filename": "renamed-note.txt"},
+        content=content,
+        headers={"content-type": "application/octet-stream"},
+    )
+
+    assert imported.status_code == 200
+    assert imported.json()["status"] == "imported"
+    assert Path(imported.json()["archived_path"]).read_bytes() == content
+    assert duplicate.status_code == 200
+    assert duplicate.json()["status"] == "duplicate"
+
+
+def test_upload_api_rejects_unsupported_extension(tmp_path: Path) -> None:
+    client = TestClient(build_test_runtime(tmp_path).app)
+
+    response = client.post(
+        "/api/v1/admin/import/upload",
+        params={"filename": "manual.pdf"},
+        content=b"unsupported",
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error_code"] == "HTTP_400"

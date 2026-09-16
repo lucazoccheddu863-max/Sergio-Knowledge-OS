@@ -6,13 +6,13 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
-import shutil
 import tempfile
 
 from skos.m4.application.services.document_indexer_service import DocumentIndexerService
 
 
 SUPPORTED_EXTENSIONS = frozenset({".json", ".md", ".txt"})
+MAX_DOCUMENT_BYTES = 10 * 1024 * 1024
 
 
 @dataclass(frozen=True)
@@ -40,12 +40,23 @@ class DocumentImportService:
         source = Path(source_path).expanduser().resolve()
         if not source.is_file():
             raise FileNotFoundError(f"Document not found: {source}")
-        suffix = source.suffix.lower()
+        return self._import_raw(source.read_bytes(), source.name, str(source))
+
+    def import_upload(self, filename: str, raw: bytes) -> DocumentImportResult:
+        """Archive and index bytes uploaded by the local admin console."""
+        safe_name = Path(filename).name
+        if not safe_name or safe_name in {".", ".."}:
+            raise ValueError("Document filename is required")
+        return self._import_raw(raw, safe_name, f"upload:{safe_name}")
+
+    def _import_raw(self, raw: bytes, source_name: str, source_path: str) -> DocumentImportResult:
+        if len(raw) > MAX_DOCUMENT_BYTES:
+            raise ValueError("Document exceeds the 10 MB import limit")
+        suffix = Path(source_name).suffix.lower()
         if suffix not in SUPPORTED_EXTENSIONS:
             supported = ", ".join(sorted(SUPPORTED_EXTENSIONS))
             raise ValueError(f"Unsupported document type {suffix or '(none)'}; supported: {supported}")
 
-        raw = source.read_bytes()
         digest = sha256(raw).hexdigest()
         text = self._extract_text(raw, suffix)
         if not text.strip():
@@ -59,7 +70,7 @@ class DocumentImportService:
         if archived_exists and sha256(archived.read_bytes()).hexdigest() != digest:
             raise RuntimeError(f"Archived document checksum mismatch: {archived}")
         if not archived_exists:
-            self._archive_original(source, archived)
+            self._archive_original(raw, archived)
 
         doc_id = f"document:{digest}"
         chunk_count = 0
@@ -71,8 +82,8 @@ class DocumentImportService:
                 metadata={
                     "doc_id": doc_id,
                     "sha256": digest,
-                    "source_name": source.name,
-                    "source_path": str(source),
+                    "source_name": source_name,
+                    "source_path": source_path,
                     "archived_path": str(archived),
                     "media_type": suffix.lstrip("."),
                 },
@@ -81,7 +92,7 @@ class DocumentImportService:
 
         return DocumentImportResult(
             status="duplicate" if duplicate else "imported",
-            source_path=str(source),
+            source_path=source_path,
             archived_path=str(archived),
             sha256=digest,
             doc_id=doc_id,
@@ -104,13 +115,13 @@ class DocumentImportService:
         return decoded
 
     @staticmethod
-    def _archive_original(source: Path, destination: Path) -> None:
+    def _archive_original(raw: bytes, destination: Path) -> None:
         destination.parent.mkdir(parents=True, exist_ok=True)
         fd, temporary_name = tempfile.mkstemp(prefix=".import-", dir=destination.parent)
         os.close(fd)
         temporary = Path(temporary_name)
         try:
-            shutil.copy2(source, temporary)
+            temporary.write_bytes(raw)
             os.replace(temporary, destination)
         finally:
             temporary.unlink(missing_ok=True)

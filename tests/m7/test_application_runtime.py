@@ -142,3 +142,12 @@ def test_query_api_uses_assembled_graph_runtime(tmp_path: Path) -> None:
 
     assert response.status_code == 200
     assert response.json()["engines_used"] == ["graph"]
+
+
+def test_local_admin_routes_are_open_when_auth_is_disabled(tmp_path: Path) -> None:
+    client = TestClient(build_test_runtime(tmp_path).app)
+
+    response = client.get("/api/v1/admin/snapshot")
+
+    assert response.status_code == 200
+    assert response.json()["release"]["version"]

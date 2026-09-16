@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.7.0-alpha4] — 2026-09-17
+
+### Milestone 7.4 (M7.4) — Admin Document Import
+
+#### Added
+- Browser file picker and import action in the local admin console
+- Raw-byte upload endpoint without multipart dependencies
+- Upload size limit of 10 MB for text knowledge documents
+- Console result summary with status, chunk count and SHA-256 identity
+- API tests for successful upload, duplicate content and unsupported formats
+- Visual runtime verification of the desktop console layout
+- `setup_milestone7_4.py` + `verify_milestone7_4.py`
+
+#### Changed
+- File and browser uploads share one archival and indexing implementation
+- Local-open runtime no longer wires an authentication adapter that blocks admin panels
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha4`
+
+#### Test Results
+- M7 total: 15/15 PASS
+- M6 regression: 67/67 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha3] — 2026-09-17
 
 ### Milestone 7.3 (M7.3) — Safe Document Import

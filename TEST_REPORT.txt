@@ -1,32 +1,31 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.3
+TEST REPORT — Sergio Knowledge OS M7.4
 ============================================================
 
 Date: 2026-09-17
-Version: 0.7.0-alpha3
-Milestone: M7.3 — Safe Document Import
+Version: 0.7.0-alpha4
+Milestone: M7.4 — Admin Document Import
 
-M7 Tests: 12/12 PASS
+M7 Tests: 15/15 PASS
 M6 Regression: 67/67 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 349/349 PASS
+Total: 352/352 PASS
 
 Verification command:
-python3 verify_milestone7_3.py
+python3 verify_milestone7_4.py
 
 Result:
-M7.3 verification complete. All checks PASS.
+M7.4 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-349 passed, 2 warnings
+352 passed, 2 warnings
 
 Notes:
-- UTF-8 text, Markdown and JSON files are archived byte-for-byte and indexed.
-- SHA-256 identity prevents duplicate archives and duplicate vector indexing.
-- Provenance metadata links indexed chunks to source and archived paths.
-- Interrupted indexing remains retryable while preserving the original archive.
-- Import is available through the operator CLI and admin API.
+- The admin console imports text, Markdown and JSON through a native file picker.
+- Uploaded bytes use the same archival, provenance and duplicate controls as local files.
+- The local-open runtime loads every admin panel without authentication errors.
+- Desktop visual verification found no horizontal overflow or overlapping controls.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

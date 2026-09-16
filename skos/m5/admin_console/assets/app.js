@@ -19,6 +19,7 @@ const endpoints = {
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
   backupRestoreStage: "/api/v1/admin/backup/restore/stage",
+  documentUpload: "/api/v1/admin/import/upload",
 };
 
 const text = (id, value) => {
@@ -77,6 +78,12 @@ const setBackupRows = (rows) => {
 
 const setReleasePackageRows = (rows) => {
   document.getElementById("release-package-list").innerHTML = rows
+    .map(([name, value]) => row(name, escapeHtml(value)))
+    .join("");
+};
+
+const setImportRows = (rows) => {
+  document.getElementById("import-list").innerHTML = rows
     .map(([name, value]) => row(name, escapeHtml(value)))
     .join("");
 };
@@ -213,6 +220,39 @@ document.getElementById("refresh").addEventListener("click", () => {
     document.getElementById("launch-list").innerHTML = "";
     document.getElementById("manual-list").innerHTML = "";
   });
+});
+
+document.getElementById("document-import").addEventListener("click", async () => {
+  const input = document.getElementById("document-file");
+  const file = input.files[0];
+  if (!file) {
+    text("import-summary", "Select a document");
+    return;
+  }
+  text("import-summary", "Importing");
+  try {
+    const params = new URLSearchParams({ filename: file.name });
+    const response = await fetch(`${endpoints.documentUpload}?${params.toString()}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/octet-stream" },
+      body: file,
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || `Import returned ${response.status}`);
+    }
+    text("import-summary", result.status === "duplicate" ? "Already imported" : "Imported");
+    setImportRows([
+      ["Document", file.name],
+      ["Status", result.status],
+      ["Indexed chunks", result.chunk_count],
+      ["SHA-256", result.sha256],
+    ]);
+    input.value = "";
+  } catch (error) {
+    text("import-summary", "Error");
+    setImportRows([["Error", error.message]]);
+  }
 });
 
 document.getElementById("backup-create").addEventListener("click", () => {

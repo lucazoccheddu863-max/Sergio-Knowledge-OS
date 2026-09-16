@@ -449,6 +449,41 @@ class FastAPIAdapter:
             )
             return result.as_dict()
 
+        @self._app.post(
+            "/api/v1/admin/import/upload",
+            summary="Upload, archive and index a document",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_import_upload_endpoint(
+            request: Request,
+            filename: str,
+        ) -> dict[str, Any]:
+            ctx = self._resolve_security_context(request)
+            if self._get_security_config()["auth_required"]:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            if self._document_importer is None:
+                raise HTTPException(
+                    status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                    detail="Document import is not configured",
+                )
+            try:
+                result = self._document_importer.import_upload(filename, await request.body())
+            except ValueError as exc:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
+            path = "/api/v1/admin/import/upload"
+            self._count_request("POST", path, 200)
+            self._audit_event(
+                "admin",
+                ctx.principal,
+                "POST",
+                path,
+                "success",
+                {"filename": filename, "sha256": result.sha256},
+            )
+            return result.as_dict()
+
         @self._app.get(
             "/api/v1/admin/status",
             response_model=StatusResponse,

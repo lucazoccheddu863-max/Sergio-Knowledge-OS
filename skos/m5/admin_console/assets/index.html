@@ -37,6 +37,21 @@
 
       <section class="panel">
         <div class="panel-heading">
+          <h2>Document Import</h2>
+          <span id="import-summary">Ready</span>
+        </div>
+        <div class="document-import-actions">
+          <label>
+            Document
+            <input id="document-file" type="file" accept=".txt,.md,.json,text/plain,text/markdown,application/json">
+          </label>
+          <button id="document-import" type="button">Import</button>
+        </div>
+        <div id="import-list" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
           <h2>Subsystem Health</h2>
           <span id="updated-at">Not updated yet</span>
         </div>

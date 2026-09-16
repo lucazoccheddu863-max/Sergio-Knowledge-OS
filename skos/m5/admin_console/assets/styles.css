@@ -278,6 +278,26 @@ input {
   margin-bottom: 14px;
 }
 
+.document-import-actions {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 14px;
+}
+
+.document-import-actions label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input[type="file"] {
+  padding: 7px 10px;
+}
+
 .backup-actions label {
   display: grid;
   gap: 6px;
@@ -298,6 +318,10 @@ input {
   }
 
   .backup-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .document-import-actions {
     grid-template-columns: 1fr;
   }
 
