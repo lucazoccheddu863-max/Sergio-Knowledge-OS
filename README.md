@@ -1,7 +1,7 @@
 # Sergio Knowledge OS
 
-**Version:** 0.6.0-alpha19
-**Status:** M6.19 Operator Snapshot verified
+**Version:** 0.6.0-alpha20
+**Status:** M6.20 Operator Snapshot Report Export verified
 **License:** MIT
 
 Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered information retrieval, management, and exploration.
@@ -13,7 +13,7 @@ Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered
 pip install -e ".[dev]"
 
 # Run current milestone and regression tests
-python verify_milestone6_19.py
+python verify_milestone6_20.py
 
 # Start API
 python3 -m uvicorn skos.m6.production.local_server:app --host 127.0.0.1 --port 8000
@@ -40,6 +40,7 @@ Key endpoints:
 - `GET /api/v1/admin/overview` — Operator overview for release, readiness and backup
 - `GET /api/v1/admin/smoke` — Operator smoke check for core admin readiness
 - `GET /api/v1/admin/snapshot` — Single operator snapshot with verdict and next actions
+- `GET /api/v1/admin/snapshot/report` — Downloadable plain-text operator snapshot report
 - `GET /api/v1/admin/local/launch` — Local launch command and preflight checks
 - `POST /api/v1/admin/local/bootstrap` — Prepare local runtime directories safely
 - `GET /api/v1/admin/manual` — Structured operator manual for local use
@@ -112,15 +113,16 @@ M4.10 introduces production observability:
 | **M6.17 — Local Workspace Bootstrap** | **0.6.0-alpha17** | **Verified** |
 | **M6.18 — Admin Console UX Polish** | **0.6.0-alpha18** | **Verified** |
 | **M6.19 — Operator Snapshot** | **0.6.0-alpha19** | **Verified** |
+| **M6.20 — Snapshot Report Export** | **0.6.0-alpha20** | **Verified** |
 
 ## Development
 
 ```bash
 # Setup
-python setup_milestone6_19.py
+python setup_milestone6_20.py
 
 # Verify
-python verify_milestone6_19.py
+python verify_milestone6_20.py
 
 # Full test suite
 pytest -q

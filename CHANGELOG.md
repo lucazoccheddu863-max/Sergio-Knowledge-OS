@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha20] — 2026-09-16
+
+### Milestone 6.20 — Operator Snapshot Report Export
+
+#### Added
+- `skos.m6.production.render_operator_snapshot_report()` — portable plain-text report renderer
+- `GET /api/v1/admin/snapshot/report` — authenticated report download endpoint
+- Download report action in the Operator Snapshot console panel
+- Tests covering report contents, response headers and console wiring
+- `setup_milestone6_20.py` + `verify_milestone6_20.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha20`
+- `pyproject.toml` bumped to `0.6.0-alpha20`
+- README, roadmap and test report updated for M6.20
+
+#### Design Decisions
+- Export is generated in memory and does not write into user data directories
+- Plain text keeps the report portable, readable and easy to archive
+- Report reuses the same snapshot as the console, avoiding conflicting verdicts
+
+#### Test Results
+- M6 total: 62/62 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha19] — 2026-09-16
 
 ### Milestone 6.19 — Operator Snapshot

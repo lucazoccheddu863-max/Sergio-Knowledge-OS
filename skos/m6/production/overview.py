@@ -170,6 +170,31 @@ def build_operator_snapshot(
     )
 
 
+def render_operator_snapshot_report(snapshot: OperatorSnapshot) -> str:
+    """Render an operator snapshot as a portable plain-text report."""
+
+    lines = [
+        "Sergio Knowledge OS - Operator Snapshot",
+        "=" * 39,
+        f"Generated: {snapshot.generated_at}",
+        f"Verdict: {snapshot.verdict.upper()}",
+        f"Summary: {snapshot.summary}",
+        f"Version: {snapshot.release.version}",
+        f"Milestone: {snapshot.release.milestone}",
+        f"Launch: {snapshot.launch.command}",
+        "",
+        "Checks",
+        "------",
+    ]
+    lines.extend(
+        f"[{check.status.upper()}] {check.name}: {check.message}"
+        for check in snapshot.smoke.checks
+    )
+    lines.extend(["", "Next actions", "------------"])
+    lines.extend(f"- {action}" for action in snapshot.next_actions)
+    return "\n".join(lines) + "\n"
+
+
 def _build_next_actions(
     readiness: ReadinessReport,
     backup: BackupManifest,

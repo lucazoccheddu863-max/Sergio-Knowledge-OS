@@ -49,6 +49,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.17 ✅ — Local workspace bootstrap
 - M6.18 ✅ — Admin console UX polish
 - M6.19 ✅ — Operator snapshot
+- M6.20 ✅ — Operator snapshot report export
 
 ## Definition of Done
 1. Design approved

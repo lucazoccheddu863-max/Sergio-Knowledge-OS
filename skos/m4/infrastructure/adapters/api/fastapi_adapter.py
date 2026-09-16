@@ -605,6 +605,34 @@ class FastAPIAdapter:
             return build_operator_snapshot(self._config, host=host, port=port).as_dict()
 
         @self._app.get(
+            "/api/v1/admin/snapshot/report",
+            summary="Download operator snapshot report",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_snapshot_report_endpoint(
+            request: Request,
+            host: str = "127.0.0.1",
+            port: int = 8000,
+        ) -> PlainTextResponse:
+            from skos.m6.production import build_operator_snapshot, render_operator_snapshot_report
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            snapshot = build_operator_snapshot(self._config, host=host, port=port)
+            content = render_operator_snapshot_report(snapshot)
+            path = "/api/v1/admin/snapshot/report"
+            self._count_request("GET", path, 200)
+            self._audit_event("admin", ctx.principal, "GET", path, "success")
+            filename = f"sergio-operator-snapshot-{snapshot.release.version}.txt"
+            return PlainTextResponse(
+                content,
+                headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+            )
+
+        @self._app.get(
             "/api/v1/admin/local/launch",
             summary="Local launch preflight",
             tags=["Admin"],

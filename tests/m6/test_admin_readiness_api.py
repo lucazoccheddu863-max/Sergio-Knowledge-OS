@@ -117,6 +117,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/local/bootstrap" in response.text
     assert "/api/v1/admin/manual" in response.text
     assert "/api/v1/admin/snapshot" in response.text
+    assert "/api/v1/admin/snapshot/report" in response.text
     assert "/api/v1/admin/overview" in response.text
     assert "/api/v1/admin/smoke" in response.text
 
@@ -132,6 +133,7 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert "Backup Operations" in html_response.text
     assert "Operator Smoke Check" in html_response.text
     assert "Operator Snapshot" in html_response.text
+    assert "snapshot-download" in html_response.text
     assert "Release Package" in html_response.text
     assert "Local Launch" in html_response.text
     assert "Operator Manual" in html_response.text
@@ -176,6 +178,20 @@ def test_admin_snapshot_endpoint_returns_operator_snapshot(tmp_path: Path) -> No
     assert data["smoke"]["ready"] is True
     assert "--port 8765" in data["launch"]["command"]
     assert data["next_actions"]
+
+
+def test_admin_snapshot_report_endpoint_downloads_text_report(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/snapshot/report", params={"port": 8765})
+
+    assert response.status_code == 200
+    assert response.headers["content-type"].startswith("text/plain")
+    assert "attachment; filename=" in response.headers["content-disposition"]
+    assert "Sergio Knowledge OS - Operator Snapshot" in response.text
+    assert "Verdict: READY" in response.text
+    assert "--port 8765" in response.text
 
 
 def test_admin_release_package_endpoint_creates_zip(tmp_path: Path) -> None:

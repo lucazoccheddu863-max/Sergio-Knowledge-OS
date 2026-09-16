@@ -11,6 +11,7 @@ const endpoints = {
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
   releaseGate: "/api/v1/admin/release/gate",
   snapshot: "/api/v1/admin/snapshot",
+  snapshotReport: "/api/v1/admin/snapshot/report",
   localLaunch: "/api/v1/admin/local/launch",
   localBootstrap: "/api/v1/admin/local/bootstrap",
   manual: "/api/v1/admin/manual",
@@ -131,6 +132,8 @@ const setSnapshotRows = (snapshot) => {
     ),
   ].join("");
 };
+
+document.getElementById("snapshot-download").href = endpoints.snapshotReport;
 
 async function refreshBackupManifest() {
   const manifest = await getJson(endpoints.backupManifest);

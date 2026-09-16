@@ -6,7 +6,12 @@ from pathlib import Path
 from skos.m4.infrastructure.adapters.config.hierarchical_config_adapter import (
     HierarchicalConfigAdapter,
 )
-from skos.m6.production import build_admin_overview, build_admin_smoke_report, build_operator_snapshot
+from skos.m6.production import (
+    build_admin_overview,
+    build_admin_smoke_report,
+    build_operator_snapshot,
+    render_operator_snapshot_report,
+)
 
 
 def config_for(tmp_path: Path) -> HierarchicalConfigAdapter:
@@ -109,3 +114,15 @@ def test_operator_snapshot_reports_next_actions_for_attention(tmp_path: Path) ->
     assert "Operator attention required" in data["summary"]
     assert any("Review readiness checks" in action for action in data["next_actions"])
     assert any("Prepare backup inputs" in action for action in data["next_actions"])
+
+
+def test_operator_snapshot_report_is_readable_and_complete(tmp_path: Path) -> None:
+    snapshot = build_operator_snapshot(config_for(tmp_path), root_path=tmp_path, port=8765)
+
+    report = render_operator_snapshot_report(snapshot)
+
+    assert report.startswith("Sergio Knowledge OS - Operator Snapshot\n")
+    assert "Verdict: ATTENTION" in report
+    assert "Launch:" in report and "--port 8765" in report
+    assert "[PASS] admin_console:" in report
+    assert "Next actions\n------------\n- " in report
