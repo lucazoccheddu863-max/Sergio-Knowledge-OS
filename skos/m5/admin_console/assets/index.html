@@ -37,6 +37,28 @@
 
       <section class="panel">
         <div class="panel-heading">
+          <h2>Ask Sergio</h2>
+          <span id="query-summary">Ready</span>
+        </div>
+        <div class="query-controls">
+          <label class="query-field">
+            Question
+            <textarea id="query-text" rows="3" placeholder="Ask about your imported knowledge"></textarea>
+          </label>
+          <div class="query-toolbar">
+            <div class="segmented-control" aria-label="Query mode">
+              <label><input type="radio" name="query-mode" value="rag" checked><span>Answer</span></label>
+              <label><input type="radio" name="query-mode" value="semantic"><span>Search</span></label>
+            </div>
+            <button id="query-submit" type="button">Ask</button>
+          </div>
+        </div>
+        <div id="query-answer" class="query-answer" hidden></div>
+        <div id="query-sources" class="source-list"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
           <h2>Document Import</h2>
           <span id="import-summary">Ready</span>
         </div>

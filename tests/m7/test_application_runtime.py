@@ -151,3 +151,17 @@ def test_local_admin_routes_are_open_when_auth_is_disabled(tmp_path: Path) -> No
 
     assert response.status_code == 200
     assert response.json()["release"]["version"]
+
+
+def test_rag_query_api_returns_answer_with_sources(tmp_path: Path) -> None:
+    client = TestClient(build_test_runtime(tmp_path).app)
+
+    response = client.post(
+        "/api/v1/query",
+        json={"text": "What is in the knowledge base?", "mode": "rag", "top_k": 5},
+    )
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["rag_result"]["response"]["content"] == "runtime answer"
+    assert payload["rag_result"]["context"]["documents"][0]["source_id"] == "source-1"

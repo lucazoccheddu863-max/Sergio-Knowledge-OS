@@ -28,6 +28,8 @@ def test_admin_console_serves_html() -> None:
     assert "/admin/assets/app.js" in response.text
     assert 'id="document-file"' in response.text
     assert 'id="document-import"' in response.text
+    assert 'id="query-text"' in response.text
+    assert 'id="query-submit"' in response.text
 
 
 def test_admin_console_serves_css_asset() -> None:
@@ -50,3 +52,5 @@ def test_admin_console_serves_js_asset() -> None:
     assert "/api/v1/health" in response.text
     assert "/api/v1/admin/import/upload" in response.text
     assert 'document.getElementById("document-import")' in response.text
+    assert 'document.getElementById("query-submit")' in response.text
+    assert "result.rag_result?.context?.documents" in response.text

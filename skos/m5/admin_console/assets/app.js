@@ -20,6 +20,7 @@ const endpoints = {
   backupInspect: "/api/v1/admin/backup/inspect",
   backupRestoreStage: "/api/v1/admin/backup/restore/stage",
   documentUpload: "/api/v1/admin/import/upload",
+  query: "/api/v1/query",
 };
 
 const text = (id, value) => {
@@ -70,6 +71,19 @@ async function postJson(url) {
   return data;
 }
 
+async function postJsonBody(url, body) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || `${url} returned ${response.status}`);
+  }
+  return data;
+}
+
 const setBackupRows = (rows) => {
   document.getElementById("backup-list").innerHTML = rows
     .map(([name, value]) => row(name, escapeHtml(value)))
@@ -85,6 +99,25 @@ const setReleasePackageRows = (rows) => {
 const setImportRows = (rows) => {
   document.getElementById("import-list").innerHTML = rows
     .map(([name, value]) => row(name, escapeHtml(value)))
+    .join("");
+};
+
+const renderSources = (documents) => {
+  const target = document.getElementById("query-sources");
+  if (!documents.length) {
+    target.innerHTML = row("Sources", "No matching documents");
+    return;
+  }
+  target.innerHTML = documents
+    .map((document, index) => {
+      const sourceName = document.metadata?.source_name || document.source_id || `Source ${index + 1}`;
+      const score = Number(document.similarity_score || 0);
+      const scoreText = score > 0 ? `${Math.round(score * 100)}% match` : "Source";
+      return `<article class="source-item">
+        <div><strong>${escapeHtml(sourceName)}</strong><span>${escapeHtml(scoreText)}</span></div>
+        <p>${escapeHtml(document.text)}</p>
+      </article>`;
+    })
     .join("");
 };
 
@@ -252,6 +285,43 @@ document.getElementById("document-import").addEventListener("click", async () =>
   } catch (error) {
     text("import-summary", "Error");
     setImportRows([["Error", error.message]]);
+  }
+});
+
+document.getElementById("query-submit").addEventListener("click", async () => {
+  const input = document.getElementById("query-text");
+  const question = input.value.trim();
+  if (!question) {
+    text("query-summary", "Enter a question");
+    input.focus();
+    return;
+  }
+  const mode = document.querySelector('input[name="query-mode"]:checked').value;
+  const answer = document.getElementById("query-answer");
+  text("query-summary", mode === "rag" ? "Thinking" : "Searching");
+  answer.hidden = true;
+  document.getElementById("query-sources").innerHTML = "";
+  try {
+    const result = await postJsonBody(endpoints.query, { text: question, mode, top_k: 5 });
+    const documents = result.rag_result?.context?.documents || result.semantic_result?.results || [];
+    if (result.rag_result) {
+      answer.textContent = result.rag_result.response.content;
+      answer.hidden = false;
+      text("query-summary", `${documents.length} sources`);
+    } else {
+      text("query-summary", `${documents.length} results`);
+    }
+    renderSources(documents);
+  } catch (error) {
+    text("query-summary", "Error");
+    answer.textContent = error.message;
+    answer.hidden = false;
+  }
+});
+
+document.getElementById("query-text").addEventListener("keydown", (event) => {
+  if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+    document.getElementById("query-submit").click();
   }
 });
 

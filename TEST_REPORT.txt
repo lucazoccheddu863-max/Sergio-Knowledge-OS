@@ -1,31 +1,31 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.4
+TEST REPORT — Sergio Knowledge OS M7.5
 ============================================================
 
 Date: 2026-09-17
-Version: 0.7.0-alpha4
-Milestone: M7.4 — Admin Document Import
+Version: 0.7.0-alpha5
+Milestone: M7.5 — Ask Sergio Console
 
-M7 Tests: 15/15 PASS
+M7 Tests: 16/16 PASS
 M6 Regression: 67/67 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 352/352 PASS
+Total: 353/353 PASS
 
 Verification command:
-python3 verify_milestone7_4.py
+python3 verify_milestone7_5.py
 
 Result:
-M7.4 verification complete. All checks PASS.
+M7.5 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-352 passed, 2 warnings
+353 passed, 2 warnings
 
 Notes:
-- The admin console imports text, Markdown and JSON through a native file picker.
-- Uploaded bytes use the same archival, provenance and duplicate controls as local files.
-- The local-open runtime loads every admin panel without authentication errors.
-- Desktop visual verification found no horizontal overflow or overlapping controls.
+- The console supports grounded answers and direct semantic searches.
+- RAG answers return their source documents in the same API response.
+- Source names, relevance and excerpts are rendered safely.
+- Desktop visual verification confirms visible controls and zero horizontal overflow.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

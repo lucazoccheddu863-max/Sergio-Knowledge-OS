@@ -57,6 +57,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M7.2 ✅ — Complete application runtime assembly
 - M7.3 ✅ — Safe local document import, archival and indexing
 - M7.4 ✅ — Document import from the local admin console
+- M7.5 ✅ — Questions, semantic search and cited sources in the admin console
 
 ## Definition of Done
 1. Design approved

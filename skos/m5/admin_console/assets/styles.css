@@ -96,6 +96,19 @@ input {
   font: inherit;
 }
 
+textarea {
+  width: 100%;
+  min-height: 84px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  line-height: 1.5;
+}
+
 .status-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -286,6 +299,104 @@ input {
   margin-bottom: 14px;
 }
 
+.query-controls,
+.query-field {
+  display: grid;
+  gap: 8px;
+}
+
+.query-field {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.query-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.segmented-control {
+  display: inline-grid;
+  grid-template-columns: repeat(2, minmax(84px, 1fr));
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #edf1f7;
+}
+
+.segmented-control label {
+  cursor: pointer;
+}
+
+.segmented-control input {
+  position: absolute;
+  width: 1px;
+  min-height: 0;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.segmented-control span {
+  display: block;
+  border-radius: 4px;
+  padding: 7px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.segmented-control input:checked + span {
+  background: #ffffff;
+  color: var(--accent-strong);
+  box-shadow: 0 1px 3px rgb(29 36 51 / 14%);
+}
+
+.query-answer {
+  margin-top: 16px;
+  border-left: 3px solid var(--accent);
+  padding: 12px 14px;
+  background: #f1f8f6;
+  color: var(--text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.source-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.source-item {
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.source-item div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.source-item div span {
+  color: var(--muted);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.source-item p {
+  margin: 6px 0 0;
+  color: #39465a;
+  font-size: 14px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
 .document-import-actions label {
   display: grid;
   gap: 6px;
@@ -323,6 +434,16 @@ input[type="file"] {
 
   .document-import-actions {
     grid-template-columns: 1fr;
+  }
+
+  .query-toolbar,
+  .source-item div {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .query-toolbar button {
+    width: 100%;
   }
 
   .row {

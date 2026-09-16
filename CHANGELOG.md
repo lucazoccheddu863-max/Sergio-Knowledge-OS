@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.7.0-alpha5] — 2026-09-17
+
+### Milestone 7.5 (M7.5) — Ask Sergio Console
+
+#### Added
+- “Ask Sergio” workspace in the local admin console
+- Answer mode for RAG responses grounded in imported documents
+- Search mode for direct semantic document retrieval
+- Source list with document identity, relevance and matching excerpts
+- Keyboard submission with Command/Ctrl + Enter
+- End-to-end API test proving answers and sources are returned together
+- `setup_milestone7_5.py` + `verify_milestone7_5.py`
+
+#### Changed
+- Query controls adapt to narrow screens without horizontal overflow
+- Response and source rendering escapes imported content before display
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha5`
+
+#### Test Results
+- M7 total: 16/16 PASS
+- M6 regression: 67/67 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha4] — 2026-09-17
 
 ### Milestone 7.4 (M7.4) — Admin Document Import
