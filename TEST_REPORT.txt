@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.16
+TEST REPORT — Sergio Knowledge OS M6.17
 ============================================================
 
 Date: 2026-09-15
-Version: 0.6.0-alpha16
-Milestone: M6.16 — Operator Manual
+Version: 0.6.0-alpha17
+Milestone: M6.17 — Local Workspace Bootstrap
 
-M6 Tests: 52/52 PASS
+M6 Tests: 56/56 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 322/322 PASS
+Total: 326/326 PASS
 
 Verification command:
-python3 verify_milestone6_16.py
+python3 verify_milestone6_17.py
 
 Result:
-M6.16 verification complete. All checks PASS.
+M6.17 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-322 passed, 2 warnings
+326 passed, 2 warnings
 
 Notes:
-- Operator manual is available through admin API and console.
-- Manual covers local start, daily checks, backup safety and release gating.
-- Manual is structured data so UI and API stay consistent.
+- Local workspace bootstrap prepares runtime directories non-destructively.
+- Bootstrap is idempotent and reports file collisions as warnings.
+- Admin local bootstrap endpoint uses configured runtime paths.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

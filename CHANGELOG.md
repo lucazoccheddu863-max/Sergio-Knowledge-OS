@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha17] — 2026-09-16
+
+### Milestone 6.17 — Local Workspace Bootstrap
+
+#### Added
+- `skos.m6.production.bootstrap_local_workspace()` — non-destructive local runtime directory preparation
+- `POST /api/v1/admin/local/bootstrap` — admin endpoint for preparing configured local paths
+- Console action to prepare the local workspace from the Local Launch panel
+- Tests covering directory creation, idempotency, collision warnings and API output
+- `setup_milestone6_17.py` + `verify_milestone6_17.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha17`
+- `pyproject.toml` bumped to `0.6.0-alpha17`
+- README, roadmap and test report updated for M6.17
+
+#### Design Decisions
+- Bootstrap creates only missing directories and never overwrites existing files
+- API bootstrap uses configured paths, so tests and local runs prepare the intended workspace
+- Re-running bootstrap is safe and reports existing paths as already present
+
+#### Test Results
+- M6 total: 56/56 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha16] — 2026-09-16
 
 ### Milestone 6.16 — Operator Manual

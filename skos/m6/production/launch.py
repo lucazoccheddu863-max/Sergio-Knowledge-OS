@@ -45,6 +45,42 @@ class LocalLaunchPlan:
         }
 
 
+@dataclass(frozen=True)
+class LocalWorkspaceItem:
+    """Single local workspace path prepared for local operation."""
+
+    name: str
+    path: str
+    existed: bool
+    created: bool
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "name": self.name,
+            "path": self.path,
+            "existed": self.existed,
+            "created": self.created,
+        }
+
+
+@dataclass(frozen=True)
+class LocalWorkspaceBootstrap:
+    """Result of a non-destructive local workspace bootstrap."""
+
+    ready: bool
+    root_path: str
+    items: tuple[LocalWorkspaceItem, ...]
+    warnings: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "ready": self.ready,
+            "root_path": self.root_path,
+            "items": [item.as_dict() for item in self.items],
+            "warnings": list(self.warnings),
+        }
+
+
 def build_local_launch_plan(
     root_path: str | Path = ".",
     host: str = "127.0.0.1",
@@ -70,6 +106,59 @@ def build_local_launch_plan(
         api_url=f"{base_url}/api/v1/health",
         checks=checks,
     )
+
+
+def bootstrap_local_workspace(
+    root_path: str | Path = ".",
+    database_path: str | Path | None = None,
+    archive_root: str | Path | None = None,
+    backup_dir: str | Path | None = None,
+    release_dir: str | Path | None = None,
+) -> LocalWorkspaceBootstrap:
+    """Create local runtime directories without modifying existing files."""
+
+    root = Path(root_path)
+    data_dir = _resolve_path(root, database_path).parent if database_path else root / "data"
+    targets = (
+        ("data", data_dir),
+        ("archive", _resolve_path(root, archive_root) if archive_root else data_dir / "archive"),
+        ("backups", _resolve_path(root, backup_dir) if backup_dir else data_dir / "backups"),
+        ("releases", _resolve_path(root, release_dir) if release_dir else data_dir / "releases"),
+        ("imports", data_dir / "imports"),
+    )
+    items: list[LocalWorkspaceItem] = []
+    warnings: list[str] = []
+
+    for name, path in targets:
+        existed = path.exists()
+        if existed and not path.is_dir():
+            warnings.append(f"{name} path exists but is not a directory")
+            items.append(LocalWorkspaceItem(name=name, path=str(path), existed=True, created=False))
+            continue
+        if not existed:
+            parent = path.parent
+            if parent.exists() and not parent.is_dir():
+                warnings.append(f"{name} parent path exists but is not a directory")
+                items.append(LocalWorkspaceItem(name=name, path=str(path), existed=False, created=False))
+                continue
+            path.mkdir(parents=True, exist_ok=True)
+        items.append(LocalWorkspaceItem(name=name, path=str(path), existed=existed, created=not existed))
+
+    return LocalWorkspaceBootstrap(
+        ready=not warnings,
+        root_path=str(root),
+        items=tuple(items),
+        warnings=tuple(warnings),
+    )
+
+
+def _resolve_path(root: Path, path: str | Path | None) -> Path:
+    if path is None:
+        return root
+    candidate = Path(path)
+    if candidate.is_absolute():
+        return candidate
+    return root / candidate
 
 
 def _check_release(root: Path) -> LocalLaunchCheck:

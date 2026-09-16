@@ -11,6 +11,7 @@ const endpoints = {
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
   releaseGate: "/api/v1/admin/release/gate",
   localLaunch: "/api/v1/admin/local/launch",
+  localBootstrap: "/api/v1/admin/local/bootstrap",
   manual: "/api/v1/admin/manual",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
@@ -157,6 +158,23 @@ document.getElementById("backup-create").addEventListener("click", () => {
     .catch((error) => {
       text("backup-summary", "Error");
       setBackupRows([["Error", error.message]]);
+    });
+});
+
+document.getElementById("local-bootstrap").addEventListener("click", () => {
+  postJson(endpoints.localBootstrap)
+    .then((bootstrap) => {
+      text("launch-summary", bootstrap.ready ? "Workspace ready" : "Workspace warning");
+      document.getElementById("launch-list").innerHTML = bootstrap.items
+        .map((item) => {
+          const status = item.created ? "created" : "present";
+          return `<div class="row"><span>${item.name}</span><strong>${status}: ${item.path}</strong></div>`;
+        })
+        .join("");
+    })
+    .catch((error) => {
+      text("launch-summary", "Error");
+      document.getElementById("launch-list").innerHTML = `<div class="row"><span>Error</span><strong>${error.message}</strong></div>`;
     });
 });
 

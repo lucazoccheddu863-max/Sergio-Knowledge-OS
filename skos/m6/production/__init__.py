@@ -15,6 +15,9 @@ from skos.m6.production.overview import (
 from skos.m6.production.launch import (
     LocalLaunchCheck,
     LocalLaunchPlan,
+    LocalWorkspaceBootstrap,
+    LocalWorkspaceItem,
+    bootstrap_local_workspace,
     build_local_launch_plan,
 )
 from skos.m6.production.manual import (
@@ -58,6 +61,8 @@ __all__ = [
     "AdminSmokeReport",
     "LocalLaunchCheck",
     "LocalLaunchPlan",
+    "LocalWorkspaceBootstrap",
+    "LocalWorkspaceItem",
     "OperatorManual",
     "OperatorManualSection",
     "OperatorManualStep",
@@ -73,6 +78,7 @@ __all__ = [
     "build_admin_overview",
     "build_admin_smoke_report",
     "build_local_launch_plan",
+    "bootstrap_local_workspace",
     "build_operator_manual",
     "build_release_status",
     "create_backup_archive",

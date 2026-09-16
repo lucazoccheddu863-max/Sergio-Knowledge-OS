@@ -604,6 +604,29 @@ class FastAPIAdapter:
             self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/local/launch", "success")
             return build_local_launch_plan(host=host, port=port).as_dict()
 
+        @self._app.post(
+            "/api/v1/admin/local/bootstrap",
+            summary="Bootstrap local workspace",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_local_bootstrap_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import bootstrap_local_workspace
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            result = bootstrap_local_workspace(
+                database_path=self._config.get("database_path", default="./data/sergio_knowledge.db"),
+                archive_root=self._config.get("archive_root", default="./data/archive"),
+                backup_dir=self._config.get("backup_dir", default="./data/backups"),
+                release_dir=self._config.get("release_dir", default="./data/releases"),
+            )
+            self._count_request("POST", "/api/v1/admin/local/bootstrap", 200)
+            self._audit_event("admin", ctx.principal, "POST", "/api/v1/admin/local/bootstrap", "success")
+            return result.as_dict()
+
         @self._app.get(
             "/api/v1/admin/manual",
             summary="Operator manual",
