@@ -45,7 +45,7 @@ def test_admin_overview_serializes_nested_reports(tmp_path: Path) -> None:
     data = build_admin_overview(config_for(tmp_path), root_path=tmp_path).as_dict()
 
     assert data["ready"] is False
-    assert data["release"]["milestone"].startswith("M6.")
+    assert data["release"]["milestone"].startswith("M7.")
     assert "checks" in data["readiness"]
     assert "items" in data["backup"]
 

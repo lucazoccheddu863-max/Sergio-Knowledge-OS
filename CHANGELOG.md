@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.7.0-alpha1] — 2026-09-16
+
+### Milestone 7.1 — AI Service Runtime Contract
+
+#### Added
+- M7 executable-runtime test suite
+- Tests proving structured embedding, chat and provider-health calls use the configured provider
+- `setup_milestone7_1.py` + `verify_milestone7_1.py`
+
+#### Changed
+- `AIService.chat()` and `AIService.embed()` now accept the structured requests used by search and RAG
+- Explicit provider calls remain backward compatible for existing pipelines and integrations
+- `AIService.health_check()` uses the configured primary provider when none is passed
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha1`
+- README, roadmap and test report updated for M7.1
+
+#### Design Decisions
+- One configured provider contract now serves semantic search, RAG and direct provider calls
+- Existing explicit-provider APIs remain supported to avoid breaking import and embedding pipelines
+- M7 begins the executable-runtime phase required for a genuinely usable local beta
+
+#### Test Results
+- M7 total: 4/4 PASS
+- M6 regression: 66/66 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha21] — 2026-09-16
 
 ### Milestone 6.21 — Local Operator CLI

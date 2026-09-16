@@ -21,7 +21,7 @@ def test_release_status_reads_current_version() -> None:
     status = build_release_status()
 
     assert status.version == current_version()
-    assert status.milestone.startswith("M6.")
+    assert status.milestone.startswith("M7.")
     assert status.status == "operational"
 
 
@@ -29,7 +29,7 @@ def test_release_status_serializes_to_dict() -> None:
     data = build_release_status().as_dict()
 
     assert data["version"] == current_version()
-    assert data["milestone"].startswith("M6.")
+    assert data["milestone"].startswith("M7.")
     assert data["status"] == "operational"
 
 
@@ -40,7 +40,7 @@ def test_create_release_package_writes_clean_zip(tmp_path: Path) -> None:
     assert archive_path.exists()
     assert archive_path.parent == tmp_path
     assert result.manifest.version == current_version()
-    assert result.manifest.milestone.startswith("M6.")
+    assert result.manifest.milestone.startswith("M7.")
 
     with ZipFile(archive_path) as archive:
         names = set(archive.namelist())

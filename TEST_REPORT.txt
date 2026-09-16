@@ -1,30 +1,32 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.21
+TEST REPORT — Sergio Knowledge OS M7.1
 ============================================================
 
 Date: 2026-09-16
-Version: 0.6.0-alpha21
-Milestone: M6.21 — Local Operator CLI
+Version: 0.7.0-alpha1
+Milestone: M7.1 — AI Service Runtime Contract
 
-M6 Tests: 66/66 PASS
+M7 Tests: 4/4 PASS
+M6 Regression: 66/66 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 336/336 PASS
+Total: 340/340 PASS
 
 Verification command:
-python3 verify_milestone6_21.py
+python3 verify_milestone7_1.py
 
 Result:
-M6.21 verification complete. All checks PASS.
+M7.1 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-336 passed, 2 warnings
+340 passed, 2 warnings
 
 Notes:
-- Local operator CLI provides prepare, status, report and start commands.
-- Workspace preparation remains non-destructive and report overwrite is explicit.
-- Start command performs preflight checks before running the local admin console.
+- Structured AI requests now reach the configured provider correctly.
+- Semantic search and RAG share the same executable AI service contract.
+- Explicit provider calls remain backward compatible.
+- Release metadata now recognizes M7 and future alpha milestones.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

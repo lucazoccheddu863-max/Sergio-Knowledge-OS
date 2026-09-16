@@ -260,14 +260,11 @@ def _read_version(root: Path) -> str:
 
 
 def _derive_milestone(version: str) -> str:
-    if version.startswith("0.6.0-alpha"):
-        suffix = version.removeprefix("0.6.0-alpha")
-        if suffix.isdigit():
-            return f"M6.{suffix}"
-    if version.startswith("0.5.0-alpha"):
-        suffix = version.removeprefix("0.5.0-alpha")
-        if suffix.isdigit():
-            return f"M5.{suffix}"
+    if version.startswith("0.") and ".0-alpha" in version:
+        release, suffix = version.split("-alpha", maxsplit=1)
+        parts = release.split(".")
+        if len(parts) == 3 and parts[1].isdigit() and parts[2] == "0" and suffix.isdigit():
+            return f"M{parts[1]}.{suffix}"
     if version == "0.4.0":
         return "M4.12"
     return "unknown"

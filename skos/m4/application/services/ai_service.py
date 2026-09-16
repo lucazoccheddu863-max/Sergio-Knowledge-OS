@@ -30,18 +30,42 @@ class AIService:
         kwargs["timeout"] = timeout
         return self._registry.create(name, **kwargs)
 
-    def chat(self, provider_name: str, messages: list[ChatMessage], **kwargs: Any) -> ChatResponse:
+    def _default_provider_name(self) -> str:
+        provider = self._config.get("ai_primary_provider", default="ollama")
+        return provider if isinstance(provider, str) and provider else "ollama"
+
+    def chat(
+        self,
+        provider_or_request: str | ChatRequest,
+        messages: list[ChatMessage] | None = None,
+        **kwargs: Any,
+    ) -> ChatResponse:
+        if isinstance(provider_or_request, ChatRequest):
+            provider_name = self._default_provider_name()
+            request = provider_or_request
+        else:
+            provider_name = provider_or_request
+            request = ChatRequest(messages=messages or [], **kwargs)
         provider = self._get_provider(provider_name)
-        request = ChatRequest(messages=messages, **kwargs)
         return provider.chat(request)
 
-    def embed(self, provider_name: str, texts: list[str], **kwargs: Any) -> EmbeddingResult:
+    def embed(
+        self,
+        provider_or_request: str | EmbeddingRequest,
+        texts: list[str] | None = None,
+        **kwargs: Any,
+    ) -> EmbeddingResult:
+        if isinstance(provider_or_request, EmbeddingRequest):
+            provider_name = self._default_provider_name()
+            request = provider_or_request
+        else:
+            provider_name = provider_or_request
+            request = EmbeddingRequest(texts=texts or [], **kwargs)
         provider = self._get_provider(provider_name)
-        request = EmbeddingRequest(texts=texts, **kwargs)
         return provider.embed(request)
 
-    def health_check(self, provider_name: str) -> bool:
-        provider = self._get_provider(provider_name)
+    def health_check(self, provider_name: str | None = None) -> bool:
+        provider = self._get_provider(provider_name or self._default_provider_name())
         return provider.health_check()
 
     def list_models(self, provider_name: str) -> list[str]:

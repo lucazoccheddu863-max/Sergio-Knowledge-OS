@@ -67,7 +67,7 @@ def test_admin_release_endpoint_returns_current_release(tmp_path: Path) -> None:
     assert response.status_code == 200
     data = response.json()
     assert data["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
-    assert data["milestone"].startswith("M6.")
+    assert data["milestone"].startswith("M7.")
     assert data["status"] == "operational"
 
 

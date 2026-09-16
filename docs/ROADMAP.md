@@ -52,6 +52,9 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.20 ✅ — Operator snapshot report export
 - M6.21 ✅ — Local operator CLI
 
+### M7 — Executable Runtime & Local Beta 🔄 IN PROGRESS
+- M7.1 ✅ — AI service runtime contract alignment
+
 ## Definition of Done
 1. Design approved
 2. Full implementation
