@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha16] — 2026-09-16
+
+### Milestone 6.16 — Operator Manual
+
+#### Added
+- `skos.m6.production.build_operator_manual()` — structured local operator manual
+- `GET /api/v1/admin/manual` — operator manual endpoint
+- Operator Manual panel in the `/admin` console
+- Tests covering manual sections, safety guidance and API output
+- `setup_milestone6_16.py` + `verify_milestone6_16.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha16`
+- `pyproject.toml` bumped to `0.6.0-alpha16`
+- README, roadmap and test report updated for M6.16
+
+#### Design Decisions
+- The manual is structured data, not only prose, so UI and API can reuse it
+- Manual guidance focuses on local start, daily checks, backup safety and release gating
+- The admin console shows operational steps without requiring file browsing
+
+#### Test Results
+- M6 total: 52/52 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha15] — 2026-09-15
 
 ### Milestone 6.15 — Local Launch Preflight

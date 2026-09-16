@@ -605,6 +605,23 @@ class FastAPIAdapter:
             return build_local_launch_plan(host=host, port=port).as_dict()
 
         @self._app.get(
+            "/api/v1/admin/manual",
+            summary="Operator manual",
+            tags=["Admin"],
+            include_in_schema=True,
+        )
+        async def admin_manual_endpoint(request: Request) -> dict[str, Any]:
+            from skos.m6.production import build_operator_manual
+
+            ctx = self._resolve_security_context(request)
+            if self._auth:
+                self._require_auth(ctx)
+                self._require_authorization(ctx, "admin", "/api/v1/admin/*")
+            self._count_request("GET", "/api/v1/admin/manual", 200)
+            self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/manual", "success")
+            return build_operator_manual().as_dict()
+
+        @self._app.get(
             "/api/v1/admin/backup/manifest",
             summary="Backup manifest report",
             tags=["Admin"],

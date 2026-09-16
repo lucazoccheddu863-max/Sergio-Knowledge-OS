@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.15
+TEST REPORT — Sergio Knowledge OS M6.16
 ============================================================
 
 Date: 2026-09-15
-Version: 0.6.0-alpha15
-Milestone: M6.15 — Local Launch Preflight
+Version: 0.6.0-alpha16
+Milestone: M6.16 — Operator Manual
 
-M6 Tests: 48/48 PASS
+M6 Tests: 52/52 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 318/318 PASS
+Total: 322/322 PASS
 
 Verification command:
-python3 verify_milestone6_15.py
+python3 verify_milestone6_16.py
 
 Result:
-M6.15 verification complete. All checks PASS.
+M6.16 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-318 passed, 2 warnings
+322 passed, 2 warnings
 
 Notes:
-- Local launch preflight reports command, admin URL and health URL for Mac testing.
-- Local server entrypoint exposes admin console and health endpoint without external services.
-- Admin local launch endpoint and console panel are operator-facing only.
+- Operator manual is available through admin API and console.
+- Manual covers local start, daily checks, backup safety and release gating.
+- Manual is structured data so UI and API stay consistent.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

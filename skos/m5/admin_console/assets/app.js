@@ -11,6 +11,7 @@ const endpoints = {
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
   releaseGate: "/api/v1/admin/release/gate",
   localLaunch: "/api/v1/admin/local/launch",
+  manual: "/api/v1/admin/manual",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -67,7 +68,7 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, overview, smoke, launch] = await Promise.all([
+  const [status, health, engines, security, overview, smoke, launch, manual] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
@@ -75,6 +76,7 @@ async function refreshDashboard() {
     getJson(endpoints.overview),
     getJson(endpoints.smoke),
     getJson(endpoints.localLaunch),
+    getJson(endpoints.manual),
   ]);
   const { release, readiness, backup: backupManifest } = overview;
 
@@ -107,6 +109,14 @@ async function refreshDashboard() {
     .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
     .join("");
 
+  text("manual-summary", manual.audience);
+  document.getElementById("manual-list").innerHTML = manual.sections
+    .map((section) => {
+      const steps = section.steps.map((step) => `${step.title}: ${step.detail}`).join(" | ");
+      return `<div class="row"><span>${section.title}</span><strong>${steps}</strong></div>`;
+    })
+    .join("");
+
   document.getElementById("engine-list").innerHTML = engines.engines
     .map((engine) => `<span class="chip">${engine}</span>`)
     .join("");
@@ -129,6 +139,7 @@ document.getElementById("refresh").addEventListener("click", () => {
     document.getElementById("readiness-list").innerHTML = "";
     document.getElementById("smoke-list").innerHTML = "";
     document.getElementById("launch-list").innerHTML = "";
+    document.getElementById("manual-list").innerHTML = "";
   });
 });
 
@@ -258,6 +269,7 @@ refreshDashboard().catch((error) => {
   document.getElementById("readiness-list").innerHTML = "";
   document.getElementById("smoke-list").innerHTML = "";
   document.getElementById("launch-list").innerHTML = "";
+  document.getElementById("manual-list").innerHTML = "";
   refreshBackupManifest().catch(() => {
     text("backup-summary", "Error");
   });
