@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha19] — 2026-09-16
+
+### Milestone 6.19 — Operator Snapshot
+
+#### Added
+- `skos.m6.production.build_operator_snapshot()` — read-only operator decision snapshot
+- `GET /api/v1/admin/snapshot` — admin endpoint with verdict, launch command and next actions
+- Operator Snapshot panel in the `/admin` console
+- Tests covering ready and attention snapshot states plus API/console wiring
+- `setup_milestone6_19.py` + `verify_milestone6_19.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha19`
+- `pyproject.toml` bumped to `0.6.0-alpha19`
+- README, roadmap and test report updated for M6.19
+
+#### Design Decisions
+- Snapshot is read-only and reuses existing release, readiness, backup, smoke and launch reports
+- Verdict is intentionally simple: `ready` or `attention`
+- Next actions are generated from failed checks so the operator sees what to do next
+
+#### Test Results
+- M6 total: 60/60 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha18] — 2026-09-16
 
 ### Milestone 6.18 — Admin Console UX Polish

@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from importlib import resources
 from pathlib import Path
 from typing import Any
 
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
 from skos.m6.production.backup import BackupManifest, build_backup_manifest
+from skos.m6.production.launch import LocalLaunchPlan, build_local_launch_plan
 from skos.m6.production.readiness import ReadinessReport, run_production_readiness
 from skos.m6.production.release import ReleaseStatus, build_release_status
 
@@ -66,6 +68,39 @@ class AdminSmokeReport:
         }
 
 
+@dataclass(frozen=True)
+class OperatorSnapshot:
+    """Single operator-facing readiness snapshot for local operation."""
+
+    generated_at: str
+    verdict: str
+    summary: str
+    release: ReleaseStatus
+    readiness: ReadinessReport
+    backup: BackupManifest
+    smoke: AdminSmokeReport
+    launch: LocalLaunchPlan
+    next_actions: tuple[str, ...]
+
+    @property
+    def ready(self) -> bool:
+        return self.verdict == "ready"
+
+    def as_dict(self) -> dict[str, Any]:
+        return {
+            "generated_at": self.generated_at,
+            "ready": self.ready,
+            "verdict": self.verdict,
+            "summary": self.summary,
+            "release": self.release.as_dict(),
+            "readiness": self.readiness.as_dict(),
+            "backup": self.backup.as_dict(),
+            "smoke": self.smoke.as_dict(),
+            "launch": self.launch.as_dict(),
+            "next_actions": list(self.next_actions),
+        }
+
+
 def build_admin_overview(
     config: ConfigurationPort,
     root_path: str | Path = ".",
@@ -93,6 +128,66 @@ def build_admin_smoke_report(
         _check_admin_console_assets(),
     ]
     return AdminSmokeReport(checks=tuple(checks))
+
+
+def build_operator_snapshot(
+    config: ConfigurationPort,
+    root_path: str | Path = ".",
+    host: str = "127.0.0.1",
+    port: int = 8000,
+) -> OperatorSnapshot:
+    """Build a compact, read-only snapshot for the local operator console."""
+
+    release = build_release_status(root_path)
+    readiness = run_production_readiness(config, root_path=root_path)
+    backup = build_backup_manifest(config, root_path=root_path)
+    smoke = AdminSmokeReport(
+        checks=(
+            _check_release(release),
+            _check_readiness(readiness),
+            _check_backup(backup),
+            _check_admin_console_assets(),
+        )
+    )
+    launch = build_local_launch_plan(root_path=root_path, host=host, port=port)
+    next_actions = _build_next_actions(readiness, backup, launch)
+    verdict = "ready" if readiness.ready and backup.ready and smoke.ready and launch.ready else "attention"
+    summary = (
+        "System ready for local operation"
+        if verdict == "ready"
+        else "Operator attention required before local operation"
+    )
+    return OperatorSnapshot(
+        generated_at=datetime.now(timezone.utc).replace(microsecond=0).isoformat(),
+        verdict=verdict,
+        summary=summary,
+        release=release,
+        readiness=readiness,
+        backup=backup,
+        smoke=smoke,
+        launch=launch,
+        next_actions=tuple(next_actions),
+    )
+
+
+def _build_next_actions(
+    readiness: ReadinessReport,
+    backup: BackupManifest,
+    launch: LocalLaunchPlan,
+) -> list[str]:
+    actions: list[str] = []
+    if not readiness.ready:
+        failed = [check.name for check in readiness.checks if not check.passed]
+        actions.append("Review readiness checks: " + ", ".join(failed))
+    if not backup.ready:
+        actions.append("Prepare backup inputs: " + "; ".join(backup.warnings))
+    if not launch.ready:
+        failed = [check.name for check in launch.checks if not check.passed]
+        actions.append("Fix local launch checks: " + ", ".join(failed))
+    if not actions:
+        actions.append("Run the local launch command and open the admin console")
+        actions.append("Create a fresh backup before importing important data")
+    return actions
 
 
 def _check_release(release: ReleaseStatus) -> AdminSmokeCheck:

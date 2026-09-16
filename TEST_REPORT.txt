@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.18
+TEST REPORT — Sergio Knowledge OS M6.19
 ============================================================
 
 Date: 2026-09-16
-Version: 0.6.0-alpha18
-Milestone: M6.18 — Admin Console UX Polish
+Version: 0.6.0-alpha19
+Milestone: M6.19 — Operator Snapshot
 
-M6 Tests: 57/57 PASS
+M6 Tests: 60/60 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 327/327 PASS
+Total: 330/330 PASS
 
 Verification command:
-python3 verify_milestone6_18.py
+python3 verify_milestone6_19.py
 
 Result:
-M6.18 verification complete. All checks PASS.
+M6.19 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-327 passed, 2 warnings
+330 passed, 2 warnings
 
 Notes:
-- Admin console renders launch command, local URLs and bootstrap paths as readable code blocks.
-- Operator manual sections are split into clear step cards.
-- Console output wraps safely on compact screens.
+- Operator snapshot combines release, readiness, backup, smoke and launch state.
+- Snapshot includes a single verdict and concrete next actions.
+- Admin console now shows the snapshot as a compact operator decision panel.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

@@ -116,6 +116,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/local/launch" in response.text
     assert "/api/v1/admin/local/bootstrap" in response.text
     assert "/api/v1/admin/manual" in response.text
+    assert "/api/v1/admin/snapshot" in response.text
     assert "/api/v1/admin/overview" in response.text
     assert "/api/v1/admin/smoke" in response.text
 
@@ -130,6 +131,7 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert js_response.status_code == 200
     assert "Backup Operations" in html_response.text
     assert "Operator Smoke Check" in html_response.text
+    assert "Operator Snapshot" in html_response.text
     assert "Release Package" in html_response.text
     assert "Local Launch" in html_response.text
     assert "Operator Manual" in html_response.text
@@ -152,10 +154,28 @@ def test_admin_console_assets_include_operator_readability_helpers(tmp_path: Pat
     assert "setLaunchRows" in js_response.text
     assert "setBootstrapRows" in js_response.text
     assert "setManualRows" in js_response.text
+    assert "setSnapshotRows" in js_response.text
     assert "escapeHtml" in js_response.text
     assert "manual-step" in css_response.text
     assert "overflow-wrap: anywhere" in css_response.text
     assert "check-list" in css_response.text
+    assert "action-list" in css_response.text
+
+
+def test_admin_snapshot_endpoint_returns_operator_snapshot(tmp_path: Path) -> None:
+    seed_backup_inputs(tmp_path)
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/snapshot", params={"port": 8765})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert data["verdict"] == "ready"
+    assert data["release"]["version"] == Path("VERSION").read_text(encoding="utf-8").strip()
+    assert data["smoke"]["ready"] is True
+    assert "--port 8765" in data["launch"]["command"]
+    assert data["next_actions"]
 
 
 def test_admin_release_package_endpoint_creates_zip(tmp_path: Path) -> None:

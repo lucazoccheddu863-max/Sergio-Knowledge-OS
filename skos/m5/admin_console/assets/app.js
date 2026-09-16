@@ -10,6 +10,7 @@ const endpoints = {
   releasePackage: "/api/v1/admin/release/package",
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
   releaseGate: "/api/v1/admin/release/gate",
+  snapshot: "/api/v1/admin/snapshot",
   localLaunch: "/api/v1/admin/local/launch",
   localBootstrap: "/api/v1/admin/local/bootstrap",
   manual: "/api/v1/admin/manual",
@@ -115,6 +116,22 @@ const setManualRows = (manual) => {
     .join("");
 };
 
+const setSnapshotRows = (snapshot) => {
+  document.getElementById("snapshot-list").innerHTML = [
+    row("Verdict", badge(snapshot.verdict)),
+    row("Version", code(snapshot.release.version)),
+    row("Milestone", code(snapshot.release.milestone)),
+    row("Launch", code(snapshot.launch.command), "stack"),
+    row(
+      "Next actions",
+      `<span class="action-list">${snapshot.next_actions
+        .map((action) => `<span>${escapeHtml(action)}</span>`)
+        .join("")}</span>`,
+      "stack"
+    ),
+  ].join("");
+};
+
 async function refreshBackupManifest() {
   const manifest = await getJson(endpoints.backupManifest);
   text("backup-summary", manifest.ready ? "Ready" : "Needs attention");
@@ -127,13 +144,14 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, overview, smoke, launch, manual] = await Promise.all([
+  const [status, health, engines, security, overview, smoke, snapshot, launch, manual] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
     getJson(endpoints.security),
     getJson(endpoints.overview),
     getJson(endpoints.smoke),
+    getJson(endpoints.snapshot),
     getJson(endpoints.localLaunch),
     getJson(endpoints.manual),
   ]);
@@ -157,6 +175,9 @@ async function refreshDashboard() {
   document.getElementById("smoke-list").innerHTML = smoke.checks
     .map((check) => row(`${check.name}: ${check.message}`, badge(check.status)))
     .join("");
+
+  text("snapshot-summary", snapshot.summary);
+  setSnapshotRows(snapshot);
 
   text("launch-summary", launch.ready ? "Ready" : "Needs attention");
   setLaunchRows(launch);
@@ -185,6 +206,7 @@ document.getElementById("refresh").addEventListener("click", () => {
     document.getElementById("health-list").innerHTML = row(error.message, badge(false));
     document.getElementById("readiness-list").innerHTML = "";
     document.getElementById("smoke-list").innerHTML = "";
+    document.getElementById("snapshot-list").innerHTML = "";
     document.getElementById("launch-list").innerHTML = "";
     document.getElementById("manual-list").innerHTML = "";
   });
@@ -327,6 +349,7 @@ refreshDashboard().catch((error) => {
   document.getElementById("health-list").innerHTML = row(error.message, badge(false));
   document.getElementById("readiness-list").innerHTML = "";
   document.getElementById("smoke-list").innerHTML = "";
+  document.getElementById("snapshot-list").innerHTML = "";
   document.getElementById("launch-list").innerHTML = "";
   document.getElementById("manual-list").innerHTML = "";
   refreshBackupManifest().catch(() => {

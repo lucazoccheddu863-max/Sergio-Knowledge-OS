@@ -209,6 +209,21 @@ input {
   line-height: 1.45;
 }
 
+.action-list {
+  display: grid;
+  gap: 6px;
+}
+
+.action-list span {
+  padding: 8px 10px;
+  border: 1px solid #e2e7f0;
+  border-radius: 6px;
+  background: #fbfcfe;
+  color: var(--text);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .badge,
 .chip {
   border-radius: 999px;

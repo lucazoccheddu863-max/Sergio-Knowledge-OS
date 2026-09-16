@@ -9,8 +9,10 @@ from skos.m6.production.overview import (
     AdminOverview,
     AdminSmokeCheck,
     AdminSmokeReport,
+    OperatorSnapshot,
     build_admin_overview,
     build_admin_smoke_report,
+    build_operator_snapshot,
 )
 from skos.m6.production.launch import (
     LocalLaunchCheck,
@@ -66,6 +68,7 @@ __all__ = [
     "OperatorManual",
     "OperatorManualSection",
     "OperatorManualStep",
+    "OperatorSnapshot",
     "ReadinessCheck",
     "ReadinessReport",
     "ReleasePackageFile",
@@ -77,6 +80,7 @@ __all__ = [
     "build_backup_manifest",
     "build_admin_overview",
     "build_admin_smoke_report",
+    "build_operator_snapshot",
     "build_local_launch_plan",
     "bootstrap_local_workspace",
     "build_operator_manual",
