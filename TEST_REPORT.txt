@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.20
+TEST REPORT — Sergio Knowledge OS M6.21
 ============================================================
 
 Date: 2026-09-16
-Version: 0.6.0-alpha20
-Milestone: M6.20 — Operator Snapshot Report Export
+Version: 0.6.0-alpha21
+Milestone: M6.21 — Local Operator CLI
 
-M6 Tests: 62/62 PASS
+M6 Tests: 66/66 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 332/332 PASS
+Total: 336/336 PASS
 
 Verification command:
-python3 verify_milestone6_20.py
+python3 verify_milestone6_21.py
 
 Result:
-M6.20 verification complete. All checks PASS.
+M6.21 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-332 passed, 2 warnings
+336 passed, 2 warnings
 
 Notes:
-- Operator snapshot can be exported as a portable plain-text report.
-- Report download is generated in memory and leaves user data unchanged.
-- Admin console provides a direct report download action.
+- Local operator CLI provides prepare, status, report and start commands.
+- Workspace preparation remains non-destructive and report overwrite is explicit.
+- Start command performs preflight checks before running the local admin console.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

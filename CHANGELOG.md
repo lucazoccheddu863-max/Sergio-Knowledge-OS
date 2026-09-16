@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha21] — 2026-09-16
+
+### Milestone 6.21 — Local Operator CLI
+
+#### Added
+- `sergio-knowledge prepare` — safely prepare local runtime folders
+- `sergio-knowledge status` — print the current operator snapshot
+- `sergio-knowledge report` — save a portable report with overwrite protection
+- `sergio-knowledge start` — run preflight checks and start the local admin console
+- Tests covering preparation, status, protected report writes and server startup wiring
+- `setup_milestone6_21.py` + `verify_milestone6_21.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha21`
+- `pyproject.toml` bumped to `0.6.0-alpha21` and now installs the operator command
+- README, roadmap and test report updated for M6.21
+
+#### Design Decisions
+- Local preparation remains non-destructive and does not invent an empty database
+- Existing reports are preserved unless the operator passes `--overwrite`
+- Server startup runs only after workspace and launch preflight checks pass
+
+#### Test Results
+- M6 total: 66/66 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha20] — 2026-09-16
 
 ### Milestone 6.20 — Operator Snapshot Report Export
