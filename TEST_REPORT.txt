@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.17
+TEST REPORT — Sergio Knowledge OS M6.18
 ============================================================
 
-Date: 2026-09-15
-Version: 0.6.0-alpha17
-Milestone: M6.17 — Local Workspace Bootstrap
+Date: 2026-09-16
+Version: 0.6.0-alpha18
+Milestone: M6.18 — Admin Console UX Polish
 
-M6 Tests: 56/56 PASS
+M6 Tests: 57/57 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 326/326 PASS
+Total: 327/327 PASS
 
 Verification command:
-python3 verify_milestone6_17.py
+python3 verify_milestone6_18.py
 
 Result:
-M6.17 verification complete. All checks PASS.
+M6.18 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-326 passed, 2 warnings
+327 passed, 2 warnings
 
 Notes:
-- Local workspace bootstrap prepares runtime directories non-destructively.
-- Bootstrap is idempotent and reports file collisions as warnings.
-- Admin local bootstrap endpoint uses configured runtime paths.
+- Admin console renders launch command, local URLs and bootstrap paths as readable code blocks.
+- Operator manual sections are split into clear step cards.
+- Console output wraps safely on compact screens.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

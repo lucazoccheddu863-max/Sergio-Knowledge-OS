@@ -1,5 +1,33 @@
 # Changelog
 
+## [0.6.0-alpha18] — 2026-09-16
+
+### Milestone 6.18 — Admin Console UX Polish
+
+#### Added
+- Reusable admin console row renderers for readable operator output
+- Code-style rendering for launch commands, local URLs and bootstrap paths
+- Step-based manual rendering in the Operator Manual panel
+- Console asset test covering readability helpers and responsive wrapping
+- `setup_milestone6_18.py` + `verify_milestone6_18.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha18`
+- `pyproject.toml` bumped to `0.6.0-alpha18`
+- README, roadmap and test report updated for M6.18
+
+#### Design Decisions
+- UX polish stays client-side and does not change admin API contracts
+- Long commands and filesystem paths wrap safely on compact screens
+- Console renderers escape dynamic text before inserting it into HTML
+
+#### Test Results
+- M6 total: 57/57 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha17] — 2026-09-16
 
 ### Milestone 6.17 — Local Workspace Bootstrap

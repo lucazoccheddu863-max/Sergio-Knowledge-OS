@@ -24,9 +24,31 @@ const text = (id, value) => {
 };
 
 const badge = (value) => {
-  const ok = value === true || value === "healthy" || value === "operational" || value === "pass";
+  const ok =
+    value === true ||
+    ["created", "healthy", "operational", "pass", "present", "ready"].includes(String(value));
   return `<strong class="badge ${ok ? "ok" : "warn"}">${String(value)}</strong>`;
 };
+
+const escapeHtml = (value) =>
+  String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+
+const code = (value) => `<code>${escapeHtml(value)}</code>`;
+
+const row = (name, value, className = "") => {
+  const classes = ["row", className].filter(Boolean).join(" ");
+  return `<div class="${classes}"><span>${escapeHtml(name)}</span><strong>${value}</strong></div>`;
+};
+
+const checklist = (checks) =>
+  `<span class="check-list">${checks
+    .map((check) => `<span class="chip">${escapeHtml(check.name)}: ${escapeHtml(check.status)}</span>`)
+    .join("")}</span>`;
 
 async function getJson(url) {
   const response = await fetch(url);
@@ -47,13 +69,49 @@ async function postJson(url) {
 
 const setBackupRows = (rows) => {
   document.getElementById("backup-list").innerHTML = rows
-    .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
+    .map(([name, value]) => row(name, escapeHtml(value)))
     .join("");
 };
 
 const setReleasePackageRows = (rows) => {
   document.getElementById("release-package-list").innerHTML = rows
-    .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
+    .map(([name, value]) => row(name, escapeHtml(value)))
+    .join("");
+};
+
+const setLaunchRows = (launch) => {
+  document.getElementById("launch-list").innerHTML = [
+    row("Command", code(launch.command), "stack"),
+    row("Admin", code(launch.admin_url)),
+    row("Health", code(launch.api_url)),
+    row("Checks", checklist(launch.checks)),
+  ].join("");
+};
+
+const setBootstrapRows = (bootstrap) => {
+  document.getElementById("launch-list").innerHTML = bootstrap.items
+    .map((item) => {
+      const status = item.created ? "created" : "present";
+      return row(item.name, `${badge(status)} ${code(item.path)}`, "stack");
+    })
+    .join("");
+};
+
+const setManualRows = (manual) => {
+  document.getElementById("manual-list").innerHTML = manual.sections
+    .map((section) => {
+      const steps = section.steps
+        .map(
+          (step) =>
+            `<div class="manual-step"><span>${escapeHtml(step.title)}</span><small>${escapeHtml(
+              step.detail
+            )}</small></div>`
+        )
+        .join("");
+      return `<div class="row stack"><span class="manual-section-title">${escapeHtml(
+        section.title
+      )}</span><strong class="manual-section">${steps}</strong></div>`;
+    })
     .join("");
 };
 
@@ -87,36 +145,24 @@ async function refreshDashboard() {
   text("security-status", security.enabled ? "Enabled" : "Open mode");
 
   document.getElementById("health-list").innerHTML = Object.entries(health.engines)
-    .map(([name, value]) => `<div class="row"><span>${name}</span>${badge(value)}</div>`)
+    .map(([name, value]) => row(name, badge(value)))
     .join("");
 
   text("readiness-summary", readiness.ready ? "Ready" : "Needs attention");
   document.getElementById("readiness-list").innerHTML = readiness.checks
-    .map((check) => `<div class="row"><span>${check.name}: ${check.message}</span>${badge(check.status)}</div>`)
+    .map((check) => row(`${check.name}: ${check.message}`, badge(check.status)))
     .join("");
 
   text("smoke-summary", smoke.ready ? "Pass" : "Needs attention");
   document.getElementById("smoke-list").innerHTML = smoke.checks
-    .map((check) => `<div class="row"><span>${check.name}: ${check.message}</span>${badge(check.status)}</div>`)
+    .map((check) => row(`${check.name}: ${check.message}`, badge(check.status)))
     .join("");
 
   text("launch-summary", launch.ready ? "Ready" : "Needs attention");
-  document.getElementById("launch-list").innerHTML = [
-    ["Command", launch.command],
-    ["Admin", launch.admin_url],
-    ["Health", launch.api_url],
-    ["Checks", launch.checks.map((check) => `${check.name}: ${check.status}`).join("; ")],
-  ]
-    .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
-    .join("");
+  setLaunchRows(launch);
 
   text("manual-summary", manual.audience);
-  document.getElementById("manual-list").innerHTML = manual.sections
-    .map((section) => {
-      const steps = section.steps.map((step) => `${step.title}: ${step.detail}`).join(" | ");
-      return `<div class="row"><span>${section.title}</span><strong>${steps}</strong></div>`;
-    })
-    .join("");
+  setManualRows(manual);
 
   document.getElementById("engine-list").innerHTML = engines.engines
     .map((engine) => `<span class="chip">${engine}</span>`)
@@ -136,7 +182,7 @@ async function refreshDashboard() {
 document.getElementById("refresh").addEventListener("click", () => {
   refreshDashboard().catch((error) => {
     text("system-status", "Error");
-    document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
+    document.getElementById("health-list").innerHTML = row(error.message, badge(false));
     document.getElementById("readiness-list").innerHTML = "";
     document.getElementById("smoke-list").innerHTML = "";
     document.getElementById("launch-list").innerHTML = "";
@@ -165,16 +211,11 @@ document.getElementById("local-bootstrap").addEventListener("click", () => {
   postJson(endpoints.localBootstrap)
     .then((bootstrap) => {
       text("launch-summary", bootstrap.ready ? "Workspace ready" : "Workspace warning");
-      document.getElementById("launch-list").innerHTML = bootstrap.items
-        .map((item) => {
-          const status = item.created ? "created" : "present";
-          return `<div class="row"><span>${item.name}</span><strong>${status}: ${item.path}</strong></div>`;
-        })
-        .join("");
+      setBootstrapRows(bootstrap);
     })
     .catch((error) => {
       text("launch-summary", "Error");
-      document.getElementById("launch-list").innerHTML = `<div class="row"><span>Error</span><strong>${error.message}</strong></div>`;
+      document.getElementById("launch-list").innerHTML = row("Error", escapeHtml(error.message));
     });
 });
 
@@ -283,7 +324,7 @@ document.getElementById("backup-restore").addEventListener("click", () => {
 
 refreshDashboard().catch((error) => {
   text("system-status", "Error");
-  document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
+  document.getElementById("health-list").innerHTML = row(error.message, badge(false));
   document.getElementById("readiness-list").innerHTML = "";
   document.getElementById("smoke-list").innerHTML = "";
   document.getElementById("launch-list").innerHTML = "";

@@ -141,6 +141,23 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert "/api/v1/admin/backup/restore/stage" in js_response.text
 
 
+def test_admin_console_assets_include_operator_readability_helpers(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+
+    js_response = client.get("/admin/assets/app.js")
+    css_response = client.get("/admin/assets/styles.css")
+
+    assert js_response.status_code == 200
+    assert css_response.status_code == 200
+    assert "setLaunchRows" in js_response.text
+    assert "setBootstrapRows" in js_response.text
+    assert "setManualRows" in js_response.text
+    assert "escapeHtml" in js_response.text
+    assert "manual-step" in css_response.text
+    assert "overflow-wrap: anywhere" in css_response.text
+    assert "check-list" in css_response.text
+
+
 def test_admin_release_package_endpoint_creates_zip(tmp_path: Path) -> None:
     client = build_client(tmp_path)
 

@@ -47,6 +47,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.15 ✅ — Local launch preflight
 - M6.16 ✅ — Operator manual
 - M6.17 ✅ — Local workspace bootstrap
+- M6.18 ✅ — Admin console UX polish
 
 ## Definition of Done
 1. Design approved
