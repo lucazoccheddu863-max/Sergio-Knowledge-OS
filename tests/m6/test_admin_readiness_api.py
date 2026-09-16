@@ -113,6 +113,7 @@ def test_admin_console_js_loads_readiness_endpoint(tmp_path: Path) -> None:
     assert "/api/v1/admin/release/package" in response.text
     assert "/api/v1/admin/release/package/inspect" in response.text
     assert "/api/v1/admin/release/gate" in response.text
+    assert "/api/v1/admin/local/launch" in response.text
     assert "/api/v1/admin/overview" in response.text
     assert "/api/v1/admin/smoke" in response.text
 
@@ -128,6 +129,7 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
     assert "Backup Operations" in html_response.text
     assert "Operator Smoke Check" in html_response.text
     assert "Release Package" in html_response.text
+    assert "Local Launch" in html_response.text
     assert "release-package-inspect" in html_response.text
     assert "release-gate-run" in html_response.text
     assert "backup-create" in html_response.text
@@ -179,6 +181,18 @@ def test_admin_release_gate_endpoint_returns_distribution_verdict(tmp_path: Path
     assert archive_path.parent == tmp_path / "releases"
     assert data["inspection"]["ready"] is True
     assert data["warnings"] == []
+
+
+def test_admin_local_launch_endpoint_returns_operator_plan(tmp_path: Path) -> None:
+    client = build_client(tmp_path)
+
+    response = client.get("/api/v1/admin/local/launch", params={"port": 8765})
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["ready"] is True
+    assert "--port 8765" in data["command"]
+    assert data["admin_url"] == "http://127.0.0.1:8765/admin"
 
 
 def test_admin_backup_manifest_endpoint_returns_report(tmp_path: Path) -> None:

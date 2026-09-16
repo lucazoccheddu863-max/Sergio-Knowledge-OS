@@ -12,6 +12,11 @@ from skos.m6.production.overview import (
     build_admin_overview,
     build_admin_smoke_report,
 )
+from skos.m6.production.launch import (
+    LocalLaunchCheck,
+    LocalLaunchPlan,
+    build_local_launch_plan,
+)
 from skos.m6.production.release import (
     ReleasePackageFile,
     ReleasePackageInspection,
@@ -45,6 +50,8 @@ __all__ = [
     "AdminOverview",
     "AdminSmokeCheck",
     "AdminSmokeReport",
+    "LocalLaunchCheck",
+    "LocalLaunchPlan",
     "ReadinessCheck",
     "ReadinessReport",
     "ReleasePackageFile",
@@ -56,6 +63,7 @@ __all__ = [
     "build_backup_manifest",
     "build_admin_overview",
     "build_admin_smoke_report",
+    "build_local_launch_plan",
     "build_release_status",
     "create_backup_archive",
     "create_release_package",

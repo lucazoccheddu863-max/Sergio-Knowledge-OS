@@ -1,30 +1,30 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M6.14
+TEST REPORT — Sergio Knowledge OS M6.15
 ============================================================
 
 Date: 2026-09-15
-Version: 0.6.0-alpha14
-Milestone: M6.14 — Release Readiness Gate
+Version: 0.6.0-alpha15
+Milestone: M6.15 — Local Launch Preflight
 
-M6 Tests: 43/43 PASS
+M6 Tests: 48/48 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 313/313 PASS
+Total: 318/318 PASS
 
 Verification command:
-python3 verify_milestone6_14.py
+python3 verify_milestone6_15.py
 
 Result:
-M6.14 verification complete. All checks PASS.
+M6.15 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-313 passed, 2 warnings
+318 passed, 2 warnings
 
 Notes:
-- Release readiness gate creates and inspects a fresh package before distribution.
-- Admin release gate endpoint and console action are operator-facing only.
-- Gate warnings combine release metadata mismatches and package inspection warnings.
+- Local launch preflight reports command, admin URL and health URL for Mac testing.
+- Local server entrypoint exposes admin console and health endpoint without external services.
+- Admin local launch endpoint and console panel are operator-facing only.
 - Public `/api/v1/status` remains compatible with API Contract v1.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.6.0-alpha15] — 2026-09-15
+
+### Milestone 6.15 — Local Launch Preflight
+
+#### Added
+- `skos.m6.production.local_server` — local FastAPI app entrypoint for admin/health testing
+- `skos.m6.production.build_local_launch_plan()` — local launch command and preflight checks
+- `GET /api/v1/admin/local/launch` — operator launch plan endpoint
+- Local Launch panel in the `/admin` console
+- Tests covering launch plan checks, local server health/admin routes and API output
+- `setup_milestone6_15.py` + `verify_milestone6_15.py`
+
+#### Changed
+- `VERSION` bumped to `0.6.0-alpha15`
+- `pyproject.toml` bumped to `0.6.0-alpha15`
+- README, roadmap and test report updated for M6.15
+
+#### Design Decisions
+- Local launch preflight is non-destructive and does not start external services
+- The local server uses memory-mode defaults and an internal health orchestrator
+- The admin console now shows the command and URLs Luca can use for local testing
+
+#### Test Results
+- M6 total: 48/48 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.6.0-alpha14] — 2026-09-15
 
 ### Milestone 6.14 — Release Readiness Gate

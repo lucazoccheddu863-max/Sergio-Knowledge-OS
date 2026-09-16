@@ -10,6 +10,7 @@ const endpoints = {
   releasePackage: "/api/v1/admin/release/package",
   releasePackageInspect: "/api/v1/admin/release/package/inspect",
   releaseGate: "/api/v1/admin/release/gate",
+  localLaunch: "/api/v1/admin/local/launch",
   backupManifest: "/api/v1/admin/backup/manifest",
   backupCreate: "/api/v1/admin/backup/create",
   backupInspect: "/api/v1/admin/backup/inspect",
@@ -66,13 +67,14 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
-  const [status, health, engines, security, overview, smoke] = await Promise.all([
+  const [status, health, engines, security, overview, smoke, launch] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
     getJson(endpoints.engines),
     getJson(endpoints.security),
     getJson(endpoints.overview),
     getJson(endpoints.smoke),
+    getJson(endpoints.localLaunch),
   ]);
   const { release, readiness, backup: backupManifest } = overview;
 
@@ -93,6 +95,16 @@ async function refreshDashboard() {
   text("smoke-summary", smoke.ready ? "Pass" : "Needs attention");
   document.getElementById("smoke-list").innerHTML = smoke.checks
     .map((check) => `<div class="row"><span>${check.name}: ${check.message}</span>${badge(check.status)}</div>`)
+    .join("");
+
+  text("launch-summary", launch.ready ? "Ready" : "Needs attention");
+  document.getElementById("launch-list").innerHTML = [
+    ["Command", launch.command],
+    ["Admin", launch.admin_url],
+    ["Health", launch.api_url],
+    ["Checks", launch.checks.map((check) => `${check.name}: ${check.status}`).join("; ")],
+  ]
+    .map(([name, value]) => `<div class="row"><span>${name}</span><strong>${value}</strong></div>`)
     .join("");
 
   document.getElementById("engine-list").innerHTML = engines.engines
@@ -116,6 +128,7 @@ document.getElementById("refresh").addEventListener("click", () => {
     document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
     document.getElementById("readiness-list").innerHTML = "";
     document.getElementById("smoke-list").innerHTML = "";
+    document.getElementById("launch-list").innerHTML = "";
   });
 });
 
@@ -244,6 +257,7 @@ refreshDashboard().catch((error) => {
   document.getElementById("health-list").innerHTML = `<div class="row"><span>${error.message}</span>${badge(false)}</div>`;
   document.getElementById("readiness-list").innerHTML = "";
   document.getElementById("smoke-list").innerHTML = "";
+  document.getElementById("launch-list").innerHTML = "";
   refreshBackupManifest().catch(() => {
     text("backup-summary", "Error");
   });

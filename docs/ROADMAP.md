@@ -44,6 +44,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M6.12 ✅ — Release package export
 - M6.13 ✅ — Release package inspection
 - M6.14 ✅ — Release readiness gate
+- M6.15 ✅ — Local launch preflight
 
 ## Definition of Done
 1. Design approved
