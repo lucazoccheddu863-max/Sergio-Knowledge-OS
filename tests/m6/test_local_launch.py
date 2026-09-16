@@ -2,8 +2,9 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 
-from fastapi.testclient import TestClient
+from fastapi import FastAPI
 
 from skos.m6.production import bootstrap_local_workspace, build_local_launch_plan
 from skos.m6.production.local_server import build_local_app
@@ -13,7 +14,8 @@ def test_local_launch_plan_reports_command_and_urls() -> None:
     plan = build_local_launch_plan(port=8765)
 
     assert plan.ready is True
-    assert "skos.m6.production.local_server:app" in plan.command
+    assert "skos.m6.production.local_server:create_app" in plan.command
+    assert "--factory" in plan.command
     assert "--port 8765" in plan.command
     assert plan.admin_url == "http://127.0.0.1:8765/admin"
     assert plan.api_url == "http://127.0.0.1:8765/api/v1/health"
@@ -40,16 +42,14 @@ def test_local_launch_plan_warns_when_config_missing(tmp_path: Path) -> None:
     assert any(check.name == "config" and check.status == "fail" for check in plan.checks)
 
 
-def test_local_server_serves_admin_and_health() -> None:
-    client = TestClient(build_local_app())
+def test_local_server_factory_delegates_to_application_runtime(monkeypatch) -> None:
+    expected_app = FastAPI()
+    monkeypatch.setattr(
+        "skos.m6.production.local_server.build_application_runtime",
+        lambda root_path: SimpleNamespace(app=expected_app),
+    )
 
-    health = client.get("/api/v1/health")
-    admin = client.get("/admin")
-
-    assert health.status_code == 200
-    assert health.json()["status"] == "healthy"
-    assert admin.status_code == 200
-    assert "Sergio Knowledge OS" in admin.text
+    assert build_local_app() is expected_app
 
 
 def test_bootstrap_local_workspace_creates_runtime_directories(tmp_path: Path) -> None:

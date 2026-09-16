@@ -99,8 +99,8 @@ def build_local_launch_plan(
     return LocalLaunchPlan(
         ready=all(check.passed for check in checks),
         command=(
-            "python3 -m uvicorn skos.m6.production.local_server:app "
-            f"--host {host} --port {port}"
+            "python3 -m uvicorn skos.m6.production.local_server:create_app "
+            f"--factory --host {host} --port {port}"
         ),
         admin_url=f"{base_url}/admin",
         api_url=f"{base_url}/api/v1/health",
@@ -193,9 +193,9 @@ def _check_admin_assets() -> LocalLaunchCheck:
 
 def _check_local_server_import() -> LocalLaunchCheck:
     try:
-        from skos.m6.production.local_server import app
+        from skos.m6.production.local_server import create_app
     except Exception as exc:
         return LocalLaunchCheck("local_server", "fail", f"local server unavailable: {exc}")
-    if app is None:
-        return LocalLaunchCheck("local_server", "fail", "local server app is unavailable")
-    return LocalLaunchCheck("local_server", "pass", "local server app is importable")
+    if not callable(create_app):
+        return LocalLaunchCheck("local_server", "fail", "local server factory is unavailable")
+    return LocalLaunchCheck("local_server", "pass", "local server factory is importable")

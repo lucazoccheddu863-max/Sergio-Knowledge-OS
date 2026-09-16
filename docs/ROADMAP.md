@@ -54,6 +54,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 
 ### M7 — Executable Runtime & Local Beta 🔄 IN PROGRESS
 - M7.1 ✅ — AI service runtime contract alignment
+- M7.2 ✅ — Complete application runtime assembly
 
 ## Definition of Done
 1. Design approved

@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.7.0-alpha2] — 2026-09-16
+
+### Milestone 7.2 (M7.2) — Complete Application Runtime Assembly
+
+#### Added
+- `skos.m7.runtime.build_application_runtime()` — complete executable runtime factory
+- Provider registry for OpenAI, Gemini, Kimi, Claude and Ollama
+- Runtime event bridge between application payloads and the frozen domain event contract
+- Persistent ChromaDB vector-store wiring and environment-backed secret access
+- End-to-end tests for service assembly, semantic queries and graph queries through the API
+- `setup_milestone7_2.py` + `verify_milestone7_2.py`
+
+#### Changed
+- Local server now starts the real application runtime through a lazy Uvicorn factory
+- Operator `start` command uses the side-effect-free server factory
+- Local launch checks validate the runtime factory without creating data during import
+- PyYAML is now a direct dependency because runtime configuration loads `config.yaml`
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha2`
+
+#### Design Decisions
+- Runtime assembly reuses the existing M4 services and M5 persistence selection
+- Imports remain side-effect free; storage is initialized only when the app is created
+- The event bridge preserves frozen infrastructure contracts while making real services executable
+
+#### Test Results
+- M7 total: 8/8 PASS
+- M6 regression: 66/66 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha1] — 2026-09-16
 
 ### Milestone 7.1 — AI Service Runtime Contract

@@ -1,7 +1,7 @@
 # Sergio Knowledge OS
 
-**Version:** 0.7.0-alpha1
-**Status:** M7.1 AI Service Runtime Contract verified
+**Version:** 0.7.0-alpha2
+**Status:** M7.2 Complete Application Runtime verified
 **License:** MIT
 
 Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered information retrieval, management, and exploration.
@@ -13,10 +13,10 @@ Sergio Knowledge OS (SKOS) is a semantic knowledge platform built for AI-powered
 pip install -e ".[dev]"
 
 # Run current milestone and regression tests
-python verify_milestone7_1.py
+python verify_milestone7_2.py
 
 # Start API
-python3 -m uvicorn skos.m6.production.local_server:app --host 127.0.0.1 --port 8000
+python3 -m uvicorn skos.m6.production.local_server:create_app --factory --host 127.0.0.1 --port 8000
 ```
 
 After installation, the local operator workflow is available through one command:
@@ -125,15 +125,16 @@ M4.10 introduces production observability:
 | **M6.20 — Snapshot Report Export** | **0.6.0-alpha20** | **Verified** |
 | **M6.21 — Local Operator CLI** | **0.6.0-alpha21** | **Verified** |
 | **M7.1 — AI Runtime Contract** | **0.7.0-alpha1** | **Verified** |
+| **M7.2 — Application Runtime Assembly** | **0.7.0-alpha2** | **Verified** |
 
 ## Development
 
 ```bash
 # Setup
-python setup_milestone7_1.py
+python setup_milestone7_2.py
 
 # Verify
-python verify_milestone7_1.py
+python verify_milestone7_2.py
 
 # Full test suite
 pytest -q

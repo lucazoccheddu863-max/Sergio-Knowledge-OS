@@ -124,7 +124,7 @@ def _write_report(path: Path, content: str, overwrite: bool) -> None:
 def _run_server(host: str, port: int) -> None:
     import uvicorn
 
-    uvicorn.run("skos.m6.production.local_server:app", host=host, port=port)
+    uvicorn.run("skos.m6.production.local_server:create_app", factory=True, host=host, port=port)
 
 
 def main(argv: Sequence[str] | None = None) -> int:
