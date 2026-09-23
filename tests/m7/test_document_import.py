@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from skos.m4.domain.query_orchestrator_models import UnifiedQuery
+from skos.m7.runtime.document_import import DocumentImportService
 from tests.m7.test_application_runtime import build_test_runtime
 
 
@@ -27,6 +28,23 @@ def test_import_archives_indexes_and_finds_document(tmp_path: Path) -> None:
     assert search.semantic_result.results[0].text == "Sergio conserva conoscenza verificabile."
 
 
+def test_markdown_import_keeps_heading_with_section_body(tmp_path: Path) -> None:
+    source = tmp_path / "roadmap.md"
+    source.write_text(
+        "# Roadmap\n\nIntro.\n\n## Milestone 7\n\n- Importazione\n- Ricerca\n\n## Future\n\nLater.",
+        encoding="utf-8",
+    )
+    runtime = build_test_runtime(tmp_path)
+
+    result = runtime.document_import.import_file(source)
+
+    assert result.chunk_count == 3
+    milestone = runtime.vector_store.records[1]
+    assert "## Milestone 7" in milestone.text
+    assert "- Importazione" in milestone.text
+    assert "- Ricerca" in milestone.text
+
+
 def test_duplicate_content_is_not_archived_or_indexed_twice(tmp_path: Path) -> None:
     first = tmp_path / "first.txt"
     second = tmp_path / "second.txt"
@@ -42,6 +60,28 @@ def test_duplicate_content_is_not_archived_or_indexed_twice(tmp_path: Path) -> N
     assert duplicate.archived_path == imported.archived_path
     assert duplicate.chunk_count == 0
     assert len(runtime.vector_store.records) == record_count
+
+
+def test_new_index_generation_reindexes_preserved_archive(tmp_path: Path) -> None:
+    source = tmp_path / "knowledge.txt"
+    source.write_text("Versioned local knowledge", encoding="utf-8")
+    first_runtime = build_test_runtime(tmp_path)
+    legacy_import = DocumentImportService(
+        tmp_path / "data" / "archive",
+        first_runtime.document_indexer,
+    )
+    legacy_import.import_file(source)
+    second_runtime = build_test_runtime(tmp_path)
+    versioned_import = DocumentImportService(
+        tmp_path / "data" / "archive",
+        second_runtime.document_indexer,
+        index_generation="m7_9",
+    )
+
+    result = versioned_import.import_file(source)
+
+    assert result.status == "imported"
+    assert result.chunk_count == 1
 
 
 def test_unsupported_document_is_rejected_without_archive(tmp_path: Path) -> None:

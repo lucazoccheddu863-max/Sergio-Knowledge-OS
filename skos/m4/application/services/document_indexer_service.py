@@ -8,7 +8,7 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 
-from skos.m4.domain.chunking import ParagraphChunking
+from skos.m4.domain.chunking import ChunkingStrategy, ParagraphChunking
 from skos.m4.application.services.embedding_pipeline import EmbeddingPipeline
 from skos.m4.application.services.vector_store_service import VectorStoreService
 from skos.m4.infrastructure.ports.config_port import ConfigurationPort
@@ -44,10 +44,11 @@ class DocumentIndexerService:
         doc_id: str,
         source_id: str = "",
         metadata: dict[str, Any] | None = None,
+        chunking_strategy: ChunkingStrategy | None = None,
     ) -> int:
         """Index a text document: chunk → embed → store."""
         try:
-            chunker = ParagraphChunking()
+            chunker = chunking_strategy or ParagraphChunking()
             chunks = chunker.chunk(text, source_id=source_id or doc_id)
             if metadata:
                 chunk_metadata = {str(key): str(value) for key, value in metadata.items()}

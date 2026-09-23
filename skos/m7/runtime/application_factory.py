@@ -121,15 +121,29 @@ def build_runtime_config(root_path: str | Path = ".") -> HierarchicalConfigAdapt
             "m4": {
                 "security": {"enabled": False, "auth_required": False},
                 "semantic_search": {
-                    "collection_name": "semantic_search",
+                    "collection_name": "semantic_search_m7_9",
                     "default_top_k": 5,
                     "max_results_per_query": 20,
                 },
-                "rag": {"default_top_k": 5},
+                "embedding": {
+                    "document_prefix": "search_document: ",
+                    "query_prefix": "search_query: ",
+                },
+                "rag": {
+                    "default_top_k": 5,
+                    "system_prompt": (
+                        "Rispondi in italiano usando esclusivamente il contesto fornito. "
+                        "Sintetizza i fatti rilevanti e non inventare informazioni. "
+                        "Se il contesto non contiene la risposta, dichiaralo chiaramente."
+                    ),
+                },
             },
             "m5": {"persistence": {"mode": "memory"}},
             "m6": {"environment": "development"},
-            "m7": {"vector_store": {"path": str(root / "data" / "chroma")}},
+            "m7": {
+                "index_generation": "m7_9",
+                "vector_store": {"path": str(root / "data" / "chroma")},
+            },
         }
     )
     config_path = root / "config.yaml"
@@ -191,6 +205,7 @@ def build_application_runtime(
     document_import = DocumentImportService(
         config.get("archive_root", default=root / "data" / "archive"),
         document_indexer,
+        index_generation=str(config.get("m7.index_generation", default="")),
     )
     ai_status = AIRuntimeStatusService(ai_service, config)
     semantic_search = SemanticSearchService(store, ai_service, config, event_bus)

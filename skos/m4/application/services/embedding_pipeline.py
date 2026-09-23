@@ -88,10 +88,12 @@ class EmbeddingPipeline:
         all_vectors: list[list[float]] = []
         model_name = ""
         dimensions = 0
+        document_prefix = self._config.get("m4.embedding.document_prefix", default="")
+        document_prefix = document_prefix if isinstance(document_prefix, str) else ""
 
         for i in range(0, len(chunks), batch_size):
             batch = chunks[i : i + batch_size]
-            batch_texts = [c.text for c in batch]
+            batch_texts = [f"{document_prefix}{c.text}" for c in batch]
             result = self._ai_service.embed(provider, batch_texts)
             all_vectors.extend(result.vectors)
             model_name = result.model

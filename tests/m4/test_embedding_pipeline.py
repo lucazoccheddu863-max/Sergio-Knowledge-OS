@@ -162,6 +162,22 @@ class TestEmbeddingPipeline:
         assert len(result.vectors) == 2
         assert ai_service.last_texts == ["chunk one", "chunk two"]
 
+    def test_embed_chunks_applies_document_prefix(self) -> None:
+        bus = InMemoryEventBus()
+        config = MagicMock()
+        config.get.side_effect = lambda key, default=None: {
+            "m4.embedding.batch_size": 100,
+            "m4.embedding.chunk_size": 500,
+            "m4.embedding.chunk_overlap": 50,
+            "m4.embedding.document_prefix": "search_document: ",
+        }.get(key, default)
+        ai_service = MockAIService()
+        pipeline = EmbeddingPipeline(ai_service, bus, config)
+
+        pipeline.embed_chunks([TextChunk(text="knowledge", source_id="src", index=0, total_chunks=1)])
+
+        assert ai_service.last_texts == ["search_document: knowledge"]
+
     def test_empty_texts(self) -> None:
         bus = InMemoryEventBus()
         config = MagicMock()

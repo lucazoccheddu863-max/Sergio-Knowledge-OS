@@ -15,6 +15,7 @@ ai_providers:
     timeout: 300
 
 m7:
+  index_generation: m7_9
   vector_store:
     path: ./data/chroma
 
@@ -41,15 +42,19 @@ m5:
 
 m4:
   semantic_search:
-    collection_name: "semantic_search"
+    collection_name: "semantic_search_m7_9"
     default_top_k: 5
     similarity_threshold: 0.7
     max_results_per_query: 20
     rerank_enabled: false
 
+  embedding:
+    document_prefix: "search_document: "
+    query_prefix: "search_query: "
+
   rag:
     default_top_k: 5
-    system_prompt: "You are a helpful assistant. Use the provided context to answer the question. If the context does not contain the answer, say so clearly."
+    system_prompt: "Rispondi in italiano usando esclusivamente il contesto fornito. Sintetizza i fatti rilevanti e non inventare informazioni. Se il contesto non contiene la risposta, dichiaralo chiaramente."
 
   knowledge_graph:
     default_depth: 2

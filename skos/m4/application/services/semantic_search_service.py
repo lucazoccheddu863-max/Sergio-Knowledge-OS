@@ -50,7 +50,9 @@ class SemanticSearchService:
         """Execute semantic search: embed query → vector search → rank → emit event."""
         start = time.perf_counter()
         try:
-            embed_req = EmbeddingRequest(texts=[query.text])
+            query_prefix = self._config.get("m4.embedding.query_prefix", default="")
+            query_prefix = query_prefix if isinstance(query_prefix, str) else ""
+            embed_req = EmbeddingRequest(texts=[f"{query_prefix}{query.text}"])
             embed_result = self._ai.embed(embed_req)
             query_vector = embed_result.vectors[0]
 

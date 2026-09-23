@@ -1,26 +1,26 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.8
+TEST REPORT — Sergio Knowledge OS M7.9
 ============================================================
 
 Date: 2026-09-23
-Version: 0.7.0-alpha8
-Milestone: M7.8 — One-command Local Start
+Version: 0.7.0-alpha9
+Milestone: M7.9 — Grounded Local Retrieval
 
-M7 Tests: 23/23 PASS
+M7 Tests: 27/27 PASS
 M6 Regression: 68/68 PASS
 M5 Regression: 32/32 PASS
-M4 Regression: 238/238 PASS
-Total: 361/361 PASS
+M4 Regression: 240/240 PASS
+Total: 367/367 PASS
 
 Verification command:
-python3 verify_milestone7_8.py
+python3 verify_milestone7_9.py
 
 Result:
-M7.8 verification complete. All checks PASS.
+M7.9 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-361 passed, 2 warnings
+367 passed, 2 warnings
 
 Notes:
 - Ollama 0.34.2 was compiled and validated on the local Intel Mac.
@@ -33,5 +33,9 @@ Notes:
 - ADR-007 documents a generic external integration boundary without concrete connectors.
 - `sergio-knowledge start` starts and verifies Ollama without administrator privileges.
 - A real stopped Ollama process was restarted and verified through API 0.34.2.
+- Markdown headings remain attached to their section content during indexing.
+- Nomic retrieval prefixes are applied separately to documents and queries.
+- M7.9 uses a new persistent collection and index generation without deleting prior data.
+- Live retrieval returned `ROADMAP.md` and `README.md` as the leading sources.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0-alpha9] — 2026-09-23
+
+### Milestone 7.9 (M7.9) — Grounded Local Retrieval
+
+#### Added
+- Markdown-aware chunking that keeps headings with their section content
+- Nomic document and query prefixes for retrieval-oriented local embeddings
+- Non-destructive index generations for safe reindexing after embedding changes
+- Focused tests for Markdown sections, embedding prefixes and index generations
+- `setup_milestone7_9.py` + `verify_milestone7_9.py`
+
+#### Changed
+- Local semantic search now uses the isolated `semantic_search_m7_9` collection
+- RAG answers default to an Italian, context-only anti-hallucination instruction
+- `README.md` and `ROADMAP.md` were reindexed without deleting prior archive data
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha9`
+
+#### Live Validation
+- Local retrieval returned `ROADMAP.md` and `README.md` as the leading sources
+- The M7 milestone section was included in the retrieved context
+- Ollama generated the RAG response through the assembled application runtime
+
+#### Test Results
+- M7 total: 27/27 PASS
+- M6 regression: 68/68 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 240/240 PASS
+- Full suite: 367/367 PASS
+
+* * *
+
 ## [0.7.0-alpha8] — 2026-09-23
 
 ### Milestone 7.8 (M7.8) — One-command Local Start

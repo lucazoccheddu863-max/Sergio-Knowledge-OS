@@ -6,9 +6,11 @@ from hashlib import sha256
 import json
 import os
 from pathlib import Path
+import re
 import tempfile
 
 from skos.m4.application.services.document_indexer_service import DocumentIndexerService
+from skos.m7.runtime.markdown_chunking import MarkdownSectionChunking
 
 
 SUPPORTED_EXTENSIONS = frozenset({".json", ".md", ".txt"})
@@ -32,9 +34,15 @@ class DocumentImportResult:
 class DocumentImportService:
     """Archive an original local document and index its textual content."""
 
-    def __init__(self, archive_root: str | Path, indexer: DocumentIndexerService) -> None:
+    def __init__(
+        self,
+        archive_root: str | Path,
+        indexer: DocumentIndexerService,
+        index_generation: str = "",
+    ) -> None:
         self._archive_root = Path(archive_root).expanduser().resolve()
         self._indexer = indexer
+        self._index_generation = re.sub(r"[^a-zA-Z0-9_-]", "_", index_generation)
 
     def import_file(self, source_path: str | Path) -> DocumentImportResult:
         source = Path(source_path).expanduser().resolve()
@@ -64,7 +72,10 @@ class DocumentImportService:
 
         archive_dir = self._archive_root / "imported" / digest[:2]
         archived = archive_dir / f"{digest}{suffix}"
-        indexed_marker = archived.with_suffix(f"{suffix}.indexed")
+        marker_suffix = f"{suffix}.indexed"
+        if self._index_generation:
+            marker_suffix = f"{marker_suffix}.{self._index_generation}"
+        indexed_marker = archived.with_suffix(marker_suffix)
         archived_exists = archived.is_file()
         duplicate = archived_exists and indexed_marker.is_file()
         if archived_exists and sha256(archived.read_bytes()).hexdigest() != digest:
@@ -87,6 +98,7 @@ class DocumentImportService:
                     "archived_path": str(archived),
                     "media_type": suffix.lstrip("."),
                 },
+                chunking_strategy=MarkdownSectionChunking() if suffix == ".md" else None,
             )
             indexed_marker.write_text(str(chunk_count), encoding="ascii")
 

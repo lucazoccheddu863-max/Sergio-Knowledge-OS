@@ -61,6 +61,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M7.6 ✅ — Local AI provider and required-model readiness
 - M7.7 ✅ — Local beta reliability and end-to-end validation
 - M7.8 ✅ — One-command local startup for Ollama and Sergio
+- M7.9 ✅ — Grounded Markdown retrieval with model-aware embeddings
 
 ## Definition of Done
 1. Design approved

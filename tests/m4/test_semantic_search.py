@@ -141,6 +141,22 @@ class TestSemanticSearchService:
         assert result.results[0].rank == 1
         assert result.embedding_model == "test-model"
 
+    def test_search_applies_query_embedding_prefix(self, mock_deps: dict[str, MagicMock]) -> None:
+        mock_deps["config"].get.side_effect = lambda key, default=None: {
+            "m4.semantic_search.collection_name": "semantic_search",
+            "m4.semantic_search.default_top_k": 5,
+            "m4.semantic_search.max_results_per_query": 20,
+            "m4.embedding.query_prefix": "search_query: ",
+        }.get(key, default)
+        service = SemanticSearchService(
+            mock_deps["store"], mock_deps["ai"], mock_deps["config"], mock_deps["bus"]
+        )
+
+        service.search(SemanticQuery(text="milestones"))
+
+        request = mock_deps["ai"].embed.call_args.args[0]
+        assert request.texts == ["search_query: milestones"]
+
     def test_search_emits_completed_event(self, mock_deps: dict[str, MagicMock]) -> None:
         service = SemanticSearchService(
             mock_deps["store"], mock_deps["ai"], mock_deps["config"], mock_deps["bus"]
