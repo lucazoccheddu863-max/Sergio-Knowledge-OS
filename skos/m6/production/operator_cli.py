@@ -110,6 +110,11 @@ def run_command(
             if not check.passed:
                 print(f"- {check.name}: {check.message}", file=stderr)
         return 1
+    local_ai = _ensure_local_ai()
+    if not local_ai.ready:
+        print(f"Local start blocked: {local_ai.message}", file=stderr)
+        return 1
+    print(local_ai.message, file=stdout)
     print(f"Admin console: {plan.admin_url}", file=stdout)
     print("Press Ctrl+C to stop Sergio Knowledge OS.", file=stdout)
     _run_server(args.host, args.port)
@@ -141,6 +146,12 @@ def _run_server(host: str, port: int) -> None:
     import uvicorn
 
     uvicorn.run("skos.m6.production.local_server:create_app", factory=True, host=host, port=port)
+
+
+def _ensure_local_ai():
+    from skos.m7.runtime.local_ai_process import ensure_ollama_running
+
+    return ensure_ollama_running()
 
 
 def main(argv: Sequence[str] | None = None) -> int:

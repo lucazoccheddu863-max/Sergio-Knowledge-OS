@@ -1,26 +1,26 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.7
+TEST REPORT — Sergio Knowledge OS M7.8
 ============================================================
 
 Date: 2026-09-23
-Version: 0.7.0-alpha7
-Milestone: M7.7 — Local Beta Reliability
+Version: 0.7.0-alpha8
+Milestone: M7.8 — One-command Local Start
 
-M7 Tests: 20/20 PASS
-M6 Regression: 67/67 PASS
+M7 Tests: 23/23 PASS
+M6 Regression: 68/68 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 357/357 PASS
+Total: 361/361 PASS
 
 Verification command:
-python3 verify_milestone7_7.py
+python3 verify_milestone7_8.py
 
 Result:
-M7.7 verification complete. All checks PASS.
+M7.8 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-357 passed, 2 warnings
+361 passed, 2 warnings
 
 Notes:
 - Ollama 0.34.2 was compiled and validated on the local Intel Mac.
@@ -31,5 +31,7 @@ Notes:
 - The local API and admin console returned HTTP 200 and AI readiness PASS.
 - Runtime status now derives the active release while M4 defaults remain compatible.
 - ADR-007 documents a generic external integration boundary without concrete connectors.
+- `sergio-knowledge start` starts and verifies Ollama without administrator privileges.
+- A real stopped Ollama process was restarted and verified through API 0.34.2.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.7.0-alpha8] — 2026-09-23
+
+### Milestone 7.8 (M7.8) — One-command Local Start
+
+#### Added
+- Local Ollama process discovery and readiness checks
+- Automatic background startup from PATH, Intel Homebrew or Apple Silicon Homebrew
+- Bounded startup wait with actionable failure messages
+- Operator CLI tests for successful and blocked local AI startup
+- `setup_milestone7_8.py` + `verify_milestone7_8.py`
+
+#### Changed
+- `sergio-knowledge start` now starts Ollama before launching the admin console
+- Local CPU-friendly Ollama environment defaults are applied automatically
+- The console no longer starts in a misleading state when local AI is unavailable
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha8`
+
+#### Live Validation
+- Ollama was stopped and restarted automatically without administrator privileges
+- Ollama API 0.34.2 became ready within the bounded startup window
+- Sergio started on port 8000 and reported operational AI readiness
+
+#### Test Results
+- M7 total: 23/23 PASS
+- M6 regression: 68/68 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha7] — 2026-09-23
 
 ### Milestone 7.7 (M7.7) — Local Beta Reliability

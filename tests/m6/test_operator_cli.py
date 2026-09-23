@@ -82,6 +82,11 @@ def test_start_command_runs_server_after_preflight(tmp_path: Path, monkeypatch) 
     seed_release_files(tmp_path)
     calls: list[tuple[str, int]] = []
     monkeypatch.setattr(operator_cli, "_run_server", lambda host, port: calls.append((host, port)))
+    monkeypatch.setattr(
+        operator_cli,
+        "_ensure_local_ai",
+        lambda: SimpleNamespace(ready=True, started=True, message="Ollama started"),
+    )
     output = StringIO()
 
     result = operator_cli.run_command(
@@ -91,7 +96,30 @@ def test_start_command_runs_server_after_preflight(tmp_path: Path, monkeypatch) 
 
     assert result == 0
     assert calls == [("127.0.0.1", 8765)]
+    assert "Ollama started" in output.getvalue()
     assert "http://127.0.0.1:8765/admin" in output.getvalue()
+
+
+def test_start_command_stops_when_local_ai_is_unavailable(tmp_path: Path, monkeypatch) -> None:
+    seed_release_files(tmp_path)
+    calls: list[tuple[str, int]] = []
+    monkeypatch.setattr(operator_cli, "_run_server", lambda host, port: calls.append((host, port)))
+    monkeypatch.setattr(
+        operator_cli,
+        "_ensure_local_ai",
+        lambda: SimpleNamespace(ready=False, started=False, message="Ollama unavailable"),
+    )
+    errors = StringIO()
+
+    result = operator_cli.run_command(
+        parse("--root", str(tmp_path), "start"),
+        stdout=StringIO(),
+        stderr=errors,
+    )
+
+    assert result == 1
+    assert calls == []
+    assert "Ollama unavailable" in errors.getvalue()
 
 
 def test_import_command_reports_archived_document(tmp_path: Path, monkeypatch) -> None:
