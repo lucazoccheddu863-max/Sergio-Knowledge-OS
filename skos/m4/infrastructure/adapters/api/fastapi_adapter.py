@@ -91,9 +91,15 @@ class FastAPIAdapter:
         self._audit = audit
         self._document_importer = document_importer
         self._ai_status = ai_status
+        configured_version = config.get("runtime.version", default="0.4.0")
+        configured_milestone = config.get("runtime.milestone", default="M4.12")
+        self._runtime_version = configured_version if isinstance(configured_version, str) else "0.4.0"
+        self._runtime_milestone = (
+            configured_milestone if isinstance(configured_milestone, str) else "M4.12"
+        )
         self._app = FastAPI(
             title="Sergio Knowledge OS API",
-            version="0.4.0",
+            version=self._runtime_version,
             description="REST API for the Sergio Knowledge OS Query Engine — Contract v1",
             docs_url="/api/v1/docs",
             redoc_url="/api/v1/redoc",
@@ -387,8 +393,8 @@ class FastAPIAdapter:
             self._count_request("GET", "/api/v1/status", 200)
             self._audit_event("status", ctx.principal, "GET", "/api/v1/status", "success")
             return StatusResponse(
-                version="0.4.0",
-                milestone="M4.12",
+                version=self._runtime_version,
+                milestone=self._runtime_milestone,
                 status="operational",
             )
 
@@ -523,8 +529,8 @@ class FastAPIAdapter:
             self._count_request("GET", "/api/v1/admin/status", 200)
             self._audit_event("admin", ctx.principal, "GET", "/api/v1/admin/status", "success")
             return StatusResponse(
-                version="0.4.0",
-                milestone="M4.12",
+                version=self._runtime_version,
+                milestone=self._runtime_milestone,
                 status="admin_reserved",
             )
 

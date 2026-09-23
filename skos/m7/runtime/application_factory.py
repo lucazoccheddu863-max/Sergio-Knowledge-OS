@@ -99,6 +99,9 @@ def build_runtime_config(root_path: str | Path = ".") -> HierarchicalConfigAdapt
     """Load runtime defaults and merge the repository config when present."""
 
     root = Path(root_path).resolve()
+    version_path = root / "VERSION"
+    version = version_path.read_text(encoding="utf-8").strip() if version_path.is_file() else "unknown"
+    milestone = _derive_milestone(version)
     config = HierarchicalConfigAdapter(
         defaults={
             "database_path": str(root / "data" / "sergio_knowledge.db"),
@@ -108,6 +111,13 @@ def build_runtime_config(root_path: str | Path = ".") -> HierarchicalConfigAdapt
             "ai_primary_provider": "ollama",
             "ai_local_model": "qwen2.5:1.5b",
             "ai_embedding_model": "nomic-embed-text",
+            "runtime": {"version": version, "milestone": milestone},
+            "ai_providers": {
+                "ollama": {
+                    "base_url": "http://127.0.0.1:11434/api",
+                    "timeout": 300,
+                }
+            },
             "m4": {
                 "security": {"enabled": False, "auth_required": False},
                 "semantic_search": {
@@ -126,6 +136,15 @@ def build_runtime_config(root_path: str | Path = ".") -> HierarchicalConfigAdapt
     if config_path.is_file():
         config.load_from_file(config_path)
     return config
+
+
+def _derive_milestone(version: str) -> str:
+    if version.startswith("0.") and ".0-alpha" in version:
+        release, suffix = version.split("-alpha", maxsplit=1)
+        parts = release.split(".")
+        if len(parts) == 3 and parts[1].isdigit() and parts[2] == "0" and suffix.isdigit():
+            return f"M{parts[1]}.{suffix}"
+    return "unknown"
 
 
 def build_provider_registry() -> AIProviderRegistry:

@@ -40,3 +40,7 @@ dist/
 # Backup temporanei
 *.bak
 *.tmp
+
+# Local runtime knowledge and vector indexes
+data/archive/
+data/chroma/

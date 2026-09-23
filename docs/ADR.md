@@ -2,7 +2,7 @@
 
 ## ADR-001: Clean Architecture with Ports & Adapters
 
-**Status:** Accepted  
+**Status:** Accepted
 **Date:** 2026-08-05
 
 **Context:** SKOS needs to support multiple AI providers, databases, and deployment environments without coupling domain logic to infrastructure.
@@ -84,3 +84,28 @@
 - ✅ Works immediately after `pip install`
 - ✅ Zero configuration for first run
 - ✅ Production backends require only adapter swap
+
+## ADR-007: Generic External Integration Boundary
+
+**Status:** Accepted
+**Date:** 2026-09-23
+
+**Context:** SKOS may receive knowledge from independent external applications. The core must remain reusable and must not absorb the architecture, database, or domain model of any particular source system.
+
+**Decision:** Future integrations will be implemented as optional adapters against a small, generic inbound contract. An adapter is responsible for source-specific authentication, transport, mapping, and checkpointing. It submits normalized content and provenance metadata to SKOS through existing application services. SKOS retains ownership of its archive, indexes, database, and processing lifecycle. No concrete connector is introduced until its source application and requirements are stable.
+
+The minimum future contract must preserve:
+
+- source system and external record identity;
+- source schema or payload version;
+- content type and normalized content;
+- provenance metadata and source timestamps;
+- an idempotency key suitable for safe retries.
+
+**Consequences:**
+- ✅ External applications remain independent from SKOS
+- ✅ New adapters do not require source-specific dependencies in the core
+- ✅ Existing import, indexing, provenance, DI, and event mechanisms remain reusable
+- ✅ Connector databases are never merged with the SKOS database
+- ❌ Authentication, polling, webhooks, synchronization, and write-back remain connector-specific future work
+- ❌ No connector, microservice, gateway, broker, or additional event bus is created by this decision

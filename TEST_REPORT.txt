@@ -1,31 +1,35 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.6
+TEST REPORT — Sergio Knowledge OS M7.7
 ============================================================
 
-Date: 2026-09-17
-Version: 0.7.0-alpha6
-Milestone: M7.6 — Local AI Readiness
+Date: 2026-09-23
+Version: 0.7.0-alpha7
+Milestone: M7.7 — Local Beta Reliability
 
-M7 Tests: 18/18 PASS
+M7 Tests: 20/20 PASS
 M6 Regression: 67/67 PASS
 M5 Regression: 32/32 PASS
 M4 Regression: 238/238 PASS
-Total: 355/355 PASS
+Total: 357/357 PASS
 
 Verification command:
-python3 verify_milestone7_6.py
+python3 verify_milestone7_7.py
 
 Result:
-M7.6 verification complete. All checks PASS.
+M7.7 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-355 passed, 2 warnings
+357 passed, 2 warnings
 
 Notes:
-- Local-first configuration selects Ollama and explicit chat/embedding models.
-- The console reports provider connectivity and missing required models.
-- Configured model names are applied to structured AI requests.
-- Live Mac verification correctly reports Ollama offline when it is not installed.
+- Ollama 0.34.2 was compiled and validated on the local Intel Mac.
+- `qwen2.5:1.5b` generated a real local response.
+- `nomic-embed-text` generated a real 768-dimension embedding.
+- `README.md` and `docs/ROADMAP.md` were archived and indexed in persistent Chroma storage.
+- A five-source RAG query completed through the assembled runtime.
+- The local API and admin console returned HTTP 200 and AI readiness PASS.
+- Runtime status now derives the active release while M4 defaults remain compatible.
+- ADR-007 documents a generic external integration boundary without concrete connectors.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

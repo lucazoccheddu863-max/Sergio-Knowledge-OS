@@ -9,6 +9,11 @@ ai_primary_provider: ollama
 ai_local_model: qwen2.5:1.5b
 ai_embedding_model: nomic-embed-text
 
+ai_providers:
+  ollama:
+    base_url: http://127.0.0.1:11434/api
+    timeout: 300
+
 m7:
   vector_store:
     path: ./data/chroma

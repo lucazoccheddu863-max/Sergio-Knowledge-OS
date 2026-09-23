@@ -59,6 +59,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M7.4 ✅ — Document import from the local admin console
 - M7.5 ✅ — Questions, semantic search and cited sources in the admin console
 - M7.6 ✅ — Local AI provider and required-model readiness
+- M7.7 ✅ — Local beta reliability and end-to-end validation
 
 ## Definition of Done
 1. Design approved

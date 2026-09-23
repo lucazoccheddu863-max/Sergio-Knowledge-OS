@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0-alpha7] — 2026-09-23
+
+### Milestone 7.7 (M7.7) — Local Beta Reliability
+
+#### Added
+- Live local validation with Ollama 0.34.2, `qwen2.5:1.5b` and `nomic-embed-text`
+- Runtime release metadata derived from the current `VERSION`
+- ADR-007 generic external integration boundary
+- Tests for slow CPU inference settings and current runtime status
+- `setup_milestone7_7.py` + `verify_milestone7_7.py`
+
+#### Changed
+- Ollama uses the explicit local endpoint and a 300-second timeout for Intel CPU inference
+- `/api/v1/status`, admin status and OpenAPI metadata report the active runtime release
+- M4 API defaults remain backward compatible with the frozen v1 contract
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha7`
+
+#### Live Validation
+- Local chat generation completed with `qwen2.5:1.5b`
+- Local 768-dimension embedding completed with `nomic-embed-text`
+- `ROADMAP.md` and `README.md` archived and indexed in persistent Chroma storage
+- Five-source RAG query completed through the assembled application runtime
+
+#### Test Results
+- M7 total: 20/20 PASS
+- M6 regression: 67/67 PASS
+- M5 regression: 32/32 PASS
+- M4 regression: 238/238 PASS
+
+* * *
+
 ## [0.7.0-alpha6] — 2026-09-17
 
 ### Milestone 7.6 (M7.6) — Local AI Readiness

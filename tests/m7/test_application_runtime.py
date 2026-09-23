@@ -13,6 +13,7 @@ from skos.m4.infrastructure.ports.ai_provider_port import AIProviderPort
 from skos.m4.infrastructure.ports.secret_port import SecretManagerPort
 from skos.m4.infrastructure.ports.vector_store_port import VectorStorePort
 from skos.m7.runtime import build_application_runtime, build_provider_registry
+from skos.m7.runtime.application_factory import build_runtime_config
 
 
 class RuntimeProvider(AIProviderPort):
@@ -114,6 +115,27 @@ def test_provider_registry_contains_all_supported_adapters() -> None:
         "ollama",
         "openai",
     ]
+
+
+def test_local_runtime_allows_slow_cpu_inference(tmp_path: Path) -> None:
+    config = build_runtime_config(tmp_path)
+
+    assert config.get("ai_providers.ollama.base_url") == "http://127.0.0.1:11434/api"
+    assert config.get("ai_providers.ollama.timeout") == 300
+
+
+def test_runtime_status_reports_current_release(tmp_path: Path) -> None:
+    (tmp_path / "VERSION").write_text("0.7.0-alpha7\n", encoding="ascii")
+    client = TestClient(build_test_runtime(tmp_path).app)
+
+    response = client.get("/api/v1/status")
+
+    assert response.status_code == 200
+    assert response.json() == {
+        "version": "0.7.0-alpha7",
+        "milestone": "M7.7",
+        "status": "operational",
+    }
 
 
 def test_application_runtime_assembles_real_services(tmp_path: Path) -> None:
