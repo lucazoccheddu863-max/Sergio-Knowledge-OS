@@ -63,6 +63,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M7.8 ✅ — One-command local startup for Ollama and Sergio
 - M7.9 ✅ — Grounded Markdown retrieval with model-aware embeddings
 - M7.10 ✅ — Sergio control-room visual identity for the local console
+- M7.11 ✅ — Idempotent local SQLite bootstrap and backup readiness
 
 ## Definition of Done
 1. Design approved

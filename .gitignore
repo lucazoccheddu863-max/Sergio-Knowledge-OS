@@ -44,3 +44,7 @@ dist/
 # Local runtime knowledge and vector indexes
 data/archive/
 data/chroma/
+data/backups/
+data/imports/
+data/releases/
+data/reports/

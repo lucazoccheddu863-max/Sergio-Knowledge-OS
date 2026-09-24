@@ -78,3 +78,54 @@ def test_bootstrap_local_workspace_warns_for_file_collision(tmp_path: Path) -> N
 
     assert result.ready is False
     assert "data path exists but is not a directory" in result.warnings
+
+
+def test_bootstrap_initializes_configured_sqlite_database(tmp_path: Path) -> None:
+    schema = Path("schema_v1.sql").read_text(encoding="utf-8")
+    (tmp_path / "schema_v1.sql").write_text(schema, encoding="utf-8")
+
+    result = bootstrap_local_workspace(
+        root_path=tmp_path,
+        database_path="data/sergio_knowledge.db",
+    )
+
+    database_path = tmp_path / "data" / "sergio_knowledge.db"
+    assert result.ready is True
+    assert database_path.is_file()
+    assert any(item.name == "database" and item.created for item in result.items)
+
+    import sqlite3
+
+    with sqlite3.connect(database_path) as connection:
+        assert connection.execute(
+            "SELECT value FROM schema_meta WHERE key = 'schema_version'"
+        ).fetchone() == ("1",)
+
+
+def test_bootstrap_database_initialization_is_idempotent(tmp_path: Path) -> None:
+    schema = Path("schema_v1.sql").read_text(encoding="utf-8")
+    (tmp_path / "schema_v1.sql").write_text(schema, encoding="utf-8")
+    kwargs = {"root_path": tmp_path, "database_path": "data/sergio_knowledge.db"}
+
+    bootstrap_local_workspace(**kwargs)
+    result = bootstrap_local_workspace(**kwargs)
+
+    database_item = next(item for item in result.items if item.name == "database")
+    assert result.ready is True
+    assert database_item.existed is True
+    assert database_item.created is False
+
+
+def test_bootstrap_reports_missing_database_schema(tmp_path: Path, monkeypatch) -> None:
+    missing_schema = tmp_path / "missing-schema.sql"
+    monkeypatch.setattr("skos.m6.production.launch._default_schema_path", lambda: missing_schema)
+
+    result = bootstrap_local_workspace(
+        root_path=tmp_path,
+        database_path="data/sergio_knowledge.db",
+    )
+
+    assert result.ready is False
+    assert result.warnings == (
+        f"database initialization failed: schema file does not exist: {missing_schema}",
+    )

@@ -4,6 +4,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from importlib import resources
 from pathlib import Path
+import sqlite3
 from typing import Any
 
 from skos.m6.production.release import build_release_status
@@ -115,7 +116,7 @@ def bootstrap_local_workspace(
     backup_dir: str | Path | None = None,
     release_dir: str | Path | None = None,
 ) -> LocalWorkspaceBootstrap:
-    """Create local runtime directories without modifying existing files."""
+    """Create local runtime directories and initialize the configured SQLite database."""
 
     root = Path(root_path)
     data_dir = _resolve_path(root, database_path).parent if database_path else root / "data"
@@ -144,12 +145,52 @@ def bootstrap_local_workspace(
             path.mkdir(parents=True, exist_ok=True)
         items.append(LocalWorkspaceItem(name=name, path=str(path), existed=existed, created=not existed))
 
+    if database_path is not None and not warnings:
+        database = _resolve_path(root, database_path)
+        database_existed = database.exists()
+        schema_path = root / "schema_v1.sql"
+        if not schema_path.is_file():
+            schema_path = _default_schema_path()
+        try:
+            _initialize_local_database(database, schema_path)
+        except (OSError, sqlite3.DatabaseError) as exc:
+            warnings.append(f"database initialization failed: {exc}")
+        else:
+            items.append(
+                LocalWorkspaceItem(
+                    name="database",
+                    path=str(database),
+                    existed=database_existed,
+                    created=not database_existed,
+                )
+            )
+
     return LocalWorkspaceBootstrap(
         ready=not warnings,
         root_path=str(root),
         items=tuple(items),
         warnings=tuple(warnings),
     )
+
+
+def _initialize_local_database(database_path: Path, schema_path: Path) -> None:
+    if not schema_path.is_file():
+        raise OSError(f"schema file does not exist: {schema_path}")
+    database_path.parent.mkdir(parents=True, exist_ok=True)
+    schema = schema_path.read_text(encoding="utf-8")
+    with sqlite3.connect(database_path, timeout=30.0) as connection:
+        connection.execute("PRAGMA foreign_keys = ON")
+        connection.execute("PRAGMA journal_mode = WAL")
+        connection.executescript(schema)
+        row = connection.execute(
+            "SELECT value FROM schema_meta WHERE key = 'schema_version'"
+        ).fetchone()
+        if row != ("1",):
+            raise sqlite3.DatabaseError("schema version 1 was not initialized")
+
+
+def _default_schema_path() -> Path:
+    return Path(__file__).resolve().parents[3] / "schema_v1.sql"
 
 
 def _resolve_path(root: Path, path: str | Path | None) -> Path:

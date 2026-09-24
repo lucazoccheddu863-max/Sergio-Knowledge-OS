@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0-alpha11] — 2026-09-24
+
+### Milestone 7.11 (M7.11) — Local Database Bootstrap
+
+#### Added
+- Idempotent SQLite database initialization during local workspace preparation
+- Schema v1 verification after database creation
+- Installed-schema fallback for operator roots outside the repository
+- Tests for database creation, repeated preparation and missing schema handling
+- `setup_milestone7_11.py` + `verify_milestone7_11.py`
+
+#### Changed
+- `sergio-knowledge prepare` now creates the configured local database safely
+- Local backup and operator smoke checks pass after workspace preparation
+- Existing database files remain intact and are only schema-verified
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha11`
+
+#### Live Validation
+- `data/sergio_knowledge.db` was created from `schema_v1.sql`
+- Operator snapshot changed from `ATTENTION` to `READY`
+- Backup manifest reported all 15 local inputs addressable
+
+#### Test Results
+- M7 total: 27/27 PASS
+- M6 regression: 71/71 PASS
+- M5 regression: 33/33 PASS
+- M4 regression: 240/240 PASS
+- Full suite: 371/371 PASS
+
+* * *
+
 ## [0.7.0-alpha10] — 2026-09-23
 
 ### Milestone 7.10 (M7.10) — Control Room Interface

@@ -42,9 +42,9 @@ def test_status_command_prints_operator_snapshot(tmp_path: Path) -> None:
 
     result = operator_cli.run_command(parse("--root", str(tmp_path), "status"), stdout=output)
 
-    assert result == 1
+    assert result == 0
     assert "Sergio Knowledge OS - Operator Snapshot" in output.getvalue()
-    assert "Verdict: ATTENTION" in output.getvalue()
+    assert "Verdict: READY" in output.getvalue()
 
 
 def test_report_command_protects_existing_report(tmp_path: Path) -> None:
