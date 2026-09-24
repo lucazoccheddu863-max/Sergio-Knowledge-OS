@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.7.0-alpha10] — 2026-09-23
+
+### Milestone 7.10 (M7.10) — Control Room Interface
+
+#### Added
+- Persistent sidebar for the primary local workflows
+- Sergio brand lockup and compact local-system indicators
+- Focused visual regression test for the control-room identity
+- `setup_milestone7_10.py` + `verify_milestone7_10.py`
+
+#### Changed
+- Admin console adopts the approved dark cinematic control-room direction
+- Ask Sergio and local AI status form the primary first-screen workspace
+- Navigation and core import controls now use Italian operator labels
+- Responsive layouts preserve access on narrow desktop and mobile screens
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha10`
+
+#### Visual Validation
+- Real console rendered successfully at the local `/admin` endpoint
+- Sidebar, status cards, Ask Sergio and AI panels were verified without overlap
+- Existing runtime data populated correctly inside the redesigned interface
+
+#### Test Results
+- M7 total: 27/27 PASS
+- M6 regression: 68/68 PASS
+- M5 regression: 33/33 PASS
+- M4 regression: 240/240 PASS
+- Full suite: 368/368 PASS
+
+* * *
+
 ## [0.7.0-alpha9] — 2026-09-23
 
 ### Milestone 7.9 (M7.9) — Grounded Local Retrieval

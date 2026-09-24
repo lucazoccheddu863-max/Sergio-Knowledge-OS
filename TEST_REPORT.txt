@@ -1,26 +1,26 @@
 ============================================================
-TEST REPORT — Sergio Knowledge OS M7.9
+TEST REPORT — Sergio Knowledge OS M7.10
 ============================================================
 
 Date: 2026-09-23
-Version: 0.7.0-alpha9
-Milestone: M7.9 — Grounded Local Retrieval
+Version: 0.7.0-alpha10
+Milestone: M7.10 — Control Room Interface
 
 M7 Tests: 27/27 PASS
 M6 Regression: 68/68 PASS
-M5 Regression: 32/32 PASS
+M5 Regression: 33/33 PASS
 M4 Regression: 240/240 PASS
-Total: 367/367 PASS
+Total: 368/368 PASS
 
 Verification command:
-python3 verify_milestone7_9.py
+python3 verify_milestone7_10.py
 
 Result:
-M7.9 verification complete. All checks PASS.
+M7.10 verification complete. All checks PASS.
 
 Additional validation:
 python3 -m pytest -q
-367 passed, 2 warnings
+368 passed, 2 warnings
 
 Notes:
 - Ollama 0.34.2 was compiled and validated on the local Intel Mac.
@@ -37,5 +37,8 @@ Notes:
 - Nomic retrieval prefixes are applied separately to documents and queries.
 - M7.9 uses a new persistent collection and index generation without deleting prior data.
 - Live retrieval returned `ROADMAP.md` and `README.md` as the leading sources.
+- The admin console now uses the approved Sergio dark control-room identity.
+- The real local `/admin` page was visually inspected with populated runtime data.
+- Sidebar, Ask Sergio, AI status and import controls render without first-screen overlap.
 - OpenTelemetry may emit a localhost exporter warning in sandboxed environments; tests still pass.
 ============================================================

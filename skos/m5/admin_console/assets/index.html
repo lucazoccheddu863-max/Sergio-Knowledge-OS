@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,16 +7,43 @@
     <link rel="stylesheet" href="/admin/assets/styles.css">
   </head>
   <body>
-    <main class="shell">
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="Navigazione principale">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">S</span>
+          <span><strong>SERGIO</strong><small>KNOWLEDGE OS</small></span>
+        </div>
+        <nav class="primary-nav">
+          <a class="active" href="#overview"><span aria-hidden="true">⌂</span>Dashboard</a>
+          <a href="#ask-sergio"><span aria-hidden="true">◉</span>Ask Sergio</a>
+          <a href="#document-import"><span aria-hidden="true">▤</span>Libreria</a>
+          <a href="#document-import"><span aria-hidden="true">↓</span>Importa</a>
+          <a href="#engines"><span aria-hidden="true">⌘</span>Knowledge Graph</a>
+          <a href="#health"><span aria-hidden="true">◇</span>Attività</a>
+          <a href="#operations"><span aria-hidden="true">⚙</span>Impostazioni</a>
+        </nav>
+        <div class="sidebar-system">
+          <p>Sistema locale</p>
+          <span><i></i> Ollama attivo</span>
+          <span><i></i> qwen2.5:1.5b</span>
+          <span><i></i> Indice pronto</span>
+        </div>
+        <div class="sidebar-signature">
+          <span class="mini-mark">S</span>
+          <small>CONNETTE IDEE<br>CREA VALORE</small>
+        </div>
+      </aside>
+      <div class="workspace">
+      <div class="shell">
       <header class="topbar">
         <div>
-          <p class="eyebrow">Admin console</p>
+          <p class="eyebrow">Assistente personale della conoscenza</p>
           <h1>Sergio Knowledge OS</h1>
         </div>
-        <button id="refresh" type="button">Refresh</button>
+        <div class="topbar-actions"><span class="live-status"><i></i> Attivo</span><button id="refresh" type="button" title="Aggiorna stato">↻ <span>Aggiorna</span></button></div>
       </header>
 
-      <section class="status-grid" aria-label="System summary">
+      <section id="overview" class="status-grid" aria-label="Riepilogo sistema">
         <article>
           <span>Status</span>
           <strong id="system-status">Loading</strong>
@@ -35,52 +62,52 @@
         </article>
       </section>
 
-      <section class="panel">
+      <section class="panel ai-panel">
         <div class="panel-heading">
-          <h2>AI Runtime</h2>
+          <h2>Stato AI locale</h2>
           <span id="ai-summary">Checking</span>
         </div>
         <div id="ai-list" class="list"></div>
       </section>
 
-      <section class="panel">
+      <section id="ask-sergio" class="panel query-panel">
         <div class="panel-heading">
           <h2>Ask Sergio</h2>
           <span id="query-summary">Ready</span>
         </div>
         <div class="query-controls">
           <label class="query-field">
-            Question
-            <textarea id="query-text" rows="3" placeholder="Ask about your imported knowledge"></textarea>
+            La tua domanda
+            <textarea id="query-text" rows="3" placeholder="Cosa vuoi conoscere?"></textarea>
           </label>
           <div class="query-toolbar">
             <div class="segmented-control" aria-label="Query mode">
-              <label><input type="radio" name="query-mode" value="rag" checked><span>Answer</span></label>
-              <label><input type="radio" name="query-mode" value="semantic"><span>Search</span></label>
+              <label><input type="radio" name="query-mode" value="rag" checked><span>Risposta</span></label>
+              <label><input type="radio" name="query-mode" value="semantic"><span>Ricerca</span></label>
             </div>
-            <button id="query-submit" type="button">Ask</button>
+            <button id="query-submit" type="button">Chiedi</button>
           </div>
         </div>
         <div id="query-answer" class="query-answer" hidden></div>
         <div id="query-sources" class="source-list"></div>
       </section>
 
-      <section class="panel">
+      <section id="document-import" class="panel">
         <div class="panel-heading">
-          <h2>Document Import</h2>
+          <h2>Importazione documenti</h2>
           <span id="import-summary">Ready</span>
         </div>
         <div class="document-import-actions">
           <label>
-            Document
+            Documento
             <input id="document-file" type="file" accept=".txt,.md,.json,text/plain,text/markdown,application/json">
           </label>
-          <button id="document-import" type="button">Import</button>
+          <button id="document-import" type="button">Importa</button>
         </div>
         <div id="import-list" class="list"></div>
       </section>
 
-      <section class="panel">
+      <section id="health" class="panel">
         <div class="panel-heading">
           <h2>Subsystem Health</h2>
           <span id="updated-at">Not updated yet</span>
@@ -88,7 +115,7 @@
         <div id="health-list" class="list"></div>
       </section>
 
-      <section class="panel">
+      <section id="operations" class="panel">
         <div class="panel-heading">
           <h2>Production Readiness</h2>
           <span id="readiness-summary">Loading</span>
@@ -96,7 +123,7 @@
         <div id="readiness-list" class="list"></div>
       </section>
 
-      <section class="panel">
+      <section id="engines" class="panel">
         <div class="panel-heading">
           <h2>Operator Smoke Check</h2>
           <span id="smoke-summary">Loading</span>
@@ -177,6 +204,8 @@
         </div>
         <div id="engine-list" class="chips"></div>
       </section>
+      </div>
+      </div>
     </main>
     <script src="/admin/assets/app.js" defer></script>
   </body>

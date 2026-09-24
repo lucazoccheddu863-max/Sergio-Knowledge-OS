@@ -44,6 +44,21 @@ def test_admin_console_serves_css_asset() -> None:
     assert ".status-grid" in response.text
 
 
+def test_admin_console_uses_sergio_control_room_identity() -> None:
+    client = build_client()
+
+    html = client.get("/admin").text
+    css = client.get("/admin/assets/styles.css").text
+
+    assert 'class="sidebar"' in html
+    assert "Assistente personale della conoscenza" in html
+    assert "Sistema locale" in html
+    assert "Sergio Knowledge OS" in html
+    assert ".app-shell" in css
+    assert ".brand-lockup" in css
+    assert "color-scheme: dark" in css
+
+
 def test_admin_console_serves_js_asset() -> None:
     client = build_client()
 
