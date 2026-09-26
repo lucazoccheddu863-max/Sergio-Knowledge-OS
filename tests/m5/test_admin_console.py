@@ -54,8 +54,13 @@ def test_admin_console_uses_sergio_control_room_identity() -> None:
     assert "Assistente personale della conoscenza" in html
     assert "Sistema locale" in html
     assert "Sergio Knowledge OS" in html
+    assert 'class="skip-link"' in html
+    assert 'id="sidebar-ai"' in html
+    assert 'aria-live="polite"' in html
     assert ".app-shell" in css
     assert ".brand-lockup" in css
+    assert ":focus-visible" in css
+    assert ".button-danger" in css
     assert "color-scheme: dark" in css
 
 
@@ -72,3 +77,5 @@ def test_admin_console_serves_js_asset() -> None:
     assert 'document.getElementById("query-submit")' in response.text
     assert "result.rag_result?.context?.documents" in response.text
     assert "/api/v1/admin/ai/status" in response.text
+    assert "setSystemIndicator" in response.text
+    assert "showDashboardError" in response.text

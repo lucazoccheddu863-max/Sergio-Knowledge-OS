@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/admin/assets/styles.css">
   </head>
   <body>
+    <a class="skip-link" href="#main-content">Vai al contenuto principale</a>
     <main class="app-shell">
       <aside class="sidebar" aria-label="Navigazione principale">
         <div class="brand-lockup">
@@ -14,8 +15,8 @@
           <span><strong>SERGIO</strong><small>KNOWLEDGE OS</small></span>
         </div>
         <nav class="primary-nav">
-          <a class="active" href="#overview"><span aria-hidden="true">⌂</span>Dashboard</a>
-          <a href="#ask-sergio"><span aria-hidden="true">◉</span>Ask Sergio</a>
+          <a class="active" href="#overview" aria-current="page"><span aria-hidden="true">⌂</span>Panoramica</a>
+          <a href="#ask-sergio"><span aria-hidden="true">◉</span>Chiedi a Sergio</a>
           <a href="#document-import"><span aria-hidden="true">▤</span>Libreria</a>
           <a href="#document-import"><span aria-hidden="true">↓</span>Importa</a>
           <a href="#engines"><span aria-hidden="true">⌘</span>Knowledge Graph</a>
@@ -24,9 +25,9 @@
         </nav>
         <div class="sidebar-system">
           <p>Sistema locale</p>
-          <span><i></i> Ollama attivo</span>
-          <span><i></i> qwen2.5:1.5b</span>
-          <span><i></i> Indice pronto</span>
+          <span id="sidebar-ai" class="is-loading"><i></i> Verifica AI...</span>
+          <span id="sidebar-model" class="is-loading"><i></i> Verifica modello...</span>
+          <span id="sidebar-index" class="is-loading"><i></i> Verifica indice...</span>
         </div>
         <div class="sidebar-signature">
           <span class="mini-mark">S</span>
@@ -34,46 +35,46 @@
         </div>
       </aside>
       <div class="workspace">
-      <div class="shell">
+      <div id="main-content" class="shell" tabindex="-1">
       <header class="topbar">
         <div>
           <p class="eyebrow">Assistente personale della conoscenza</p>
           <h1>Sergio Knowledge OS</h1>
         </div>
-        <div class="topbar-actions"><span class="live-status"><i></i> Attivo</span><button id="refresh" type="button" title="Aggiorna stato">↻ <span>Aggiorna</span></button></div>
+        <div class="topbar-actions"><span id="live-status" class="live-status is-loading" role="status"><i></i> Verifica...</span><button id="refresh" type="button" title="Aggiorna stato" aria-label="Aggiorna tutti gli stati">↻ <span>Aggiorna</span></button></div>
       </header>
 
       <section id="overview" class="status-grid" aria-label="Riepilogo sistema">
         <article>
           <span>Status</span>
-          <strong id="system-status">Loading</strong>
+          <strong id="system-status">Caricamento</strong>
         </article>
         <article>
-          <span>Version</span>
-          <strong id="system-version">Loading</strong>
+          <span>Versione</span>
+          <strong id="system-version">Caricamento</strong>
         </article>
         <article>
           <span>Milestone</span>
-          <strong id="system-milestone">Loading</strong>
+          <strong id="system-milestone">Caricamento</strong>
         </article>
         <article>
-          <span>Security</span>
-          <strong id="security-status">Loading</strong>
+          <span>Sicurezza</span>
+          <strong id="security-status">Caricamento</strong>
         </article>
       </section>
 
       <section class="panel ai-panel">
         <div class="panel-heading">
           <h2>Stato AI locale</h2>
-          <span id="ai-summary">Checking</span>
+          <span id="ai-summary" role="status" aria-live="polite">Verifica in corso</span>
         </div>
         <div id="ai-list" class="list"></div>
       </section>
 
       <section id="ask-sergio" class="panel query-panel">
         <div class="panel-heading">
-          <h2>Ask Sergio</h2>
-          <span id="query-summary">Ready</span>
+          <h2>Chiedi a Sergio</h2>
+          <span id="query-summary" role="status" aria-live="polite">Pronto</span>
         </div>
         <div class="query-controls">
           <label class="query-field">
@@ -81,7 +82,7 @@
             <textarea id="query-text" rows="3" placeholder="Cosa vuoi conoscere?"></textarea>
           </label>
           <div class="query-toolbar">
-            <div class="segmented-control" aria-label="Query mode">
+            <div class="segmented-control" aria-label="Modalità di ricerca">
               <label><input type="radio" name="query-mode" value="rag" checked><span>Risposta</span></label>
               <label><input type="radio" name="query-mode" value="semantic"><span>Ricerca</span></label>
             </div>
@@ -95,7 +96,7 @@
       <section id="document-import" class="panel">
         <div class="panel-heading">
           <h2>Importazione documenti</h2>
-          <span id="import-summary">Ready</span>
+          <span id="import-summary" role="status" aria-live="polite">Pronto</span>
         </div>
         <div class="document-import-actions">
           <label>
@@ -109,36 +110,36 @@
 
       <section id="health" class="panel">
         <div class="panel-heading">
-          <h2>Subsystem Health</h2>
-          <span id="updated-at">Not updated yet</span>
+          <h2>Stato dei servizi</h2>
+          <span id="updated-at">Non ancora aggiornato</span>
         </div>
         <div id="health-list" class="list"></div>
       </section>
 
       <section id="operations" class="panel">
         <div class="panel-heading">
-          <h2>Production Readiness</h2>
-          <span id="readiness-summary">Loading</span>
+          <h2>Preparazione del sistema</h2>
+          <span id="readiness-summary">Caricamento</span>
         </div>
         <div id="readiness-list" class="list"></div>
       </section>
 
       <section id="engines" class="panel">
         <div class="panel-heading">
-          <h2>Operator Smoke Check</h2>
-          <span id="smoke-summary">Loading</span>
+          <h2>Controllo operativo</h2>
+          <span id="smoke-summary">Caricamento</span>
         </div>
         <div id="smoke-list" class="list"></div>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Operator Snapshot</h2>
-          <span id="snapshot-summary">Loading</span>
+          <h2>Riepilogo operativo</h2>
+          <span id="snapshot-summary">Caricamento</span>
         </div>
         <div class="backup-actions">
           <a id="snapshot-download" class="button-link" href="/api/v1/admin/snapshot/report" download>
-            Download report
+            Scarica rapporto
           </a>
         </div>
         <div id="snapshot-list" class="list"></div>
@@ -146,61 +147,61 @@
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Release Package</h2>
-          <span id="release-package-summary">Idle</span>
+          <h2>Pacchetto di rilascio</h2>
+          <span id="release-package-summary">In attesa</span>
         </div>
         <div class="backup-actions">
-          <button id="release-package-create" type="button">Create release ZIP</button>
-          <input id="release-package-path" type="text" readonly placeholder="Release package path">
-          <button id="release-package-inspect" type="button">Inspect release ZIP</button>
-          <button id="release-gate-run" type="button">Run readiness gate</button>
+          <button id="release-package-create" type="button">Crea ZIP di rilascio</button>
+          <input id="release-package-path" type="text" readonly aria-label="Percorso pacchetto di rilascio" placeholder="Percorso pacchetto">
+          <button id="release-package-inspect" class="button-secondary" type="button">Controlla ZIP</button>
+          <button id="release-gate-run" class="button-secondary" type="button">Verifica rilascio</button>
         </div>
         <div id="release-package-list" class="list"></div>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Local Launch</h2>
-          <span id="launch-summary">Loading</span>
+          <h2>Avvio locale</h2>
+          <span id="launch-summary">Caricamento</span>
         </div>
         <div class="backup-actions">
-          <button id="local-bootstrap" type="button">Prepare local workspace</button>
+          <button id="local-bootstrap" type="button">Prepara ambiente locale</button>
         </div>
         <div id="launch-list" class="list"></div>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Operator Manual</h2>
-          <span id="manual-summary">Loading</span>
+          <h2>Manuale operativo</h2>
+          <span id="manual-summary">Caricamento</span>
         </div>
         <div id="manual-list" class="list"></div>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Backup Operations</h2>
-          <span id="backup-summary">Loading</span>
+          <h2>Backup e ripristino</h2>
+          <span id="backup-summary" role="status" aria-live="polite">Caricamento</span>
         </div>
         <div class="backup-actions">
-          <button id="backup-create" type="button">Create backup</button>
+          <button id="backup-create" type="button">Crea backup</button>
           <label>
-            Backup ZIP
-            <input id="backup-archive-path" type="text" placeholder="Archive path">
+            Archivio ZIP
+            <input id="backup-archive-path" type="text" placeholder="Percorso archivio">
           </label>
-          <button id="backup-inspect" type="button">Inspect</button>
+          <button id="backup-inspect" class="button-secondary" type="button">Controlla</button>
           <label>
-            Restore target
-            <input id="backup-restore-target" type="text" placeholder="Empty staging directory">
+            Destinazione ripristino
+            <input id="backup-restore-target" type="text" placeholder="Cartella temporanea vuota">
           </label>
-          <button id="backup-restore" type="button">Stage restore</button>
+          <button id="backup-restore" class="button-danger" type="button">Prepara ripristino</button>
         </div>
         <div id="backup-list" class="list"></div>
       </section>
 
       <section class="panel">
         <div class="panel-heading">
-          <h2>Available Engines</h2>
+          <h2>Motori disponibili</h2>
         </div>
         <div id="engine-list" class="chips"></div>
       </section>

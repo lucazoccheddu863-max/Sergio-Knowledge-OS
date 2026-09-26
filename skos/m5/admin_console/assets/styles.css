@@ -476,6 +476,17 @@ input[type="file"] {
   --line: #173b53;
   --accent: #0798ef;
   --accent-strong: #42cfff;
+  --focus: #78ddff;
+  --danger: #e05268;
+  --danger-strong: #ff7186;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
   --ok-bg: #092d27;
   --ok-text: #55e3a4;
   --warn-bg: #33250b;
@@ -484,6 +495,30 @@ input[type="file"] {
 
 html {
   scroll-behavior: smooth;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 10px;
+  left: 10px;
+  transform: translateY(-180%);
+  border: 1px solid var(--focus);
+  border-radius: var(--radius-md);
+  padding: 10px 14px;
+  background: #071522;
+  color: var(--text);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
 }
 
 body {
@@ -617,6 +652,31 @@ body {
   box-shadow: 0 0 10px #34df91;
 }
 
+.sidebar-system span.is-warn i,
+.live-status.is-warn i {
+  background: var(--warn-text);
+  box-shadow: 0 0 10px var(--warn-text);
+}
+
+.sidebar-system span.is-error i,
+.live-status.is-error i {
+  background: var(--danger-strong);
+  box-shadow: 0 0 10px var(--danger-strong);
+}
+
+.sidebar-system span.is-loading i,
+.live-status.is-loading i {
+  background: #7899ae;
+  box-shadow: none;
+  animation: status-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
 .sidebar-signature {
   display: flex;
   align-items: center;
@@ -687,10 +747,40 @@ button:hover,
   background: #0a91dd;
 }
 
+button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
+.button-secondary {
+  border-color: #2d607d;
+  background: #0a2335;
+  color: #d9effb;
+}
+
+.button-secondary:hover {
+  background: #10344d;
+}
+
+.button-danger {
+  border-color: var(--danger-strong);
+  background: #441621;
+  color: #ffe9ed;
+}
+
+.button-danger:hover {
+  background: #62202e;
+}
+
 input,
 textarea {
   border-color: #24506b;
   background: #04101a;
+}
+
+input:hover,
+textarea:hover {
+  border-color: #34789e;
 }
 
 .status-grid {
@@ -717,6 +807,10 @@ textarea {
 .panel-heading {
   border-bottom: 1px solid var(--line);
   padding-bottom: 11px;
+}
+
+.panel-heading [role="status"] {
+  min-height: 18px;
 }
 
 .panel h2 {

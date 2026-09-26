@@ -130,13 +130,13 @@ def test_admin_console_loads_backup_operations_panel(tmp_path: Path) -> None:
 
     assert html_response.status_code == 200
     assert js_response.status_code == 200
-    assert "Backup Operations" in html_response.text
-    assert "Operator Smoke Check" in html_response.text
-    assert "Operator Snapshot" in html_response.text
+    assert "Backup e ripristino" in html_response.text
+    assert "Controllo operativo" in html_response.text
+    assert "Riepilogo operativo" in html_response.text
     assert "snapshot-download" in html_response.text
-    assert "Release Package" in html_response.text
-    assert "Local Launch" in html_response.text
-    assert "Operator Manual" in html_response.text
+    assert "Pacchetto di rilascio" in html_response.text
+    assert "Avvio locale" in html_response.text
+    assert "Manuale operativo" in html_response.text
     assert "local-bootstrap" in html_response.text
     assert "release-package-inspect" in html_response.text
     assert "release-gate-run" in html_response.text

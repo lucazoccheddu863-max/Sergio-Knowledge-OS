@@ -28,6 +28,20 @@ const text = (id, value) => {
   document.getElementById(id).textContent = value;
 };
 
+const setSystemIndicator = (id, label, state) => {
+  const target = document.getElementById(id);
+  target.classList.remove("is-loading", "is-warn", "is-error");
+  if (state !== "ok") {
+    target.classList.add(`is-${state}`);
+  }
+  target.lastChild.textContent = ` ${label}`;
+};
+
+const setBusy = (button, busy) => {
+  button.disabled = busy;
+  button.setAttribute("aria-busy", String(busy));
+};
+
 const badge = (value) => {
   const ok =
     value === true ||
@@ -188,6 +202,9 @@ async function refreshBackupManifest() {
 }
 
 async function refreshDashboard() {
+  const refreshButton = document.getElementById("refresh");
+  setBusy(refreshButton, true);
+  setSystemIndicator("live-status", "Aggiornamento...", "loading");
   const [status, health, engines, security, overview, smoke, snapshot, launch, manual, aiStatus] = await Promise.all([
     getJson(endpoints.status),
     getJson(endpoints.health),
@@ -206,6 +223,30 @@ async function refreshDashboard() {
   text("system-version", release.version);
   text("system-milestone", release.milestone);
   text("security-status", security.enabled ? "Enabled" : "Open mode");
+
+  const systemReady = ["operational", "ready", "healthy"].includes(
+    String(release.status || status.status).toLowerCase()
+  );
+  setSystemIndicator(
+    "live-status",
+    systemReady ? "Operativo" : "Da verificare",
+    systemReady ? "ok" : "warn"
+  );
+  setSystemIndicator(
+    "sidebar-ai",
+    aiStatus.healthy ? "Ollama attivo" : "Ollama non disponibile",
+    aiStatus.healthy ? "ok" : "error"
+  );
+  setSystemIndicator(
+    "sidebar-model",
+    aiStatus.chat_model || "Modello non configurato",
+    aiStatus.chat_model ? "ok" : "warn"
+  );
+  setSystemIndicator(
+    "sidebar-index",
+    readiness.ready ? "Indice pronto" : "Indice da verificare",
+    readiness.ready ? "ok" : "warn"
+  );
 
   text("ai-summary", aiStatus.ready ? "Ready" : aiStatus.healthy ? "Models missing" : "Offline");
   document.getElementById("ai-list").innerHTML = [
@@ -255,19 +296,27 @@ async function refreshDashboard() {
   ]);
 
   text("updated-at", new Date().toLocaleString());
+  setBusy(refreshButton, false);
 }
 
+const showDashboardError = (error) => {
+  text("system-status", "Errore");
+  setSystemIndicator("live-status", "Non disponibile", "error");
+  setSystemIndicator("sidebar-ai", "Stato AI sconosciuto", "error");
+  setSystemIndicator("sidebar-model", "Modello non verificato", "error");
+  setSystemIndicator("sidebar-index", "Indice non verificato", "error");
+  setBusy(document.getElementById("refresh"), false);
+  document.getElementById("health-list").innerHTML = row(error.message, badge(false));
+  document.getElementById("readiness-list").innerHTML = "";
+  document.getElementById("smoke-list").innerHTML = "";
+  document.getElementById("snapshot-list").innerHTML = "";
+  document.getElementById("launch-list").innerHTML = "";
+  document.getElementById("manual-list").innerHTML = "";
+  document.getElementById("ai-list").innerHTML = "";
+};
+
 document.getElementById("refresh").addEventListener("click", () => {
-  refreshDashboard().catch((error) => {
-    text("system-status", "Error");
-    document.getElementById("health-list").innerHTML = row(error.message, badge(false));
-    document.getElementById("readiness-list").innerHTML = "";
-    document.getElementById("smoke-list").innerHTML = "";
-    document.getElementById("snapshot-list").innerHTML = "";
-    document.getElementById("launch-list").innerHTML = "";
-    document.getElementById("manual-list").innerHTML = "";
-    document.getElementById("ai-list").innerHTML = "";
-  });
+  refreshDashboard().catch(showDashboardError);
 });
 
 document.getElementById("document-import").addEventListener("click", async () => {
@@ -473,14 +522,7 @@ document.getElementById("backup-restore").addEventListener("click", () => {
 });
 
 refreshDashboard().catch((error) => {
-  text("system-status", "Error");
-  document.getElementById("health-list").innerHTML = row(error.message, badge(false));
-  document.getElementById("readiness-list").innerHTML = "";
-  document.getElementById("smoke-list").innerHTML = "";
-  document.getElementById("snapshot-list").innerHTML = "";
-  document.getElementById("launch-list").innerHTML = "";
-  document.getElementById("manual-list").innerHTML = "";
-  document.getElementById("ai-list").innerHTML = "";
+  showDashboardError(error);
   refreshBackupManifest().catch(() => {
     text("backup-summary", "Error");
   });

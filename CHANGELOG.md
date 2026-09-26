@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.7.0-alpha12] — 2026-09-26
+
+### Milestone 7.12 (M7.12) — Design System Foundation
+
+#### Added
+- Shared visual tokens for focus, spacing, radii and semantic danger actions
+- Keyboard skip link, visible focus treatment and polite live-status announcements
+- Dynamic sidebar indicators for Ollama, configured model and index readiness
+- Focused regression checks for the UI foundation and accessibility baseline
+- `setup_milestone7_12.py` + `verify_milestone7_12.py`
+
+#### Changed
+- Primary console labels and operator actions use clearer Italian wording
+- Loading, warning and error indicators now reflect API data instead of static claims
+- Secondary and restore actions have distinct, consistent visual hierarchy
+- Dashboard refresh exposes a reliable busy state and recovers cleanly from errors
+- `VERSION` and `pyproject.toml` advanced to `0.7.0-alpha12`
+
+#### Visual Validation
+- Real console rendered successfully at the local `/admin` endpoint
+- First-screen status, Ask Sergio, AI and import panels were inspected without overlap
+- Offline Ollama state was represented accurately while model and index states remained distinct
+
+#### Test Results
+- M7 total: 27/27 PASS
+- M6 regression: 71/71 PASS
+- M5 regression: 33/33 PASS
+- M4 regression: 240/240 PASS
+- Full suite: 371/371 PASS
+
+* * *
+
 ## [0.7.0-alpha11] — 2026-09-24
 
 ### Milestone 7.11 (M7.11) — Local Database Bootstrap

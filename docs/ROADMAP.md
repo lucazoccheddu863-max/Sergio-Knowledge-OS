@@ -64,6 +64,7 @@ A semantic knowledge platform that ingests, indexes, and retrieves information a
 - M7.9 ✅ — Grounded Markdown retrieval with model-aware embeddings
 - M7.10 ✅ — Sergio control-room visual identity for the local console
 - M7.11 ✅ — Idempotent local SQLite bootstrap and backup readiness
+- M7.12 ✅ — UI design-system foundation, truthful live status and accessibility baseline
 
 ## Definition of Done
 1. Design approved
